@@ -1,0 +1,73 @@
+name: Update Purchasing Power Data
+
+# Runs every February 1st at 10:00 UTC
+# (INSEE typically publishes full-year data in January)
+# Can also be triggered manually from GitHub Actions tab
+on:
+  schedule:
+    - cron: "0 10 1 2 *" # Feb 1st, 10:00 UTC
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run data update script
+        id: update
+        run: |
+          # Run in write mode - the script only adds new years, never modifies existing data
+          node scripts/update-data.mjs --write 2>&1 | tee /tmp/update-log.txt
+
+          # Check if data.ts actually changed
+          if git diff --quiet client/src/lib/data.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No data changes detected."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Data changes detected!"
+          fi
+
+      - name: Create Pull Request
+        if: steps.update.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "data: update prices and SMIC rates"
+          title: "📊 Annual data update"
+          body: |
+            Automated data update from INSEE consumer price indices.
+
+            **What changed:**
+            - Updated product prices from INSEE IPC annual averages
+            - Added new SMIC rates (if configured in the script)
+
+            **Script output:**
+            ```
+            $(cat /tmp/update-log.txt)
+            ```
+
+            **Before merging:**
+            1. Review the price changes in `client/src/lib/data.ts`
+            2. Check that the values look reasonable (no order-of-magnitude errors)
+            3. Consider manually updating products not covered by INSEE API (cigarettes, cinema, metro, etc.)
+            4. Run `npm run build` locally to verify the site renders correctly
+
+            ---
+            _This PR was created automatically by the [update-data workflow](.github/workflows/update-data.yml)._
+          branch: data/auto-update
+          delete-branch: true
+          labels: |
+            data
+            automated
