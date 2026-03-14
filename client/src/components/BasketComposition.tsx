@@ -58,6 +58,12 @@ export default function BasketComposition() {
                     ? t('basketExcludedCigarettes')
                     : item.id === 'loyer'
                     ? t('basketExcludedLoyer')
+                    : item.id === 'loyer_paris'
+                    ? t('basketExcludedLoyerParis')
+                    : item.id === 'smartphone'
+                    ? t('basketExcludedSmartphone')
+                    : item.id === 'voiture_milieu_gamme'
+                    ? t('basketExcludedVoiture')
                     : null
                   : null;
 

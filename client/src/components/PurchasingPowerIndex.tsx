@@ -19,8 +19,9 @@ import { Label } from "@/components/ui/label";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
-import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex } from "@/lib/data";
+import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex, DATA_END_YEAR } from "@/lib/data";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
+import { Slider } from "@/components/ui/slider";
 
 ChartJS.register(
   CategoryScale,
@@ -62,6 +63,8 @@ export default function PurchasingPowerIndex() {
   const [showContext, setShowContext] = useState(true);
   const [showInflation, setShowInflation] = useState(false);
   const [showProductivity, setShowProductivity] = useState(false);
+  const [yearStart, setYearStart] = useState(1960);
+  const [yearEnd, setYearEnd] = useState(DATA_END_YEAR);
 
   // Compute PP data based on salary ref
   const ppData = useMemo(() => {
@@ -103,13 +106,22 @@ export default function PurchasingPowerIndex() {
   }, [ppBaseYear]);
 
   const labels = indexYears.filter((y) => ppIndex[y] !== undefined);
-  const indexData = labels.map((y) => ppIndex[y]);
-  const minutesData = labels.map((y) => basketMinutesByYear[y]);
-  const inflationData = labels.map((y) => inflationRates[y] ?? null);
-  const prodData = labels.map((y) => productivityData[y] ?? null);
 
-  const basket1960 = basketMinutesByYear[ppBaseYear];
-  const basketNow = basketMinutesByYear[labels[labels.length - 1]];
+  // Filtered labels drive both the chart and the KPI cards
+  const filteredLabels = labels.filter((y) => y >= yearStart && y <= yearEnd);
+
+  // KPI values derived from the visible range
+  const kpiStartYear = filteredLabels[0] ?? ppBaseYear;
+  const kpiEndYear = filteredLabels[filteredLabels.length - 1] ?? labels[labels.length - 1];
+  const basket1960 = basketMinutesByYear[kpiStartYear];
+  const basketNow = basketMinutesByYear[kpiEndYear];
+  const kpiMult = (ppIndex[kpiStartYear] && ppIndex[kpiEndYear])
+    ? (ppIndex[kpiEndYear] / ppIndex[kpiStartYear]).toFixed(1)
+    : "?";
+  const indexData = filteredLabels.map((y) => ppIndex[y]);
+  const minutesData = filteredLabels.map((y) => basketMinutesByYear[y]);
+  const inflationData = filteredLabels.map((y) => inflationRates[y] ?? null);
+  const prodData = filteredLabels.map((y) => productivityData[y] ?? null);
 
   // Title and subtitle based on salary ref
   const title = salaryRef === 'median'
@@ -124,13 +136,6 @@ export default function PurchasingPowerIndex() {
       ? t("ppIndexSubMean")
       : t("ppIndexSub");
 
-  // KPI multiplier label based on salary ref
-  const kpiMultiplierLabel = salaryRef === 'median'
-    ? t("ppKpiMultiplierMedian").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
-    : salaryRef === 'mean'
-      ? t("ppKpiMultiplierMean").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
-      : t("ppKpiMultiplier").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear));
-
   // Chart Y labels
   const yLabel2 = salaryRef === 'median'
     ? t("chartYLabelMedian").replace("Minutes", "Min.") + " (" + t("ppLegendMinutes").split("(")[1]
@@ -144,13 +149,13 @@ export default function PurchasingPowerIndex() {
   // President bands
   if (showPresidents) {
     frenchPresidents.forEach((pres, i) => {
-      const start = Math.max(pres.start, labels[0]);
-      const end = Math.min(pres.end, labels[labels.length - 1]);
+      const start = Math.max(pres.start, filteredLabels[0]);
+      const end = Math.min(pres.end, filteredLabels[filteredLabels.length - 1]);
       if (start >= end) return;
 
-      const startIdx = labels.indexOf(start) >= 0 ? labels.indexOf(start) : 0;
+      const startIdx = filteredLabels.indexOf(start) >= 0 ? filteredLabels.indexOf(start) : 0;
       const endIdx =
-        labels.indexOf(end) >= 0 ? labels.indexOf(end) : labels.length - 1;
+        filteredLabels.indexOf(end) >= 0 ? filteredLabels.indexOf(end) : filteredLabels.length - 1;
 
       const colors = isDark ? presidentColors.dark : presidentColors.light;
       annotations[`pres${i}`] = {
@@ -174,7 +179,7 @@ export default function PurchasingPowerIndex() {
   // Context vertical lines (Grenelle, Mitterrand, euro, 35h, post-COVID)
   if (showContext)
     ppAnnotations.forEach((ann, i) => {
-      const idx = labels.indexOf(ann.year);
+      const idx = filteredLabels.indexOf(ann.year);
       if (idx < 0) return;
       const label = lang === "fr" ? ann.labelFr : ann.labelEn;
       annotations[`ctx${i}`] = {
@@ -260,7 +265,7 @@ export default function PurchasingPowerIndex() {
     });
   }
 
-  const chartData = { labels, datasets };
+  const chartData = { labels: filteredLabels, datasets };
 
   const scales: any = {
     x: {
@@ -405,10 +410,12 @@ export default function PurchasingPowerIndex() {
           <Card data-testid="kpi-multiplier">
             <CardContent className="pt-6 text-center">
               <div className="text-2xl font-bold tabular-nums bg-gradient-to-br from-yellow-300 to-amber-600 bg-clip-text text-transparent">
-                {multiplier}&times;
+                {kpiMult}&times;
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {kpiMultiplierLabel}
+                {t("ppKpiRangeLabel")
+                  .replace("{start}", String(kpiStartYear))
+                  .replace("{end}", String(kpiEndYear))}
               </p>
             </CardContent>
           </Card>
@@ -418,7 +425,7 @@ export default function PurchasingPowerIndex() {
                 {basket1960 ? Math.round(basket1960) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasket1960")} {ppBaseYear}
+                {t("ppKpiBasket1960")} {kpiStartYear}
               </p>
             </CardContent>
           </Card>
@@ -428,7 +435,7 @@ export default function PurchasingPowerIndex() {
                 {basketNow ? Math.round(basketNow) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasketNow")}
+                {t("ppKpiBasket1960")} {kpiEndYear}
               </p>
             </CardContent>
           </Card>
@@ -510,6 +517,20 @@ export default function PurchasingPowerIndex() {
 
         <div className="h-[300px] md:h-[400px] pl-2 pr-2">
           <Line data={chartData} options={chartOptions as any} />
+        </div>
+
+        {/* Year range filter */}
+        <div className="mt-4 flex items-center gap-3 px-1">
+          <span className="text-xs text-muted-foreground w-9 text-right tabular-nums shrink-0">{yearStart}</span>
+          <Slider
+            min={labels[0] ?? 1960}
+            max={DATA_END_YEAR}
+            step={1}
+            value={[yearStart, yearEnd]}
+            onValueChange={([s, e]) => { setYearStart(s); setYearEnd(e); }}
+            className="flex-1"
+          />
+          <span className="text-xs text-muted-foreground w-9 tabular-nums shrink-0">{yearEnd}</span>
         </div>
 
         {/* Data transparency footnotes */}

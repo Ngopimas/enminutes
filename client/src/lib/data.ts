@@ -1029,6 +1029,159 @@ const rawProducts: Record<
       2024: 32.0,
     },
   },
+  forfait_mobile: {
+    id: "forfait_mobile",
+    nameFr: "Forfait mobile (5-10 Go)",
+    nameEn: "Mobile plan (5-10 GB)",
+    unit: "1 mois",
+    emoji: "📱",
+    category: "communication",
+    funFactFr:
+      "Le forfait mobile est passé de ~480 min de travail en 2000 à ~130 min en 2024 - et la disruption Free en 2012 a divisé les prix par 3 en quelques mois.",
+    funFactEn:
+      "A mobile plan went from ~480 work-minutes in 2000 to ~130 in 2024 — and Free Mobile's 2012 disruption cut prices by 3× in just months.",
+    prices: {
+      2000: 40.0,
+      2005: 35.0,
+      2008: 32.0,
+      2010: 30.0,
+      2011: 30.0,
+      2012: 9.99,
+      2013: 9.99,
+      2015: 12.0,
+      2018: 10.0,
+      2020: 9.99,
+      2022: 10.99,
+      2024: 12.99,
+    },
+  },
+  streaming: {
+    id: "streaming",
+    nameFr: "Streaming vidéo (abonnement standard)",
+    nameEn: "Video streaming (standard plan)",
+    unit: "1 mois",
+    emoji: "🎬",
+    category: "loisirs",
+    funFactFr:
+      "Un abonnement streaming standard vaut 135 min de travail au SMIC en 2024 - soit moins que le cinéma pour un mois illimité.",
+    funFactEn:
+      "A standard streaming subscription costs 135 work-minutes at minimum wage in 2024 — less than a cinema ticket for unlimited monthly viewing.",
+    prices: {
+      2014: 8.99,
+      2015: 8.99,
+      2016: 9.99,
+      2017: 9.99,
+      2018: 11.99,
+      2019: 12.99,
+      2020: 13.99,
+      2021: 13.49,
+      2022: 13.49,
+      2023: 13.49,
+      2024: 13.49,
+    },
+  },
+  smartphone: {
+    id: "smartphone",
+    nameFr: "Smartphone milieu de gamme",
+    nameEn: "Mid-range smartphone",
+    unit: "1 appareil",
+    emoji: "📲",
+    category: "communication",
+    funFactFr:
+      "Un smartphone milieu de gamme représentait ~6 200 min de travail en 2007. En 2024 : ~4 000 min - mais avec une puissance informatique incomparable.",
+    funFactEn:
+      "A mid-range smartphone required ~6,200 work-minutes in 2007. By 2024: ~4,000 min — but with vastly more computing power.",
+    prices: {
+      2007: 499.0,
+      2008: 450.0,
+      2010: 350.0,
+      2012: 280.0,
+      2014: 300.0,
+      2016: 320.0,
+      2018: 350.0,
+      2020: 370.0,
+      2022: 399.0,
+      2024: 429.0,
+    },
+  },
+  gaz: {
+    id: "gaz",
+    nameFr: "Gaz naturel (1 MWh, usage résidentiel)",
+    nameEn: "Natural gas (1 MWh, residential)",
+    unit: "1 MWh",
+    emoji: "🔥",
+    category: "logement",
+    funFactFr:
+      "1 MWh de gaz coûtait 192 min de travail en 2000. La crise énergétique de 2022 l'a fait bondir à ~1 560 min - avant un reflux partiel.",
+    funFactEn:
+      "1 MWh of gas cost 192 work-minutes in 2000. The 2022 energy crisis pushed it to ~1,560 min — before a partial retreat.",
+    prices: {
+      2000: 16.0,
+      2005: 32.0,
+      2008: 58.0,
+      2010: 47.0,
+      2012: 62.0,
+      2015: 68.0,
+      2019: 63.0,
+      2020: 52.0,
+      2021: 80.0,
+      2022: 130.0,
+      2023: 95.0,
+      2024: 80.0,
+    },
+  },
+  loyer_paris: {
+    id: "loyer_paris",
+    nameFr: "Loyer Paris (1 m² / mois)",
+    nameEn: "Paris rent (1 m² / month)",
+    unit: "1 m²/mois",
+    emoji: "🗼",
+    category: "logement",
+    funFactFr:
+      "Le m² parisien est passé de ~30 min de travail en 1970 à ~370 min en 2024 - une multiplication par 12, bien plus que les salaires.",
+    funFactEn:
+      "Paris rent per m² went from ~30 work-minutes in 1970 to ~370 in 2024 — a 12× increase, far outpacing wages.",
+    prices: {
+      1970: 2.5,
+      1980: 8.0,
+      1990: 18.0,
+      2000: 22.0,
+      2005: 29.0,
+      2008: 36.0,
+      2010: 35.0,
+      2015: 37.0,
+      2018: 35.0,
+      2020: 35.0,
+      2022: 34.5,
+      2024: 36.0,
+    },
+  },
+  voiture_milieu_gamme: {
+    id: "voiture_milieu_gamme",
+    nameFr: "Voiture milieu de gamme (neuve)",
+    nameEn: "Mid-range car (new)",
+    unit: "1 voiture",
+    emoji: "🚘",
+    category: "transport",
+    funFactFr:
+      "Une Peugeot 205 valait ~81 000 min de travail en 1983. Sa descendante 208 en vaut ~240 000 en 2024 - le pouvoir d'achat automobile a chuté.",
+    funFactEn:
+      "A Peugeot 205 cost ~81,000 work-minutes in 1983. Its successor the 208 costs ~240,000 in 2024 — car purchasing power has dropped sharply.",
+    prices: {
+      1983: 6800.0,
+      1990: 8000.0,
+      1995: 9500.0,
+      2000: 10900.0,
+      2005: 12500.0,
+      2009: 13900.0,
+      2012: 15200.0,
+      2015: 16500.0,
+      2018: 17900.0,
+      2020: 19200.0,
+      2022: 21500.0,
+      2024: 23500.0,
+    },
+  },
 };
 
 // ── Data source classification ─────────────────────────────
@@ -1139,6 +1292,16 @@ export const historicalEvents: HistoricalEvent[] = [
     fr: "Dernier coup de pouce gouvernemental",
     en: "Last government discretionary raise",
   },
+  {
+    year: 2012,
+    fr: "Free Mobile : disruption des forfaits (−65 %)",
+    en: "Free Mobile disrupts mobile plans (−65%)",
+  },
+  {
+    year: 2022,
+    fr: "Crise énergétique (gaz +150 %)",
+    en: "Energy crisis (gas +150%)",
+  },
 ];
 
 // ── Featured products for hero rotation ────────────────────
@@ -1151,6 +1314,8 @@ export const featuredProducts = [
   "cafe",
   "boeuf",
   "lait",
+  "forfait_mobile",
+  "streaming",
 ];
 
 // ── Composite Purchasing Power Index ────────────────────────
@@ -1175,6 +1340,12 @@ export const basketWeights: Record<string, number> = {
   electricite: 1,
   loyer: 0,
   internet: 1,
+  forfait_mobile: 1,
+  streaming: 1,
+  gaz: 1,
+  loyer_paris: 0,
+  smartphone: 0,
+  voiture_milieu_gamme: 0,
 };
 
 const indexBaseYear = 1960;

@@ -659,6 +659,12 @@ async function main() {
     electricite:"EDF / CRE (tarifs réglementés)",
     loyer:      "OLAP / CLAMEUR / INSEE Enquête Logement",
     baguette_tradition: "Fédération des boulangers (si applicable)",
+    gaz:             "CRE / DGEC (tarifs réglementés ou prix spot marché)",
+    loyer_paris:     "OLAP Paris / CLAMEUR (m² Paris intra-muros)",
+    forfait_mobile:  "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
+    streaming:       "Netflix France (abonnement standard)",
+    smartphone:      "GSM Arena / Lesnumeriques (milieu de gamme référence)",
+    voiture_milieu_gamme: "Peugeot France (prix catalogue neuf, gamme 205→208)",
   };
 
   const allProductIds = [

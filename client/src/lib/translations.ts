@@ -109,6 +109,7 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket1960: "Minutes pour le panier en",
     ppKpiBasketNow: "Minutes pour le panier aujourd'hui",
+    ppKpiRangeLabel: "De pouvoir d'achat entre {start} et {end}",
     ppChartYLabel: "Indice pouvoir d'achat (base 100 = 1960)",
     ppChartYLabel2: "Minutes de travail par produit (moy.)",
     ppLegendIndex: "Indice pouvoir d'achat",
@@ -166,6 +167,12 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Exclu du panier\u202F: la hausse reflète une politique fiscale, pas le coût de la vie",
     basketExcludedLoyer:
       "Exclu du panier\u202F: les données nationales masquent les fortes disparités régionales",
+    basketExcludedLoyerParis:
+      "Exclu du panier\u202F: spécifique à Paris, non représentatif du niveau de vie national",
+    basketExcludedSmartphone:
+      "Exclu du panier\u202F: achat ponctuel, non récurrent comme les postes de consommation courante",
+    basketExcludedVoiture:
+      "Exclu du panier\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
     dataTypeActual: "Prix réel (source INSEE directe)",
     dataTypeIpcEstimate: "Prix estimé via indice IPC (INSEE)",
     dataTypeManual: "Prix actuel vérifié manuellement",
@@ -280,6 +287,7 @@ export const translations: Record<Lang, Record<string, string>> = {
       "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket1960: "Minutes for the basket in",
     ppKpiBasketNow: "Minutes for the basket today",
+    ppKpiRangeLabel: "Purchasing power between {start} and {end}",
     ppChartYLabel: "Purchasing power index (base 100 = 1960)",
     ppChartYLabel2: "Work-minutes per product (avg.)",
     ppLegendIndex: "Purchasing power index",
@@ -335,6 +343,12 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Excluded from basket: price increases reflect tax policy, not cost-of-living trends",
     basketExcludedLoyer:
       "Excluded from basket: national averages mask large regional disparities",
+    basketExcludedLoyerParis:
+      "Excluded from basket: Paris-specific data, not representative of national living costs",
+    basketExcludedSmartphone:
+      "Excluded from basket: one-off purchase, not a recurring monthly expense",
+    basketExcludedVoiture:
+      "Excluded from basket: high-value one-off purchase, difficult to weight in a monthly basket",
     dataTypeActual: "Actual price (direct INSEE source)",
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE)",
     dataTypeManual: "Current price manually sourced & verified",
