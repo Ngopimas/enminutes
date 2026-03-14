@@ -234,6 +234,12 @@ export default function ProductExplorer({
                   : trendVal === "down"
                     ? t("trendDown")
                     : t("trendStable");
+              const trendColor =
+                trendVal === "up"
+                  ? "text-red-600 dark:text-red-400"
+                  : trendVal === "down"
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-muted-foreground";
               const sparkData = years.map((y) => mins[y]);
 
               return (
@@ -267,7 +273,7 @@ export default function ProductExplorer({
                             {t("minutesAbbr")}
                           </span>
                         </div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className={`text-[10px] ${trendColor}`}>
                           {trendLabel}
                         </div>
                       </div>

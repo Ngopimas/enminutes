@@ -324,12 +324,14 @@ export default function ProductModal({
     hidden: !showPrice,
   });
 
+  const axisColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
+
   const scales: any = {
     x: {
       ticks: {
         maxTicksLimit: isMobile ? 5 : 10,
         font: { size: 10 },
-        color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+        color: axisColor,
       },
       grid: { display: false },
     },
@@ -341,39 +343,29 @@ export default function ProductModal({
         display: true,
         text: yLabel,
         font: { size: 10 },
-        color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+        color: axisColor,
+      },
+      ticks: { font: { size: 10 }, color: axisColor },
+      grid: { color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" },
+    },
+    // Always defined so the plot area width stays constant when toggling price
+    y1: {
+      type: "linear" as const,
+      display: true,
+      position: "right" as const,
+      title: {
+        display: true,
+        text: t("nominalPriceLabel") + " (€)",
+        font: { size: 10 },
+        color: showPrice ? axisColor : "transparent",
       },
       ticks: {
         font: { size: 10 },
-        color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+        color: showPrice ? axisColor : "transparent",
       },
-      grid: {
-        color: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
-      },
+      border: { display: false, color: "transparent" },
+      grid: { display: false },
     },
-  };
-
-  // Always define y1 to prevent layout shift when toggling price
-  scales.y1 = {
-    type: "linear" as const,
-    display: true,
-    position: "right" as const,
-    title: {
-      display: true,
-      text: t("nominalPriceLabel") + " (€)",
-      font: { size: 10 },
-      color: showPrice
-        ? isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"
-        : "transparent",
-    },
-    ticks: {
-      font: { size: 10 },
-      color: showPrice
-        ? isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"
-        : "transparent",
-    },
-    border: { display: false, color: "transparent" },
-    grid: { display: false },
   };
 
   const chartOptions = {
@@ -394,7 +386,9 @@ export default function ProductModal({
           font: { size: 10 },
           color: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
           padding: 12,
-          filter: (item: any) => item.text !== "",
+          filter: (item: any) =>
+            item.text !== "" &&
+            (showPrice || item.datasetIndex !== datasets.length - 1),
         },
       },
       tooltip: {
@@ -586,12 +580,13 @@ export default function ProductModal({
                   min
                 </span>
               </div>
-              {/* Always render to reserve height; invisible when price toggle is off */}
               <div
                 className="text-xs tabular-nums -mt-1"
                 style={{
                   color: showPrice
-                    ? isDark ? priceColors.dark : priceColors.light
+                    ? isDark
+                      ? priceColors.dark
+                      : priceColors.light
                     : "transparent",
                 }}
               >
@@ -634,12 +629,13 @@ export default function ProductModal({
                   min
                 </span>
               </div>
-              {/* Always render to reserve height; invisible when price toggle is off */}
               <div
                 className="text-xs tabular-nums -mt-1"
                 style={{
                   color: showPrice
-                    ? isDark ? priceColors.dark : priceColors.light
+                    ? isDark
+                      ? priceColors.dark
+                      : priceColors.light
                     : "transparent",
                 }}
               >
