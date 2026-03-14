@@ -1525,12 +1525,15 @@ export const eras: Era[] = [
     colorDark: "rgba(244, 67, 54, 0.10)",
   },
 ];
-
 export const ppAnnotations: PPAnnotation[] = [
   { year: 1968, labelFr: "Grenelle +35%", labelEn: "Grenelle +35%" },
+  { year: 1970, labelFr: "TVA → 23%", labelEn: "VAT → 23%" },
+  { year: 1975, labelFr: "Choc pétrolier", labelEn: "Oil crisis" },
   { year: 1981, labelFr: "Mitterrand +10%", labelEn: "Mitterrand +10%" },
+  { year: 1982, labelFr: "Passage aux 39h", labelEn: "39-hour week" },
   { year: 2000, labelFr: "35 heures", labelEn: "35-hour week" },
   { year: 2002, labelFr: "Passage à l'euro", labelEn: "Euro adoption" },
+  { year: 2005, labelFr: "Unification SMIC", labelEn: "SMIC unification" },
   {
     year: 2020,
     labelFr: "Confinements COVID",

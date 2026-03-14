@@ -47,14 +47,20 @@ const insightDefs: InsightDef[] = [
       const last = years[years.length - 1];
       const minFirst = Math.round(mins[first]);
       const minLast = Math.round(mins[last]);
-      const ratio = (minFirst / minLast).toFixed(1);
+      const ratioVal = minFirst / minLast;
+      const ratio = ratioVal.toFixed(1);
+      const sameAccessibility = ratioVal < 1.05;
       return lang === "fr"
         ? {
-            title: `Baguette\u202F: ${ratio}× plus accessible qu'en ${first}`,
+            title: sameAccessibility
+              ? `Baguette\u202F: aussi accessible qu'en ${first}`
+              : `Baguette\u202F: ${ratio}× plus accessible qu'en ${first}`,
             sub: `De ${minFirst} minutes de travail en ${first} à environ ${minLast} minutes aujourd'hui. Le pain reste le symbole de l'accessibilité alimentaire.`,
           }
         : {
-            title: `Baguette: ${ratio}× more affordable than in ${first}`,
+            title: sameAccessibility
+              ? `Baguette: as affordable as in ${first}`
+              : `Baguette: ${ratio}× more affordable than in ${first}`,
             sub: `From ${minFirst} work-minutes in ${first} to about ${minLast} minutes today. Bread remains the symbol of food affordability.`,
           };
     },

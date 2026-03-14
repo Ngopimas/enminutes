@@ -129,7 +129,7 @@ export default function PurchasingPowerIndex() {
     ? t("ppKpiMultiplierMedian").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
     : salaryRef === 'mean'
       ? t("ppKpiMultiplierMean").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
-      : t("ppKpiMultiplier");
+      : t("ppKpiMultiplier").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear));
 
   // Chart Y labels
   const yLabel2 = salaryRef === 'median'

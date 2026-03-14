@@ -99,7 +99,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppIndexTitle: "Le SMIC achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexSub:
       "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 16 biens courants (base 100 = 1960)",
-    ppKpiMultiplier: "Le pouvoir d'achat du SMIC a plus que doublé depuis 1960",
+    ppKpiMultiplier: "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket1960: "Minutes pour le panier en",
     ppKpiBasketNow: "Minutes pour le panier aujourd'hui",
     ppChartYLabel: "Indice pouvoir d'achat (base 100 = 1960)",
@@ -246,8 +246,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppIndexTitle: "Does the minimum wage buy more or less than before?",
     ppIndexSub:
       "Composite purchasing power index of the SMIC, based on a basket of 16 everyday goods (base 100 = 1960)",
-    ppKpiMultiplier:
-      "The SMIC's purchasing power has more than doubled since 1960",
+    ppKpiMultiplier: "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket1960: "Minutes for the basket in",
     ppKpiBasketNow: "Minutes for the basket today",
     ppChartYLabel: "Purchasing power index (base 100 = 1960)",
