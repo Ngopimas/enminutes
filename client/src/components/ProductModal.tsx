@@ -34,7 +34,7 @@ import { ArrowRight, Equal } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
-import { getMinutes, getYearsForRef, type Product } from "@/lib/data";
+import { getMinutes, getYearsForRef, getDynamicFunFact, type Product } from "@/lib/data";
 
 ChartJS.register(
   CategoryScale,
@@ -135,7 +135,7 @@ export default function ProductModal({
   if (years.length === 0) return null;
 
   const name = lang === "fr" ? product.nameFr : product.nameEn;
-  const funFact = lang === "fr" ? product.funFactFr : product.funFactEn;
+  const funFact = getDynamicFunFact(product, salaryRef, lang);
 
   // Chart Y label based on salary ref
   const yLabel = salaryRef === 'median'

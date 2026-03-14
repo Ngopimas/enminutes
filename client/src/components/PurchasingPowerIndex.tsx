@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
-import { purchasingPower, ppAnnotations, computePurchasingPowerForRef } from "@/lib/data";
+import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex } from "@/lib/data";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
 
 ChartJS.register(
@@ -59,6 +59,7 @@ export default function PurchasingPowerIndex() {
   const [showPresidents, setShowPresidents] = useState(true);
   const [showContext, setShowContext] = useState(true);
   const [showInflation, setShowInflation] = useState(false);
+  const [showProductivity, setShowProductivity] = useState(false);
 
   // Compute PP data based on salary ref
   const ppData = useMemo(() => {
@@ -88,10 +89,22 @@ export default function PurchasingPowerIndex() {
     inflationRates,
   } = ppData;
 
+  // Rebase productivity index to match PPI base year
+  const productivityData = useMemo(() => {
+    const baseVal = productivityIndex[ppBaseYear];
+    if (!baseVal) return {};
+    const rebased: Record<number, number> = {};
+    for (const [y, v] of Object.entries(productivityIndex)) {
+      rebased[Number(y)] = +((v / baseVal) * 100).toFixed(1);
+    }
+    return rebased;
+  }, [ppBaseYear]);
+
   const labels = indexYears.filter((y) => ppIndex[y] !== undefined);
   const indexData = labels.map((y) => ppIndex[y]);
   const minutesData = labels.map((y) => basketMinutesByYear[y]);
   const inflationData = labels.map((y) => inflationRates[y] ?? null);
+  const prodData = labels.map((y) => productivityData[y] ?? null);
 
   const basket1960 = basketMinutesByYear[ppBaseYear];
   const basketNow = basketMinutesByYear[labels[labels.length - 1]];
@@ -229,6 +242,22 @@ export default function PurchasingPowerIndex() {
     });
   }
 
+  // Conditionally add productivity dataset
+  if (showProductivity) {
+    datasets.push({
+      label: t("ppLegendProductivity"),
+      data: prodData,
+      borderColor: chartColor(4),
+      backgroundColor: "transparent",
+      borderDash: [8, 4],
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 3,
+      yAxisID: "y", // shares left axis with PP index (same base 100 scale)
+      borderWidth: 1.8,
+    });
+  }
+
   const chartData = { labels, datasets };
 
   const scales: any = {
@@ -331,8 +360,8 @@ export default function PurchasingPowerIndex() {
             const label = ctx.dataset.label || "";
             const value = ctx.parsed.y;
             if (value == null) return "";
-            // Add % suffix for inflation dataset
-            if (ctx.datasetIndex === 2 && showInflation) {
+            // Identify dataset by yAxisID for correct formatting
+            if (ctx.dataset.yAxisID === "y2") {
               return ` ${label}: ${value.toFixed(1)}%`;
             }
             return ` ${label}: ${value.toFixed(1)}`;
@@ -440,6 +469,20 @@ export default function PurchasingPowerIndex() {
               className="text-xs text-muted-foreground cursor-pointer"
             >
               {t("ppShowInflation")}
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              id="show-productivity"
+              checked={showProductivity}
+              onCheckedChange={setShowProductivity}
+              data-testid="show-productivity-toggle"
+            />
+            <Label
+              htmlFor="show-productivity"
+              className="text-xs text-muted-foreground cursor-pointer"
+            >
+              {t("ppShowProductivity")}
             </Label>
           </div>
         </div>

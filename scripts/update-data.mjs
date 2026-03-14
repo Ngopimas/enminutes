@@ -10,7 +10,7 @@
  *   node scripts/update-data.mjs --write      # write updated data.ts
  *
  * Data sources (all from INSEE SDMX API - no auth required):
- *   - SMIC hourly brut:   idbank 000822484
+ *   - SMIC monthly net:   idbank 000879878
  *   - Product prices:     IPC indices + "Prix moyens annuels" series
  *   - CPI inflation:      IPC ensemble (base 100 = 2015), idbank 001759970
  *
@@ -31,11 +31,13 @@ const WRITE_MODE = process.argv.includes("--write");
 // ─── Configuration ─────────────────────────────────────────────
 
 /**
- * SMIC hourly brut - INSEE series 000822484
- * Monthly data: we take the January value as the representative rate for each year.
- * Source: https://www.insee.fr/fr/statistiques/serie/000822484
+ * SMIC monthly net (after CSG/CRDS) - INSEE series 000879878
+ * Monthly data for 151.67h (35h/week). We take January value for each year,
+ * then divide by 151.67 to get the net hourly rate.
+ * Source: https://www.insee.fr/fr/statistiques/serie/000879878
  */
-const SMIC_IDBANK = "000822484";
+const SMIC_IDBANK = "000879878";
+const SMIC_MONTHLY_HOURS = 151.67;
 
 /**
  * CPI inflation - IPC ensemble, base 100 = 2015, idbank 001759970
@@ -101,22 +103,39 @@ const INDEX_PRICE_MAP = {
 
 const INSEE_BASE = "https://api.insee.fr/series/BDM/V1/data/SERIES_BDM";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
+
 async function fetchInseeXml(idbank, startYear = 2015) {
   const url = `${INSEE_BASE}/${idbank}?startPeriod=${startYear}-01`;
-  const resp = await fetch(url, {
-    headers: { Accept: "application/xml" },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  return resp.text();
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const resp = await fetch(url, {
+        headers: { Accept: "application/xml" },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      if (!text || text.length < 100) throw new Error("Empty or invalid response");
+      return text;
+    } catch (err) {
+      lastError = err;
+      if (attempt < MAX_RETRIES) {
+        console.warn(`  ⚠ Attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}. Retrying in ${RETRY_DELAY_MS}ms...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAY_MS * attempt));
+      }
+    }
+  }
+  throw lastError;
 }
 
 /**
- * Fetch SMIC hourly brut from INSEE.
+ * Fetch SMIC net hourly from INSEE (monthly net / 151.67h).
  * Returns { year: rate } using the January value of each year.
  */
 async function fetchSmicRates(startYear = 2015) {
-  console.log(`  Fetching SMIC hourly (${SMIC_IDBANK})...`);
+  console.log(`  Fetching SMIC net monthly (${SMIC_IDBANK})...`);
   try {
     const xml = await fetchInseeXml(SMIC_IDBANK, startYear);
     const obsRegex = /TIME_PERIOD="(\d{4}-\d{2})"\s+OBS_VALUE="([^"]+)"/g;
@@ -129,12 +148,13 @@ async function fetchSmicRates(startYear = 2015) {
     }
 
     // For each year, take the January value (when new SMIC typically takes effect)
+    // Convert from monthly net to hourly net: monthly / 151.67
     const rates = {};
     for (const [period, val] of Object.entries(byYearMonth)) {
       const [yearStr, month] = period.split("-");
       const year = parseInt(yearStr);
       if (month === "01" && year >= startYear) {
-        rates[year] = val;
+        rates[year] = +(val / SMIC_MONTHLY_HOURS).toFixed(2);
       }
     }
     return rates;
@@ -373,7 +393,7 @@ async function main() {
   const currentYear = new Date().getFullYear();
 
   // 1. Update SMIC rates (automatically from INSEE API)
-  console.log("Step 1: SMIC rates (INSEE 000822484)");
+  console.log("Step 1: SMIC net hourly rates (INSEE 000879878)");
   const existingSmicRates = extractSmicRates(content);
   const maxSmicYear = Math.max(...Object.keys(existingSmicRates).map(Number));
   console.log(`  Current data: up to ${maxSmicYear}`);
@@ -390,7 +410,16 @@ async function main() {
       }
     }
     if (smicUpdated) {
-      content = replaceSmicRates(content, existingSmicRates);
+      // Validate: net hourly should be reasonable (between 5€ and 20€ for recent years)
+      for (const [year, rate] of Object.entries(existingSmicRates)) {
+        const yr = parseInt(year);
+        if (yr >= 2005 && (rate < 5 || rate > 20)) {
+          console.error(`  ✘ SMIC validation failed: ${yr} → ${rate} €/h is out of range [5-20]. Skipping SMIC update.`);
+          smicUpdated = false;
+          break;
+        }
+      }
+      if (smicUpdated) content = replaceSmicRates(content, existingSmicRates);
     } else {
       console.log("  No new SMIC rates available.");
     }

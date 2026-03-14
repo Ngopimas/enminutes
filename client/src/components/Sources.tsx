@@ -18,6 +18,11 @@ const sources = [
     url: 'https://www.insee.fr/fr/statistiques/serie/001759970',
   },
   {
+    labelKey: 'sourcesProductivityLabel',
+    descKey: 'sourcesProductivityDesc',
+    url: 'https://data-explorer.oecd.org/vis?lc=en&df[id]=DSD_PDB%40DF_PDB_LV&dq=FRA.A.GDPHRS..XDC_H.Q',
+  },
+  {
     labelKey: 'sourcesPikettyLabel',
     descKey: 'sourcesPikettyDesc',
     url: 'https://wid.world/fr/donnees/',

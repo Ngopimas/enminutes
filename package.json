@@ -2,7 +2,12 @@
   "name": "enminutes",
   "version": "1.0.0",
   "type": "module",
-  "license": "MIT",
+  "license": "CC-BY-4.0",
+  "author": "Romain Coupey (https://romaincoupey.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ngopimas/enminutes"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
