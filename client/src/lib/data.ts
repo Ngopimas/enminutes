@@ -375,13 +375,15 @@ export function getDynamicFunFact(
   product: Product,
   ref: SalaryRef,
   lang: "fr" | "en",
+  yearA?: number,
+  yearB?: number,
 ): string {
   const mins = getMinutes(product, ref);
   const years = getYearsForRef(product, ref);
   if (years.length < 2) return "";
 
-  const first = years[0];
-  const last = years[years.length - 1];
+  const first = yearA ?? years[0];
+  const last = yearB ?? years[years.length - 1];
   const minFirstRaw = Math.round(mins[first]);
   const minLastRaw = Math.round(mins[last]);
   const wentDown = minLastRaw < minFirstRaw;
@@ -391,14 +393,14 @@ export function getDynamicFunFact(
 
   if (lang === "fr") {
     if (wentDown) {
-      return `En ${first}, il fallait ${minFirst} minutes de travail pour acheter 1 ${product.nameFr.toLowerCase()}. Aujourd'hui, environ ${minLast} minutes suffisent.`;
+      return `En ${first}, il fallait ${minFirst} minutes de travail pour acheter 1 ${product.nameFr.toLowerCase()}. En ${last}, environ ${minLast} minutes suffisent.`;
     }
-    return `En ${first}, il fallait ${minFirst} minutes de travail pour 1 ${product.nameFr.toLowerCase()}. Aujourd'hui, il en faut ${minLast}.`;
+    return `En ${first}, il fallait ${minFirst} minutes de travail pour 1 ${product.nameFr.toLowerCase()}. En ${last}, il en faut ${minLast}.`;
   }
   if (wentDown) {
-    return `In ${first}, you needed ${minFirst} work-minutes to buy 1 ${product.nameEn.toLowerCase()}. Today, about ${minLast} minutes is enough.`;
+    return `In ${first}, you needed ${minFirst} work-minutes to buy 1 ${product.nameEn.toLowerCase()}. In ${last}, about ${minLast} minutes is enough.`;
   }
-  return `In ${first}, it took ${minFirst} work-minutes for 1 ${product.nameEn.toLowerCase()}. Today, it takes ${minLast}.`;
+  return `In ${first}, it took ${minFirst} work-minutes for 1 ${product.nameEn.toLowerCase()}. In ${last}, it takes ${minLast}.`;
 }
 
 /** Get the minutes record for a product given a salary reference */

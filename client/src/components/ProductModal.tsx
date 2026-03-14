@@ -146,7 +146,7 @@ export default function ProductModal({
   if (years.length === 0) return null;
 
   const name = lang === "fr" ? product.nameFr : product.nameEn;
-  const funFact = getDynamicFunFact(product, salaryRef, lang);
+  const funFact = getDynamicFunFact(product, salaryRef, lang, yearA || undefined, yearB || undefined);
 
   // Chart Y label based on salary ref
   const yLabel =
