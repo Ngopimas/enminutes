@@ -87,6 +87,9 @@ export const translations: Record<Lang, Record<string, string>> = {
       "SMIC 2005+ : série INSEE officielle (net mensuel ÷ 151,67 h). 1970–2004 : approximation nette (±5%). Avant 1970 : SMIG avec taux de cotisations estimés (±10%).",
     footerText:
       "Données compilées à partir de sources publiques françaises. Les prix intermédiaires sont interpolés.",
+    footerCreatedBy: "👨‍💻 Créé par",
+    footerViewSource: "Voir le code source sur GitHub",
+    footerReadArticle: "Comment ce projet a été construit",
     createdWith: "Créé avec",
     darkMode: "Mode sombre",
     lightMode: "Mode clair",
@@ -255,6 +258,9 @@ export const translations: Record<Lang, Record<string, string>> = {
       "SMIC 2005+: official INSEE series (net monthly ÷ 151.67 h). 1970–2004: net approximation (±5%). Before 1970: SMIG with estimated contribution rates (±10%).",
     footerText:
       "Data compiled from French public sources. Intermediate prices are interpolated.",
+    footerCreatedBy: "👨‍💻 Created by",
+    footerViewSource: "View source code on GitHub",
+    footerReadArticle: "How this project was built",
     createdWith: "Created with",
     darkMode: "Dark mode",
     lightMode: "Light mode",
