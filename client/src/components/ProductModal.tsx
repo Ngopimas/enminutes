@@ -309,20 +309,20 @@ export default function ProductModal({
     },
   ];
 
-  if (showPrice) {
-    datasets.push({
-      label: t("nominalPriceLabel"),
-      data: years.map((y) => product.pricesInterp[y]),
-      borderColor: isDark ? priceColors.dark : priceColors.light,
-      backgroundColor: "transparent",
-      borderDash: [5, 3],
-      tension: 0.3,
-      pointRadius: 0,
-      pointHoverRadius: 4,
-      borderWidth: 1.5,
-      yAxisID: "y1",
-    });
-  }
+  // Always include price dataset (hidden when toggle off) so legend and y1 axis stay stable
+  datasets.push({
+    label: t("nominalPriceLabel"),
+    data: years.map((y) => product.pricesInterp[y]),
+    borderColor: isDark ? priceColors.dark : priceColors.light,
+    backgroundColor: "transparent",
+    borderDash: [5, 3],
+    tension: 0.3,
+    pointRadius: 0,
+    pointHoverRadius: showPrice ? 4 : 0,
+    borderWidth: showPrice ? 1.5 : 0,
+    yAxisID: "y1",
+    hidden: !showPrice,
+  });
 
   const scales: any = {
     x: {
@@ -353,24 +353,28 @@ export default function ProductModal({
     },
   };
 
-  if (showPrice) {
-    scales.y1 = {
-      type: "linear" as const,
+  // Always define y1 to prevent layout shift when toggling price
+  scales.y1 = {
+    type: "linear" as const,
+    display: true,
+    position: "right" as const,
+    title: {
       display: true,
-      position: "right" as const,
-      title: {
-        display: true,
-        text: t("nominalPriceLabel") + " (€)",
-        font: { size: 10 },
-        color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
-      },
-      ticks: {
-        font: { size: 10 },
-        color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
-      },
-      grid: { display: false },
-    };
-  }
+      text: t("nominalPriceLabel") + " (€)",
+      font: { size: 10 },
+      color: showPrice
+        ? isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"
+        : "transparent",
+    },
+    ticks: {
+      font: { size: 10 },
+      color: showPrice
+        ? isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"
+        : "transparent",
+    },
+    border: { display: false, color: "transparent" },
+    grid: { display: false },
+  };
 
   const chartOptions = {
     responsive: true,
@@ -382,7 +386,7 @@ export default function ProductModal({
     scales,
     plugins: {
       legend: {
-        display: showPrice,
+        display: true,
         position: "bottom" as const,
         labels: {
           usePointStyle: true,
@@ -390,6 +394,7 @@ export default function ProductModal({
           font: { size: 10 },
           color: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
           padding: 12,
+          filter: (item: any) => item.text !== "",
         },
       },
       tooltip: {
@@ -581,16 +586,17 @@ export default function ProductModal({
                   min
                 </span>
               </div>
-              {showPrice && (
-                <div
-                  className="text-xs tabular-nums -mt-1"
-                  style={{
-                    color: isDark ? priceColors.dark : priceColors.light,
-                  }}
-                >
-                  {formattedA.value} {formattedA.currency}
-                </div>
-              )}
+              {/* Always render to reserve height; invisible when price toggle is off */}
+              <div
+                className="text-xs tabular-nums -mt-1"
+                style={{
+                  color: showPrice
+                    ? isDark ? priceColors.dark : priceColors.light
+                    : "transparent",
+                }}
+              >
+                {formattedA.value} {formattedA.currency}
+              </div>
             </div>
 
             {/* Center: arrow */}
@@ -628,16 +634,17 @@ export default function ProductModal({
                   min
                 </span>
               </div>
-              {showPrice && (
-                <div
-                  className="text-xs tabular-nums -mt-1"
-                  style={{
-                    color: isDark ? priceColors.dark : priceColors.light,
-                  }}
-                >
-                  {formattedB.value} {formattedB.currency}
-                </div>
-              )}
+              {/* Always render to reserve height; invisible when price toggle is off */}
+              <div
+                className="text-xs tabular-nums -mt-1"
+                style={{
+                  color: showPrice
+                    ? isDark ? priceColors.dark : priceColors.light
+                    : "transparent",
+                }}
+              >
+                {formattedB.value} {formattedB.currency}
+              </div>
             </div>
           </div>
 
