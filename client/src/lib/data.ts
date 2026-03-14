@@ -272,7 +272,7 @@ function computeMinutes(
 }
 
 // ── Product interface ──────────────────────────────────────
-export type ProductDataType = 'actual' | 'ipc_estimate' | 'manual';
+export type ProductDataType = "actual" | "ipc_estimate" | "manual";
 
 export interface Product {
   id: string;
@@ -355,15 +355,6 @@ export interface HistoricalEvent {
   en: string;
 }
 
-export interface Era {
-  start: number;
-  end: number;
-  labelFr: string;
-  labelEn: string;
-  color: string;
-  colorDark: string;
-}
-
 export interface PPAnnotation {
   year: number;
   labelFr: string;
@@ -422,7 +413,20 @@ const rawProducts: Record<
       "Le prix de l'essence en minutes de travail est remarquablement stable depuis 30 ans, autour de 10-12 minutes.",
     funFactEn:
       "The petrol price in work-minutes has been remarkably stable for 30 years, around 10-12 minutes.",
-    prices: {1950:0.072,1960:0.157,1970:0.175,1980:0.469,1990:0.786,2000:1.14,2005:1.16,2010:1.42,2015:1.3,2020:1.3,2024:1.75,2025:1.61},
+    prices: {
+      1950: 0.072,
+      1960: 0.157,
+      1970: 0.175,
+      1980: 0.469,
+      1990: 0.786,
+      2000: 1.14,
+      2005: 1.16,
+      2010: 1.42,
+      2015: 1.3,
+      2020: 1.3,
+      2024: 1.75,
+      2025: 1.61,
+    },
   },
   cinema: {
     id: "cinema",
@@ -606,7 +610,18 @@ const rawProducts: Record<
       "Un kilo de bœuf coûtait 415 minutes de travail en 1960 contre 169 minutes en 2024 - 2,5 fois moins.",
     funFactEn:
       "A kilo of beef cost 415 work-minutes in 1960 vs 169 in 2024 - 2.5 times less.",
-    prices: {1960:1.52,1970:2.74,1980:6.86,1990:12.2,2000:15.24,2010:18,2015:19.5,2020:22,2024:26,2025:25.99},
+    prices: {
+      1960: 1.52,
+      1970: 2.74,
+      1980: 6.86,
+      1990: 12.2,
+      2000: 15.24,
+      2010: 18,
+      2015: 19.5,
+      2020: 22,
+      2024: 26,
+      2025: 25.99,
+    },
   },
   oeufs: {
     id: "oeufs",
@@ -619,7 +634,19 @@ const rawProducts: Record<
       "Les œufs sont passés de 50 minutes de travail la douzaine en 1960 à 20 minutes en 2024.",
     funFactEn:
       "Eggs went from 50 work-minutes per dozen in 1960 to 20 in 2024.",
-    prices: {1960:0.183,1970:0.305,1980:0.762,1990:1.22,2000:1.6,2005:1.8,2010:2,2015:2.2,2020:2.5,2024:3,2025:2.31},
+    prices: {
+      1960: 0.183,
+      1970: 0.305,
+      1980: 0.762,
+      1990: 1.22,
+      2000: 1.6,
+      2005: 1.8,
+      2010: 2,
+      2015: 2.2,
+      2020: 2.5,
+      2024: 3,
+      2025: 2.31,
+    },
   },
   cafe: {
     id: "cafe",
@@ -655,7 +682,18 @@ const rawProducts: Record<
       "La plaquette de beurre est passée de 62 min de travail en 1960 à 16 min en 2024.",
     funFactEn:
       "A 250g block of butter went from 62 work-minutes in 1960 to 16 in 2024.",
-    prices: {1960:0.228,1970:0.343,1980:0.762,1990:1.14,2000:1.34,2010:1.63,2015:1.7,2020:2.13,2024:2.5,2025:1.84},
+    prices: {
+      1960: 0.228,
+      1970: 0.343,
+      1980: 0.762,
+      1990: 1.14,
+      2000: 1.34,
+      2010: 1.63,
+      2015: 1.7,
+      2020: 2.13,
+      2024: 2.5,
+      2025: 1.84,
+    },
   },
   croissant: {
     id: "croissant",
@@ -691,7 +729,18 @@ const rawProducts: Record<
     funFactFr:
       "Le camembert est passé de 46 minutes de travail en 1960 à 16 minutes en 2024.",
     funFactEn: "Camembert went from 46 work-minutes in 1960 to 16 in 2024.",
-    prices: {1960:0.168,1970:0.305,1980:0.762,1990:1.37,2000:1.52,2010:1.8,2015:1.9,2020:2.1,2024:2.4,2025:1.89},
+    prices: {
+      1960: 0.168,
+      1970: 0.305,
+      1980: 0.762,
+      1990: 1.37,
+      2000: 1.52,
+      2010: 1.8,
+      2015: 1.9,
+      2020: 2.1,
+      2024: 2.4,
+      2025: 1.89,
+    },
   },
   vin: {
     id: "vin",
@@ -750,7 +799,18 @@ const rawProducts: Record<
       "Le poulet est passé de 208 min de travail/kg en 1960 à 62 min en 2024 - divisé par plus de 3.",
     funFactEn:
       "Chicken went from 208 work-min/kg in 1960 to 62 in 2024 - divided by more than 3.",
-    prices: {1960:0.762,1970:1.22,1980:3.05,1990:5.34,2000:5.8,2010:6.5,2015:7,2020:8,2024:9.5,2025:7.65},
+    prices: {
+      1960: 0.762,
+      1970: 1.22,
+      1980: 3.05,
+      1990: 5.34,
+      2000: 5.8,
+      2010: 6.5,
+      2015: 7,
+      2020: 8,
+      2024: 9.5,
+      2025: 7.65,
+    },
   },
   pates: {
     id: "pates",
@@ -828,7 +888,18 @@ const rawProducts: Record<
     funFactFr:
       "Les oranges sont passées de 41 minutes de travail en 1960 à 14 minutes en 2024.",
     funFactEn: "Oranges went from 41 work-minutes in 1960 to 14 in 2024.",
-    prices: {1960:0.152,1970:0.229,1980:0.534,1990:1.07,2000:1.52,2010:2,2015:2.1,2020:2.3,2024:2.8,2025:2.72},
+    prices: {
+      1960: 0.152,
+      1970: 0.229,
+      1980: 0.534,
+      1990: 1.07,
+      2000: 1.52,
+      2010: 2,
+      2015: 2.1,
+      2020: 2.3,
+      2024: 2.8,
+      2025: 2.72,
+    },
   },
   tomates: {
     id: "tomates",
@@ -840,7 +911,18 @@ const rawProducts: Record<
     funFactFr:
       "Les tomates coûtaient 46 min de travail en 1960, 18 min en 2024.",
     funFactEn: "Tomatoes cost 46 work-minutes in 1960, 18 in 2024.",
-    prices: {1960:0.183,1970:0.305,1980:0.61,1990:1.22,2000:1.98,2010:2.8,2015:2.5,2020:3,2024:3.5,2025:3.6},
+    prices: {
+      1960: 0.183,
+      1970: 0.305,
+      1980: 0.61,
+      1990: 1.22,
+      2000: 1.98,
+      2010: 2.8,
+      2015: 2.5,
+      2020: 3,
+      2024: 3.5,
+      2025: 3.6,
+    },
   },
   pommes: {
     id: "pommes",
@@ -852,7 +934,18 @@ const rawProducts: Record<
     funFactFr:
       "Les pommes sont passées de 33 min de travail en 1960 à 14 min en 2024.",
     funFactEn: "Apples went from 30 min in 1960 to 14 min in 2024.",
-    prices: {1960:0.122,1970:0.183,1980:0.457,1990:0.91,2000:1.52,2010:2.2,2015:2.1,2020:2.4,2024:2.8,2025:3.02},
+    prices: {
+      1960: 0.122,
+      1970: 0.183,
+      1980: 0.457,
+      1990: 0.91,
+      2000: 1.52,
+      2010: 2.2,
+      2015: 2.1,
+      2020: 2.4,
+      2024: 2.8,
+      2025: 3.02,
+    },
   },
   salade: {
     id: "salade",
@@ -1039,7 +1132,7 @@ const rawProducts: Record<
     funFactFr:
       "Le forfait mobile est passé de ~480 min de travail en 2000 à ~130 min en 2024 - et la disruption Free en 2012 a divisé les prix par 3 en quelques mois.",
     funFactEn:
-      "A mobile plan went from ~480 work-minutes in 2000 to ~130 in 2024 — and Free Mobile's 2012 disruption cut prices by 3× in just months.",
+      "A mobile plan went from ~480 work-minutes in 2000 to ~130 in 2024 - and Free Mobile's 2012 disruption cut prices by 3× in just months.",
     prices: {
       2000: 40.0,
       2005: 35.0,
@@ -1065,7 +1158,7 @@ const rawProducts: Record<
     funFactFr:
       "Un abonnement streaming standard vaut 135 min de travail au SMIC en 2024 - soit moins que le cinéma pour un mois illimité.",
     funFactEn:
-      "A standard streaming subscription costs 135 work-minutes at minimum wage in 2024 — less than a cinema ticket for unlimited monthly viewing.",
+      "A standard streaming subscription costs 135 work-minutes at minimum wage in 2024 - less than a cinema ticket for unlimited monthly viewing.",
     prices: {
       2014: 8.99,
       2015: 8.99,
@@ -1090,7 +1183,7 @@ const rawProducts: Record<
     funFactFr:
       "Un smartphone milieu de gamme représentait ~6 200 min de travail en 2007. En 2024 : ~4 000 min - mais avec une puissance informatique incomparable.",
     funFactEn:
-      "A mid-range smartphone required ~6,200 work-minutes in 2007. By 2024: ~4,000 min — but with vastly more computing power.",
+      "A mid-range smartphone required ~6,200 work-minutes in 2007. By 2024: ~4,000 min - but with vastly more computing power.",
     prices: {
       2007: 499.0,
       2008: 450.0,
@@ -1114,7 +1207,7 @@ const rawProducts: Record<
     funFactFr:
       "1 MWh de gaz coûtait 192 min de travail en 2000. La crise énergétique de 2022 l'a fait bondir à ~1 560 min - avant un reflux partiel.",
     funFactEn:
-      "1 MWh of gas cost 192 work-minutes in 2000. The 2022 energy crisis pushed it to ~1,560 min — before a partial retreat.",
+      "1 MWh of gas cost 192 work-minutes in 2000. The 2022 energy crisis pushed it to ~1,560 min - before a partial retreat.",
     prices: {
       2000: 16.0,
       2005: 32.0,
@@ -1140,7 +1233,7 @@ const rawProducts: Record<
     funFactFr:
       "Le m² parisien est passé de ~30 min de travail en 1970 à ~370 min en 2024 - une multiplication par 12, bien plus que les salaires.",
     funFactEn:
-      "Paris rent per m² went from ~30 work-minutes in 1970 to ~370 in 2024 — a 12× increase, far outpacing wages.",
+      "Paris rent per m² went from ~30 work-minutes in 1970 to ~370 in 2024 - a 12× increase, far outpacing wages.",
     prices: {
       1970: 2.5,
       1980: 8.0,
@@ -1166,7 +1259,7 @@ const rawProducts: Record<
     funFactFr:
       "Une Peugeot 205 valait ~81 000 min de travail en 1983. Sa descendante 208 en vaut ~240 000 en 2024 - le pouvoir d'achat automobile a chuté.",
     funFactEn:
-      "A Peugeot 205 cost ~81,000 work-minutes in 1983. Its successor the 208 costs ~240,000 in 2024 — car purchasing power has dropped sharply.",
+      "A Peugeot 205 cost ~81,000 work-minutes in 1983. Its successor the 208 costs ~240,000 in 2024 - car purchasing power has dropped sharply.",
     prices: {
       1983: 6800.0,
       1990: 8000.0,
@@ -1189,10 +1282,22 @@ const rawProducts: Record<
 // ipc_estimate: anchor price × (current IPC / anchor IPC)
 // manual: manually maintained from public sources
 const IPC_ESTIMATE_PRODUCTS = new Set([
-  'baguette', 'essence', 'lait', 'boeuf', 'oeufs', 'beurre', 'poulet',
-  'pommes_de_terre', 'sucre', 'pates', 'huile', 'camembert', 'vin', 'yaourt',
+  "baguette",
+  "essence",
+  "lait",
+  "boeuf",
+  "oeufs",
+  "beurre",
+  "poulet",
+  "pommes_de_terre",
+  "sucre",
+  "pates",
+  "huile",
+  "camembert",
+  "vin",
+  "yaourt",
 ]);
-const ACTUAL_PRICE_PRODUCTS = new Set(['tomates', 'oranges', 'pommes']);
+const ACTUAL_PRICE_PRODUCTS = new Set(["tomates", "oranges", "pommes"]);
 
 // ── Process all products ───────────────────────────────────
 export const products: Record<string, Product> = {};
@@ -1202,10 +1307,10 @@ for (const [key, prod] of Object.entries(rawProducts)) {
   const minutesMedian = computeMinutes(pricesInterp, medianSalaryRates);
   const minutesMean = computeMinutes(pricesInterp, meanSalaryRates);
   const dataType: ProductDataType = ACTUAL_PRICE_PRODUCTS.has(key)
-    ? 'actual'
+    ? "actual"
     : IPC_ESTIMATE_PRODUCTS.has(key)
-    ? 'ipc_estimate'
-    : 'manual';
+      ? "ipc_estimate"
+      : "manual";
   products[key] = {
     ...prod,
     pricesInterp,
@@ -1580,40 +1685,6 @@ export const inflationRates: Record<number, number> = {
   2025: 1.0,
 };
 
-export const eras: Era[] = [
-  {
-    start: 1960,
-    end: 1973,
-    labelFr: "Trente Glorieuses",
-    labelEn: "Trente Glorieuses",
-    color: "rgba(76, 175, 80, 0.08)",
-    colorDark: "rgba(76, 175, 80, 0.12)",
-  },
-  {
-    start: 1974,
-    end: 1985,
-    labelFr: "Stagflation",
-    labelEn: "Stagflation",
-    color: "rgba(255, 152, 0, 0.08)",
-    colorDark: "rgba(255, 152, 0, 0.10)",
-  },
-  {
-    start: 1986,
-    end: 2007,
-    labelFr: "Modération",
-    labelEn: "Moderation",
-    color: "rgba(158, 158, 158, 0.06)",
-    colorDark: "rgba(158, 158, 158, 0.08)",
-  },
-  {
-    start: 2008,
-    end: 2026,
-    labelFr: "Crises & inflation",
-    labelEn: "Crises & inflation",
-    color: "rgba(244, 67, 54, 0.06)",
-    colorDark: "rgba(244, 67, 54, 0.10)",
-  },
-];
 export const ppAnnotations: PPAnnotation[] = [
   { year: 1968, labelFr: "Grenelle +35%", labelEn: "Grenelle +35%" },
   { year: 1970, labelFr: "TVA → 23%", labelEn: "VAT → 23%" },
@@ -1623,6 +1694,11 @@ export const ppAnnotations: PPAnnotation[] = [
   { year: 2000, labelFr: "35 heures", labelEn: "35-hour week" },
   { year: 2002, labelFr: "Passage à l'euro", labelEn: "Euro adoption" },
   { year: 2005, labelFr: "Unification SMIC", labelEn: "SMIC unification" },
+  {
+    year: 2008,
+    labelFr: "Crise des subprimes",
+    labelEn: "Subprime crisis",
+  },
   {
     year: 2020,
     labelFr: "Confinements COVID",
@@ -1638,7 +1714,6 @@ export const purchasingPower = {
   multiplier,
   latestIndexYear,
   latestIndex,
-  eras,
   ppAnnotations,
   inflationRates,
   productivityIndex,

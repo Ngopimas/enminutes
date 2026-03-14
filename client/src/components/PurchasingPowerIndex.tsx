@@ -118,10 +118,17 @@ export default function PurchasingPowerIndex() {
   const kpiMult = (ppIndex[kpiStartYear] && ppIndex[kpiEndYear])
     ? (ppIndex[kpiEndYear] / ppIndex[kpiStartYear]).toFixed(1)
     : "?";
-  const indexData = filteredLabels.map((y) => ppIndex[y]);
+  const ppRebaseVal = ppIndex[kpiStartYear];
+  const indexData = filteredLabels.map((y) =>
+    ppRebaseVal ? +((ppIndex[y] / ppRebaseVal) * 100).toFixed(1) : ppIndex[y]
+  );
   const minutesData = filteredLabels.map((y) => basketMinutesByYear[y]);
   const inflationData = filteredLabels.map((y) => inflationRates[y] ?? null);
-  const prodData = filteredLabels.map((y) => productivityData[y] ?? null);
+  const prodRebaseVal = productivityData[kpiStartYear];
+  const prodData = filteredLabels.map((y) => {
+    const v = productivityData[y] ?? null;
+    return v !== null && prodRebaseVal ? +((v / prodRebaseVal) * 100).toFixed(1) : null;
+  });
 
   // Title and subtitle based on salary ref
   const title = salaryRef === 'median'
@@ -130,11 +137,11 @@ export default function PurchasingPowerIndex() {
       ? t("ppIndexTitleMean")
       : t("ppIndexTitle");
 
-  const subtitle = salaryRef === 'median'
+  const subtitle = (salaryRef === 'median'
     ? t("ppIndexSubMedian")
     : salaryRef === 'mean'
       ? t("ppIndexSubMean")
-      : t("ppIndexSub");
+      : t("ppIndexSub")).replace(/= \d{4}/, `= ${kpiStartYear}`);
 
   // Chart Y labels
   const yLabel2 = salaryRef === 'median'
@@ -282,7 +289,7 @@ export default function PurchasingPowerIndex() {
       position: "left" as const,
       title: {
         display: true,
-        text: t("ppChartYLabel").replace("1960", String(ppBaseYear)),
+        text: t("ppChartYLabel").replace("1960", String(kpiStartYear)),
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },

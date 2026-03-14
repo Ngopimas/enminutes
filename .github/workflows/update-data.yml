@@ -5,8 +5,8 @@ name: Update Purchasing Power Data
 # Can also be triggered manually from GitHub Actions tab
 on:
   schedule:
-    - cron: "0 10 1 2 *"  # Feb 1st — INSEE full-year product prices
-    - cron: "0 10 1 3 *"  # Mar 1st — INSEE DADS mean/median salary (publishes Feb)
+    - cron: "0 10 1 2 *" # Feb 1st - INSEE full-year product prices
+    - cron: "0 10 1 3 *" # Mar 1st - INSEE DADS mean/median salary (publishes Feb)
   workflow_dispatch: # Manual trigger
 
 permissions:
@@ -69,7 +69,7 @@ jobs:
             ${{ env.UPDATE_LOG }}
             ```
 
-            ## Manual products — please verify before merging
+            ## Manual products - please verify before merging
 
             The following products are **not auto-updated** and must be checked manually:
 

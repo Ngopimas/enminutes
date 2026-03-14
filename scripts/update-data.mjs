@@ -117,13 +117,16 @@ async function fetchInseeXml(idbank, startYear = 2015) {
       });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const text = await resp.text();
-      if (!text || text.length < 100) throw new Error("Empty or invalid response");
+      if (!text || text.length < 100)
+        throw new Error("Empty or invalid response");
       return text;
     } catch (err) {
       lastError = err;
       if (attempt < MAX_RETRIES) {
-        console.warn(`  ⚠ Attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}. Retrying in ${RETRY_DELAY_MS}ms...`);
-        await new Promise(r => setTimeout(r, RETRY_DELAY_MS * attempt));
+        console.warn(
+          `  ⚠ Attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}. Retrying in ${RETRY_DELAY_MS}ms...`,
+        );
+        await new Promise((r) => setTimeout(r, RETRY_DELAY_MS * attempt));
       }
     }
   }
@@ -414,7 +417,9 @@ async function main() {
       for (const [year, rate] of Object.entries(existingSmicRates)) {
         const yr = parseInt(year);
         if (yr >= 2005 && (rate < 5 || rate > 20)) {
-          console.error(`  ✘ SMIC validation failed: ${yr} → ${rate} €/h is out of range [5-20]. Skipping SMIC update.`);
+          console.error(
+            `  ✘ SMIC validation failed: ${yr} → ${rate} €/h is out of range [5-20]. Skipping SMIC update.`,
+          );
           smicUpdated = false;
           break;
         }
@@ -446,12 +451,18 @@ async function main() {
       if (!isNaN(annualNet) && year > maxMeanYear && year <= currentYear) {
         const hourly = +(annualNet / HOURS_PER_YEAR).toFixed(2);
         existingMeanRates[year] = hourly;
-        changes.push(`Mean salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`);
+        changes.push(
+          `Mean salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`,
+        );
         meanUpdated = true;
       }
     }
     if (meanUpdated) {
-      content = replaceSalaryRates(content, "meanSalaryRates", existingMeanRates);
+      content = replaceSalaryRates(
+        content,
+        "meanSalaryRates",
+        existingMeanRates,
+      );
     } else {
       console.log("  No new mean salary data available.");
     }
@@ -480,12 +491,18 @@ async function main() {
       if (!isNaN(annualNet) && year > maxMedianYear && year <= currentYear) {
         const hourly = +(annualNet / HOURS_PER_YEAR).toFixed(2);
         existingMedianRates[year] = hourly;
-        changes.push(`Median salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`);
+        changes.push(
+          `Median salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`,
+        );
         medianUpdated = true;
       }
     }
     if (medianUpdated) {
-      content = replaceSalaryRates(content, "medianSalaryRates", existingMedianRates);
+      content = replaceSalaryRates(
+        content,
+        "medianSalaryRates",
+        existingMedianRates,
+      );
     } else {
       console.log("  No new median salary data available.");
     }
@@ -647,23 +664,23 @@ async function main() {
   // 6. Manual products checklist
   const MANUAL_SOURCES = {
     cigarettes: "DGDDI / Tabac Info Service",
-    cinema:     "CNC (Centre national du cinéma)",
-    medecin:    "Assurance Maladie / CNAM",
-    metro:      "RATP / Île-de-France Mobilités",
-    timbre:     "La Poste (tarifs en vigueur)",
-    journal:    "Prix éditeur (ex: Le Monde, Le Figaro)",
-    magazine:   "Prix éditeur / kiosque",
-    cafe:       "Enquête prix services (INSEE / secteur)",
-    biere:      "Enquête prix services (INSEE / secteur)",
-    internet:   "ARCEP / opérateurs (offres entrée de gamme)",
-    electricite:"EDF / CRE (tarifs réglementés)",
-    loyer:      "OLAP / CLAMEUR / INSEE Enquête Logement",
+    cinema: "CNC (Centre national du cinéma)",
+    medecin: "Assurance Maladie / CNAM",
+    metro: "RATP / Île-de-France Mobilités",
+    timbre: "La Poste (tarifs en vigueur)",
+    journal: "Prix éditeur (ex: Le Monde, Le Figaro)",
+    magazine: "Prix éditeur / kiosque",
+    cafe: "Enquête prix services (INSEE / secteur)",
+    biere: "Enquête prix services (INSEE / secteur)",
+    internet: "ARCEP / opérateurs (offres entrée de gamme)",
+    electricite: "EDF / CRE (tarifs réglementés)",
+    loyer: "OLAP / CLAMEUR / INSEE Enquête Logement",
     baguette_tradition: "Fédération des boulangers (si applicable)",
-    gaz:             "CRE / DGEC (tarifs réglementés ou prix spot marché)",
-    loyer_paris:     "OLAP Paris / CLAMEUR (m² Paris intra-muros)",
-    forfait_mobile:  "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
-    streaming:       "Netflix France (abonnement standard)",
-    smartphone:      "GSM Arena / Lesnumeriques (milieu de gamme référence)",
+    gaz: "CRE / DGEC (tarifs réglementés ou prix spot marché)",
+    loyer_paris: "OLAP Paris / CLAMEUR (m² Paris intra-muros)",
+    forfait_mobile: "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
+    streaming: "Netflix France (abonnement standard)",
+    smartphone: "GSM Arena / Lesnumeriques (milieu de gamme référence)",
     voiture_milieu_gamme: "Peugeot France (prix catalogue neuf, gamme 205→208)",
   };
 
@@ -689,12 +706,12 @@ async function main() {
   }
 
   console.log("\n\n════════════════════════════════════");
-  console.log("MANUAL PRODUCTS — reviewer checklist");
+  console.log("MANUAL PRODUCTS - reviewer checklist");
   console.log("════════════════════════════════════");
   for (const id of manualProducts) {
     const lastYear = getLastYear(id);
     const source = MANUAL_SOURCES[id] ?? "source à vérifier";
-    console.log(`- [ ] ${id} (last: ${lastYear}) — ${source}`);
+    console.log(`- [ ] ${id} (last: ${lastYear}) - ${source}`);
   }
   console.log("");
 
