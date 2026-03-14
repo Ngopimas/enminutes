@@ -31,11 +31,10 @@ function Sparkline({ data }: { data: number[] }) {
       <polyline
         points={points}
         fill="none"
-        stroke="currentColor"
+        stroke="hsl(var(--chart-1))"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-primary/60"
       />
     </svg>
   );

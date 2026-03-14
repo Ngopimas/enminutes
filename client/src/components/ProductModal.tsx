@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -36,7 +37,12 @@ import { useIsMobile, formatMinutes } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
 import { useLocation } from "wouter";
-import { getMinutes, getYearsForRef, getDynamicFunFact, type Product } from "@/lib/data";
+import {
+  getMinutes,
+  getYearsForRef,
+  getDynamicFunFact,
+  type Product,
+} from "@/lib/data";
 
 ChartJS.register(
   CategoryScale,
@@ -143,11 +149,12 @@ export default function ProductModal({
   const funFact = getDynamicFunFact(product, salaryRef, lang);
 
   // Chart Y label based on salary ref
-  const yLabel = salaryRef === 'median'
-    ? t("chartYLabelMedian")
-    : salaryRef === 'mean'
-      ? t("chartYLabelMean")
-      : t("chartYLabel");
+  const yLabel =
+    salaryRef === "median"
+      ? t("chartYLabelMedian")
+      : salaryRef === "mean"
+        ? t("chartYLabelMean")
+        : t("chartYLabel");
 
   // Comparison values
   const minA = minutes[yearA] ?? 0;
@@ -214,7 +221,9 @@ export default function ProductModal({
           display: true,
           content: lang === "fr" ? inf.labelFr : inf.labelEn,
           position: "start" as const,
-          backgroundColor: isDark ? "rgba(40,35,10,0.85)" : "rgba(255,248,220,0.9)",
+          backgroundColor: isDark
+            ? "rgba(40,35,10,0.85)"
+            : "rgba(255,248,220,0.9)",
           color: isDark ? "rgba(250,200,80,0.9)" : "rgba(140,90,0,0.9)",
           font: { size: 8 },
           padding: { top: 2, bottom: 2, left: 3, right: 3 },
@@ -423,9 +432,15 @@ export default function ProductModal({
       : "text-red-600 dark:text-red-400";
   };
 
-  function handleShare() {
+  function buildShareText() {
     const url = `${window.location.origin}${window.location.pathname}#/product/${product!.id}`;
-    navigator.clipboard.writeText(url).catch(() => {});
+    const suffix = lang === "fr" ? "(en France)" : "(in France)";
+    return `${funFact} ${suffix}\n${url}`;
+  }
+
+  function handleShare() {
+    const text = buildShareText();
+    navigator.clipboard.writeText(text).catch(() => {});
     navigate(`/product/${product!.id}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -443,13 +458,6 @@ export default function ProductModal({
           <DialogTitle className="flex items-center gap-2 text-lg">
             <span className="text-xl">{product.emoji}</span>
             {name}
-            <button
-              onClick={handleShare}
-              title={t("shareProduct")}
-              className="ml-auto p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
-            </button>
           </DialogTitle>
           <DialogDescription>{product.unit}</DialogDescription>
         </DialogHeader>
@@ -480,32 +488,51 @@ export default function ProductModal({
 
         <Card className="bg-muted/50 mt-3">
           <CardContent className="pt-4 pb-4">
-            <p className="text-xs font-medium text-muted-foreground mb-1">
-              {t("didYouKnow")}
-            </p>
-            <p className="text-sm">{funFact}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  {t("didYouKnow")}
+                </p>
+                <p className="text-sm">{funFact}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleShare}
+                title={t("shareProduct")}
+                className="shrink-0 -mt-3 -mr-5"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-500" />
+                ) : (
+                  <Share2 className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         <div className="mt-2 space-y-1">
-          {salaryRef === 'median' && (
+          {salaryRef === "median" && (
             <p className="text-[11px] text-muted-foreground/60 italic">
-              ℹ {t('medianAvailableFrom')}
+              ℹ {t("medianAvailableFrom")}
             </p>
           )}
-          {salaryRef === 'mean' && (
+          {salaryRef === "mean" && (
             <p className="text-[11px] text-muted-foreground/60 italic">
-              ℹ {t('meanStopsAt')}
+              ℹ {t("meanStopsAt")}
             </p>
           )}
           <p className="text-[11px] text-muted-foreground/60 text-right">
-            {product.dataType === 'actual'
-              ? t('dataTypeActual')
-              : product.dataType === 'ipc_estimate'
-              ? t('dataTypeIpcEstimate')
-              : t('dataTypeManual')}
+            {product.dataType === "actual"
+              ? t("dataTypeActual")
+              : product.dataType === "ipc_estimate"
+                ? t("dataTypeIpcEstimate")
+                : t("dataTypeManual")}
             {product.source && (
-              <span className="ml-2 text-muted-foreground/40">· {product.source}</span>
+              <span className="ml-2 text-muted-foreground/40">
+                · {product.source}
+              </span>
             )}
           </p>
         </div>

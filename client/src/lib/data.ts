@@ -382,9 +382,12 @@ export function getDynamicFunFact(
 
   const first = years[0];
   const last = years[years.length - 1];
-  const minFirst = Math.round(mins[first]);
-  const minLast = Math.round(mins[last]);
-  const wentDown = minLast < minFirst;
+  const minFirstRaw = Math.round(mins[first]);
+  const minLastRaw = Math.round(mins[last]);
+  const wentDown = minLastRaw < minFirstRaw;
+  const locale = lang === "fr" ? "fr-FR" : "en-US";
+  const minFirst = minFirstRaw.toLocaleString(locale);
+  const minLast = minLastRaw.toLocaleString(locale);
 
   if (lang === "fr") {
     if (wentDown) {
