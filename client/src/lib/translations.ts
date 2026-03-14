@@ -100,6 +100,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     trendUp: "↗ En hausse",
     trendDown: "↘ En baisse",
     trendStable: "→ Stable",
+    trendTooltip: "Tendance sur les 3 dernières années",
+    trendAllTooltip: "Tous les produits",
+    trendUpTooltip: "En hausse sur les 3 dernières années",
+    trendDownTooltip: "En baisse sur les 3 dernières années",
+    trendStableTooltip: "Stable sur les 3 dernières années",
     inYear: "en",
     perHour: "/heure",
     ppIndexTitle: "Le SMIC achète-t-il plus ou moins qu'avant\u202F?",
@@ -176,7 +181,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     basketExcludedVoiture:
       "Exclu du panier\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
     dataTypeActual: "Prix réel (source INSEE directe)",
-    dataTypeIpcEstimate: "Prix estimé via indice IPC (INSEE)",
+    dataTypeIpcEstimate:
+      "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
     dataTypeManual: "Prix actuel vérifié manuellement",
     medianAvailableFrom:
       "Salaire médian disponible à partir de 1996 (INSEE DADS).",
@@ -280,6 +286,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     trendUp: "↗ Rising",
     trendDown: "↘ Falling",
     trendStable: "→ Stable",
+    trendTooltip: "Trend over the last 3 years",
+    trendAllTooltip: "All products",
+    trendUpTooltip: "Rising over the last 3 years",
+    trendDownTooltip: "Falling over the last 3 years",
+    trendStableTooltip: "Stable over the last 3 years",
     inYear: "in",
     perHour: "/hour",
     ppIndexTitle: "Does the minimum wage buy more or less than before?",
@@ -354,7 +365,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     basketExcludedVoiture:
       "Excluded from basket: high-value one-off purchase, difficult to weight in a monthly basket",
     dataTypeActual: "Actual price (direct INSEE source)",
-    dataTypeIpcEstimate: "Estimated via CPI index (INSEE)",
+    dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",
     medianAvailableFrom:
       "Median salary available from 1996 onwards (INSEE DADS).",

@@ -347,9 +347,11 @@ const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
     { year: 2014, labelFr: "Netflix France", labelEn: "Netflix FR launch" },
   ],
   essence: [
-    { year: 2008, labelFr: "Pic pétrolier", labelEn: "Oil price peak" },
-    { year: 2020, labelFr: "COVID-19", labelEn: "COVID-19" },
-    { year: 2022, labelFr: "Guerre Ukraine", labelEn: "Ukraine war" },
+    {
+      year: 1970,
+      labelFr: "Choc pétrolier",
+      labelEn: "Oil shock",
+    },
   ],
   gaz: [{ year: 2022, labelFr: "Crise énergie", labelEn: "Energy crisis" }],
   cigarettes: [

@@ -145,6 +145,15 @@ export default function ProductExplorer({
               <button
                 key={t_}
                 onClick={() => setTrend(t_)}
+                title={
+                  t_ === "up"
+                    ? t("trendUpTooltip")
+                    : t_ === "down"
+                      ? t("trendDownTooltip")
+                      : t_ === "stable"
+                        ? t("trendStableTooltip")
+                        : t("trendAllTooltip")
+                }
                 className={`h-8 px-2.5 rounded-md border text-xs transition-colors ${
                   trend === t_
                     ? "bg-primary text-primary-foreground border-primary"
@@ -233,6 +242,13 @@ export default function ProductExplorer({
                   className="cursor-pointer hover:border-primary/50 transition-colors"
                   onClick={() => handleCardClick(product)}
                   data-testid={`product-card-${product.id}`}
+                  title={
+                    trendVal === "up"
+                      ? t("trendUpTooltip")
+                      : trendVal === "down"
+                        ? t("trendDownTooltip")
+                        : t("trendStableTooltip")
+                  }
                 >
                   <CardContent className="pt-4 pb-4 px-4">
                     <div className="flex items-start justify-between mb-2">

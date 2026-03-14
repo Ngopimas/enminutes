@@ -123,6 +123,7 @@ export default function ProductModal({
   const { salaryRef } = useSalaryRef();
   const [, navigate] = useLocation();
   const [showPrice, setShowPrice] = useState(false);
+  const [showContext, setShowContext] = useState(false);
   const [copied, setCopied] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
@@ -146,7 +147,37 @@ export default function ProductModal({
   if (years.length === 0) return null;
 
   const name = lang === "fr" ? product.nameFr : product.nameEn;
-  const funFact = getDynamicFunFact(product, salaryRef, lang, yearA || undefined, yearB || undefined);
+  const funFact = getDynamicFunFact(
+    product,
+    salaryRef,
+    lang,
+    yearA || undefined,
+    yearB || undefined,
+  );
+
+  // Recent trend: compare last year vs ~3 years prior
+  const trendVal = (() => {
+    if (years.length < 2) return "stable";
+    const last = minutes[years[years.length - 1]];
+    const prev = minutes[years[Math.max(0, years.length - 4)]];
+    if (!prev) return "stable";
+    const pct = ((last - prev) / prev) * 100;
+    if (pct > 5) return "up";
+    if (pct < -5) return "down";
+    return "stable";
+  })();
+  const trendLabel =
+    trendVal === "up"
+      ? t("trendUp")
+      : trendVal === "down"
+        ? t("trendDown")
+        : t("trendStable");
+  const trendColor =
+    trendVal === "up"
+      ? "text-red-600 dark:text-red-400"
+      : trendVal === "down"
+        ? "text-emerald-600 dark:text-emerald-400"
+        : "text-muted-foreground";
 
   // Chart Y label based on salary ref
   const yLabel =
@@ -206,7 +237,7 @@ export default function ProductModal({
   }
 
   // Inflection point annotations
-  if (product.inflections) {
+  if (showContext && product.inflections) {
     product.inflections.forEach((inf, i) => {
       const idx = years.indexOf(inf.year);
       if (idx < 0) return;
@@ -214,19 +245,19 @@ export default function ProductModal({
         type: "line" as const,
         xMin: idx,
         xMax: idx,
-        borderColor: isDark ? "rgba(250,200,80,0.4)" : "rgba(180,120,0,0.35)",
+        borderColor: isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.15)",
         borderWidth: 1,
-        borderDash: [3, 3],
+        borderDash: [4, 4],
         label: {
           display: true,
           content: lang === "fr" ? inf.labelFr : inf.labelEn,
           position: "start" as const,
           backgroundColor: isDark
-            ? "rgba(40,35,10,0.85)"
-            : "rgba(255,248,220,0.9)",
-          color: isDark ? "rgba(250,200,80,0.9)" : "rgba(140,90,0,0.9)",
+            ? "rgba(30,30,30,0.85)"
+            : "rgba(255,255,255,0.85)",
+          color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
           font: { size: 8 },
-          padding: { top: 2, bottom: 2, left: 3, right: 3 },
+          padding: { top: 2, bottom: 2, left: 4, right: 4 },
           rotation: -90,
           yAdjust: -10,
         },
@@ -459,23 +490,55 @@ export default function ProductModal({
             <span className="text-xl">{product.emoji}</span>
             {name}
           </DialogTitle>
-          <DialogDescription>{product.unit}</DialogDescription>
+          <DialogDescription className="flex items-center gap-2">
+            <span>{product.unit}</span>
+            <span
+              className={`text-[11px] font-medium ${trendColor}`}
+              title={
+                trendVal === "up"
+                  ? t("trendUpTooltip")
+                  : trendVal === "down"
+                    ? t("trendDownTooltip")
+                    : t("trendStableTooltip")
+              }
+            >
+              {trendLabel}
+            </span>
+          </DialogDescription>
         </DialogHeader>
 
-        {/* Price toggle */}
-        <div className="flex items-center gap-2 -mt-1">
-          <Switch
-            id="show-price"
-            checked={showPrice}
-            onCheckedChange={setShowPrice}
-            data-testid="show-price-toggle"
-          />
-          <Label
-            htmlFor="show-price"
-            className="text-xs text-muted-foreground cursor-pointer"
-          >
-            {t("showNominalPrice")}
-          </Label>
+        {/* Price + context toggles */}
+        <div className="flex items-center gap-4 -mt-1">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="show-price"
+              checked={showPrice}
+              onCheckedChange={setShowPrice}
+              data-testid="show-price-toggle"
+            />
+            <Label
+              className="text-xs text-muted-foreground cursor-pointer"
+              onClick={() => setShowPrice((v) => !v)}
+            >
+              {t("showNominalPrice")}
+            </Label>
+          </div>
+          {product.inflections && product.inflections.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Switch
+                id="show-context"
+                checked={showContext}
+                onCheckedChange={setShowContext}
+                data-testid="show-context-toggle"
+              />
+              <Label
+                className="text-xs text-muted-foreground cursor-pointer"
+                onClick={() => setShowContext((v) => !v)}
+              >
+                {t("ppShowContext")}
+              </Label>
+            </div>
+          )}
         </div>
 
         <div className="h-[250px] mt-1">
@@ -484,57 +547,6 @@ export default function ProductModal({
             options={chartOptions as any}
             plugins={[crosshairPlugin]}
           />
-        </div>
-
-        <Card className="bg-muted/50 mt-3">
-          <CardContent className="pt-4 pb-4">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">
-                  {t("didYouKnow")}
-                </p>
-                <p className="text-sm">{funFact}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleShare}
-                title={t("shareProduct")}
-                className="shrink-0 -mt-3 -mr-5"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4 text-emerald-500" />
-                ) : (
-                  <Share2 className="w-4 h-4" />
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="mt-2 space-y-1">
-          {salaryRef === "median" && (
-            <p className="text-[11px] text-muted-foreground/60 italic">
-              ℹ {t("medianAvailableFrom")}
-            </p>
-          )}
-          {salaryRef === "mean" && (
-            <p className="text-[11px] text-muted-foreground/60 italic">
-              ℹ {t("meanStopsAt")}
-            </p>
-          )}
-          <p className="text-[11px] text-muted-foreground/60 text-right">
-            {product.dataType === "actual"
-              ? t("dataTypeActual")
-              : product.dataType === "ipc_estimate"
-                ? t("dataTypeIpcEstimate")
-                : t("dataTypeManual")}
-            {product.source && (
-              <span className="ml-2 text-muted-foreground/40">
-                · {product.source}
-              </span>
-            )}
-          </p>
         </div>
 
         {/* Interactive year comparison */}
@@ -635,6 +647,57 @@ export default function ProductModal({
             data-testid="comparison-verdict"
           >
             {getVerdict()}
+          </p>
+        </div>
+
+        <Card className="bg-muted/50 mt-3">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  {t("didYouKnow")}
+                </p>
+                <p className="text-sm">{funFact}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleShare}
+                title={t("shareProduct")}
+                className="shrink-0 -mt-3 -mr-5"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-500" />
+                ) : (
+                  <Share2 className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="mt-2 space-y-1">
+          {salaryRef === "median" && (
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              ℹ {t("medianAvailableFrom")}
+            </p>
+          )}
+          {salaryRef === "mean" && (
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              ℹ {t("meanStopsAt")}
+            </p>
+          )}
+          <p className="text-[11px] text-muted-foreground/60 text-right">
+            {product.dataType === "actual"
+              ? t("dataTypeActual")
+              : product.dataType === "ipc_estimate"
+                ? t("dataTypeIpcEstimate")
+                : t("dataTypeManual")}
+            {product.source && (
+              <span className="ml-2 text-muted-foreground/40">
+                · {product.source}
+              </span>
+            )}
           </p>
         </div>
       </DialogContent>
