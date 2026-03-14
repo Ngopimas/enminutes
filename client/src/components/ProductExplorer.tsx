@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { useSalaryRef } from '@/lib/salaryRef';
-import { normalizeSearch } from '@/lib/utils';
+import { normalizeSearch, useIsMobile } from '@/lib/utils';
 import { products, categories, getMinutes, getYearsForRef, type Product } from '@/lib/data';
 import ProductModal from './ProductModal';
 
@@ -43,6 +44,7 @@ function Sparkline({ data }: { data: number[] }) {
 export default function ProductExplorer() {
   const { lang, t } = useLang();
   const { salaryRef } = useSalaryRef();
+  const isMobile = useIsMobile();
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [trend, setTrend] = useState<'all' | 'up' | 'down' | 'stable'>('all');
@@ -125,20 +127,36 @@ export default function ProductExplorer() {
           </div>
         </div>
 
-        {/* Row 2: category tabs */}
+        {/* Row 2: category filter — Select on mobile, Tabs on larger screens */}
         <div className="mb-6">
-          <Tabs value={category} onValueChange={setCategory}>
-            <TabsList className="flex flex-wrap h-auto gap-1" data-testid="category-tabs">
-              <TabsTrigger value="all" className="text-xs">
-                {t('allCategories')}
-              </TabsTrigger>
-              {Object.entries(categories).map(([key, cat]) => (
-                <TabsTrigger key={key} value={key} className="text-xs">
-                  {cat.emoji} {lang === 'fr' ? cat.nameFr : cat.nameEn}
+          {isMobile ? (
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="h-8 text-xs w-48" data-testid="category-tabs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all" className="text-xs">{t('allCategories')}</SelectItem>
+                {Object.entries(categories).map(([key, cat]) => (
+                  <SelectItem key={key} value={key} className="text-xs">
+                    {cat.emoji} {lang === 'fr' ? cat.nameFr : cat.nameEn}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Tabs value={category} onValueChange={setCategory}>
+              <TabsList className="flex flex-wrap h-auto gap-1" data-testid="category-tabs">
+                <TabsTrigger value="all" className="text-xs">
+                  {t('allCategories')}
                 </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                {Object.entries(categories).map(([key, cat]) => (
+                  <TabsTrigger key={key} value={key} className="text-xs">
+                    {cat.emoji} {lang === 'fr' ? cat.nameFr : cat.nameEn}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          )}
         </div>
 
         {filtered.length === 0 ? (

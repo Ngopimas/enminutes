@@ -13,9 +13,7 @@ export function SalaryRefProvider({ children }: { children: ReactNode }) {
     return (localStorage.getItem('salaryRef') as SalaryRef) ?? 'smic';
   });
 
-  useEffect(() => {
-    localStorage.setItem('salaryRef', salaryRef);
-  }, [salaryRef]);
+  useEffect(() => { localStorage.setItem('salaryRef', salaryRef); }, [salaryRef]);
 
   return (
     <SalaryRefContext.Provider value={{ salaryRef, setSalaryRef }}>

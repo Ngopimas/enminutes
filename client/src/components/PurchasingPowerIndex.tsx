@@ -20,6 +20,7 @@ import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
 import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex, DATA_END_YEAR } from "@/lib/data";
+import { useIsMobile } from "@/lib/utils";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
 import { YearRangeSlider } from "@/components/YearRangeSlider";
 
@@ -57,6 +58,7 @@ export default function PurchasingPowerIndex() {
   const { lang, t } = useLang();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
+  const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
   const [reverseMinutes, setReverseMinutes] = useState(true);
   const [showPresidents, setShowPresidents] = useState(true);
@@ -277,7 +279,7 @@ export default function PurchasingPowerIndex() {
   const scales: any = {
     x: {
       ticks: {
-        maxTicksLimit: 12,
+        maxTicksLimit: isMobile ? 5 : 12,
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },

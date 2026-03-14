@@ -52,7 +52,7 @@ export default function Hero() {
               : t('heroSubtitleMean')
           }
         </p>
-        <div className="min-h-[48px] flex items-center justify-center">
+        <div className="h-[64px] flex items-center justify-center overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.p
               key={`${productId}-${salaryRef}`}

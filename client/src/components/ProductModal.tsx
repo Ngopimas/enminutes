@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, Equal } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { useIsMobile } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
 import { getMinutes, getYearsForRef, getDynamicFunFact, type Product } from "@/lib/data";
@@ -110,6 +111,7 @@ export default function ProductModal({
   onOpenChange,
 }: ProductModalProps) {
   const { lang, t } = useLang();
+  const isMobile = useIsMobile();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
   const [showPrice, setShowPrice] = useState(false);
@@ -226,7 +228,7 @@ export default function ProductModal({
   const scales: any = {
     x: {
       ticks: {
-        maxTicksLimit: 10,
+        maxTicksLimit: isMobile ? 5 : 10,
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },

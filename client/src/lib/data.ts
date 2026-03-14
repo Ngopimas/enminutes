@@ -335,6 +335,7 @@ export function getMinutes(
   }
 }
 
+
 /** Get years that have data for a given salary reference */
 export function getYearsForRef(product: Product, ref: SalaryRef): number[] {
   const mins = getMinutes(product, ref);
