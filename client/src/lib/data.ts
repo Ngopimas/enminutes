@@ -274,6 +274,12 @@ function computeMinutes(
 // ── Product interface ──────────────────────────────────────
 export type ProductDataType = "actual" | "ipc_estimate" | "manual";
 
+export interface ProductInflection {
+  year: number;
+  labelFr: string;
+  labelEn: string;
+}
+
 export interface Product {
   id: string;
   nameFr: string;
@@ -290,7 +296,79 @@ export interface Product {
   minutesMean: Record<number, number>;
   years: number[];
   dataType: ProductDataType;
+  source?: string;
+  inflections?: ProductInflection[];
 }
+
+// ── Source labels per product ──────────────────────────────
+const PRODUCT_SOURCES: Record<string, string> = {
+  baguette: "INSEE IPC 04.1.1.1",
+  essence: "INSEE IPC 07.2.2",
+  lait: "INSEE IPC 01.1.4.1",
+  boeuf: "INSEE IPC 01.1.2.1",
+  oeufs: "INSEE IPC 01.1.7",
+  beurre: "INSEE IPC 01.1.5.1",
+  poulet: "INSEE IPC 01.1.2.2",
+  pommes_de_terre: "INSEE IPC 01.1.6.1",
+  sucre: "INSEE IPC 01.1.8.1",
+  pates: "INSEE IPC 01.1.3.1",
+  huile: "INSEE IPC 01.1.5.2",
+  camembert: "INSEE IPC 01.1.4.2",
+  vin: "INSEE IPC 02.1.1",
+  yaourt: "INSEE IPC 01.1.4.1",
+  tomates: "INSEE Prix moyens à la consommation",
+  oranges: "INSEE Prix moyens à la consommation",
+  pommes: "INSEE Prix moyens à la consommation",
+  cigarettes: "DGDDI / Tabac Info Service",
+  cinema: "CNC",
+  medecin: "Assurance Maladie",
+  metro: "RATP / IDF Mobilités",
+  timbre: "La Poste",
+  journal: "Prix éditeur",
+  cafe: "Enquête prix services INSEE",
+  electricite: "EDF / CRE",
+  loyer: "OLAP / CLAMEUR",
+  internet: "ARCEP / opérateurs",
+  gaz: "CRE / DGEC",
+  loyer_paris: "OLAP Paris / CLAMEUR",
+  forfait_mobile: "ARCEP / opérateurs",
+  streaming: "Netflix France",
+  smartphone: "GSMArena / Lesnumériques",
+  voiture_milieu_gamme: "Peugeot France",
+};
+
+// ── Inflection points per product ─────────────────────────
+const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
+  forfait_mobile: [
+    { year: 2012, labelFr: "Free Mobile −65%", labelEn: "Free Mobile −65%" },
+  ],
+  smartphone: [{ year: 2007, labelFr: "1er iPhone", labelEn: "1st iPhone" }],
+  streaming: [
+    { year: 2014, labelFr: "Netflix France", labelEn: "Netflix FR launch" },
+  ],
+  essence: [
+    { year: 2008, labelFr: "Pic pétrolier", labelEn: "Oil price peak" },
+    { year: 2020, labelFr: "COVID-19", labelEn: "COVID-19" },
+    { year: 2022, labelFr: "Guerre Ukraine", labelEn: "Ukraine war" },
+  ],
+  gaz: [{ year: 2022, labelFr: "Crise énergie", labelEn: "Energy crisis" }],
+  cigarettes: [
+    { year: 2004, labelFr: "Hausse fiscale", labelEn: "Tax hike" },
+    { year: 2017, labelFr: "Plan Buzyn", labelEn: "Buzyn Plan" },
+  ],
+  loyer_paris: [
+    { year: 2015, labelFr: "Encadrement loyers", labelEn: "Rent control" },
+    {
+      year: 2019,
+      labelFr: "Encadrement rétabli",
+      labelEn: "Rent control reinstated",
+    },
+  ],
+  baguette: [{ year: 2022, labelFr: "Hausse blé +60%", labelEn: "Wheat +60%" }],
+  voiture_milieu_gamme: [
+    { year: 2020, labelFr: "Virage électrique", labelEn: "EV shift" },
+  ],
+};
 
 /** Generate a dynamic fun fact for a product based on current salary reference */
 export function getDynamicFunFact(
@@ -334,7 +412,6 @@ export function getMinutes(
       return product.minutes;
   }
 }
-
 
 /** Get years that have data for a given salary reference */
 export function getYearsForRef(product: Product, ref: SalaryRef): number[] {
@@ -1229,7 +1306,7 @@ const rawProducts: Record<
     nameFr: "Loyer Paris (1 m² / mois)",
     nameEn: "Paris rent (1 m² / month)",
     unit: "1 m²/mois",
-    emoji: "🗼",
+    emoji: "🏛️",
     category: "logement",
     funFactFr:
       "Le m² parisien est passé de ~30 min de travail en 1970 à ~370 min en 2024 - une multiplication par 12, bien plus que les salaires.",
@@ -1322,6 +1399,8 @@ for (const [key, prod] of Object.entries(rawProducts)) {
       .map(Number)
       .sort((a, b) => a - b),
     dataType,
+    source: PRODUCT_SOURCES[key],
+    inflections: PRODUCT_INFLECTIONS[key],
   };
 }
 

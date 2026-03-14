@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { useSalaryRef } from '@/lib/salaryRef';
-import { normalizeSearch, useIsMobile } from '@/lib/utils';
+import { normalizeSearch, useIsMobile, formatMinutes } from '@/lib/utils';
 import { products, categories, getMinutes, getYearsForRef, type Product } from '@/lib/data';
 import ProductModal from './ProductModal';
 
@@ -41,7 +41,7 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
-export default function ProductExplorer() {
+export default function ProductExplorer({ initialProductId }: { initialProductId?: string }) {
   const { lang, t } = useLang();
   const { salaryRef } = useSalaryRef();
   const isMobile = useIsMobile();
@@ -85,6 +85,14 @@ export default function ProductExplorer() {
     list = list.filter(p => getYearsForRef(p, salaryRef).length > 0);
     return list;
   }, [category, search, trend, productList, salaryRef]);
+
+  // Open modal when navigating directly to /#/product/:id
+  useEffect(() => {
+    if (initialProductId && products[initialProductId]) {
+      setSelectedProduct(products[initialProductId]);
+      setModalOpen(true);
+    }
+  }, [initialProductId]);
 
   const handleCardClick = (product: Product) => {
     setSelectedProduct(product);
@@ -195,7 +203,7 @@ export default function ProductExplorer() {
                     <div className="flex items-end justify-between">
                       <div>
                         <div className="text-lg font-bold tabular-nums">
-                          {lastMin.toFixed(0)}
+                          {formatMinutes(lastMin, lang)}
                           <span className="text-xs font-normal text-muted-foreground ml-0.5">
                             {t('minutesAbbr')}
                           </span>

@@ -10,6 +10,14 @@ export function normalizeSearch(s: string): string {
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
+export function formatMinutes(value: number, lang: string, decimals = 0): string {
+  const locale = lang === 'fr' ? 'fr-FR' : 'en-US';
+  return value.toLocaleString(locale, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
 export function useIsMobile(breakpoint = 640): boolean {
   const [mobile, setMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < breakpoint : false

@@ -10,7 +10,7 @@ import Sources from "@/components/Sources";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 
-export default function Home() {
+export default function Home({ initialProductId }: { initialProductId?: string }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -21,7 +21,7 @@ export default function Home() {
         </ErrorBoundary>
         <BasketComposition />
         <ErrorBoundary>
-          <ProductExplorer />
+          <ProductExplorer initialProductId={initialProductId} />
         </ErrorBoundary>
         <Insights />
         <History />

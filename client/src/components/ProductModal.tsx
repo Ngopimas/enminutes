@@ -30,11 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Equal } from "lucide-react";
+import { ArrowRight, Equal, Share2, Check } from "lucide-react";
 import { useLang } from "@/lib/i18n";
-import { useIsMobile } from "@/lib/utils";
+import { useIsMobile, formatMinutes } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
+import { useLocation } from "wouter";
 import { getMinutes, getYearsForRef, getDynamicFunFact, type Product } from "@/lib/data";
 
 ChartJS.register(
@@ -114,7 +115,9 @@ export default function ProductModal({
   const isMobile = useIsMobile();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
+  const [, navigate] = useLocation();
   const [showPrice, setShowPrice] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
 
@@ -195,7 +198,63 @@ export default function ProductModal({
     };
   }
 
+  // Inflection point annotations
+  if (product.inflections) {
+    product.inflections.forEach((inf, i) => {
+      const idx = years.indexOf(inf.year);
+      if (idx < 0) return;
+      annotations[`inf${i}`] = {
+        type: "line" as const,
+        xMin: idx,
+        xMax: idx,
+        borderColor: isDark ? "rgba(250,200,80,0.4)" : "rgba(180,120,0,0.35)",
+        borderWidth: 1,
+        borderDash: [3, 3],
+        label: {
+          display: true,
+          content: lang === "fr" ? inf.labelFr : inf.labelEn,
+          position: "start" as const,
+          backgroundColor: isDark ? "rgba(40,35,10,0.85)" : "rgba(255,248,220,0.9)",
+          color: isDark ? "rgba(250,200,80,0.9)" : "rgba(140,90,0,0.9)",
+          font: { size: 8 },
+          padding: { top: 2, bottom: 2, left: 3, right: 3 },
+          rotation: -90,
+          yAdjust: -10,
+        },
+      };
+    });
+  }
+
+  // Confidence band datasets (±5% for ipc_estimate products), prepended so main line renders on top
+  const confidenceBands: any[] = [];
+  if (product.dataType === "ipc_estimate") {
+    const bandAlpha = isDark ? "rgba(99,179,237,0.12)" : "rgba(66,153,225,0.1)";
+    confidenceBands.push(
+      {
+        data: years.map((y) => +(minutes[y] * 1.05).toFixed(1)),
+        borderWidth: 0,
+        pointRadius: 0,
+        fill: "+1",
+        backgroundColor: bandAlpha,
+        tension: 0.3,
+        yAxisID: "y",
+        label: "",
+      },
+      {
+        data: years.map((y) => +(minutes[y] * 0.95).toFixed(1)),
+        borderWidth: 0,
+        pointRadius: 0,
+        fill: false,
+        backgroundColor: "transparent",
+        tension: 0.3,
+        yAxisID: "y",
+        label: "",
+      },
+    );
+  }
+
   const datasets: any[] = [
+    ...confidenceBands,
     {
       label: `${name} (${t("minutesAbbr")})`,
       data: years.map((y) => minutes[y]),
@@ -306,6 +365,7 @@ export default function ProductModal({
         bodyFont: { size: 11 },
         boxWidth: 8,
         boxHeight: 8,
+        filter: (item: any) => item.dataset.label !== "",
         callbacks: {
           labelColor: (ctx: any) => ({
             borderColor: ctx.dataset.borderColor,
@@ -315,12 +375,12 @@ export default function ProductModal({
           label: (ctx: any) => {
             const value = ctx.parsed.y;
             if (value == null) return "";
-            if (ctx.datasetIndex === 1 && showPrice) {
+            if (showPrice && ctx.dataset.yAxisID === "y1") {
               const year = years[ctx.dataIndex];
               const { value: formatted, currency } = formatPrice(value, year);
               return ` ${t("nominalPriceLabel")}: ${formatted} ${currency}`;
             }
-            return ` ${ctx.dataset.label}: ${value.toFixed(1)}`;
+            return ` ${ctx.dataset.label}: ${formatMinutes(value, lang, 1)}`;
           },
         },
       },
@@ -335,7 +395,7 @@ export default function ProductModal({
     if (isSameYear) return t("identicalYears");
     if (isSameValue) return t("identicalValue");
 
-    const absDiff = Math.abs(diff).toFixed(1);
+    const absDiff = formatMinutes(Math.abs(diff), lang, 1);
     const ratioStr =
       ratioRaw >= 10 ? Math.round(ratioRaw).toString() : ratioRaw.toFixed(1);
 
@@ -363,13 +423,33 @@ export default function ProductModal({
       : "text-red-600 dark:text-red-400";
   };
 
+  function handleShare() {
+    const url = `${window.location.origin}${window.location.pathname}#/product/${product!.id}`;
+    navigator.clipboard.writeText(url).catch(() => {});
+    navigate(`/product/${product!.id}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  function handleOpenChange(v: boolean) {
+    if (!v) navigate("/");
+    onOpenChange(v);
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-lg" data-testid="product-modal">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <span className="text-xl">{product.emoji}</span>
             {name}
+            <button
+              onClick={handleShare}
+              title={t("shareProduct")}
+              className="ml-auto p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
+            </button>
           </DialogTitle>
           <DialogDescription>{product.unit}</DialogDescription>
         </DialogHeader>
@@ -424,6 +504,9 @@ export default function ProductModal({
               : product.dataType === 'ipc_estimate'
               ? t('dataTypeIpcEstimate')
               : t('dataTypeManual')}
+            {product.source && (
+              <span className="ml-2 text-muted-foreground/40">· {product.source}</span>
+            )}
           </p>
         </div>
 
@@ -454,7 +537,7 @@ export default function ProductModal({
                 </SelectContent>
               </Select>
               <div className="text-lg font-bold tabular-nums">
-                {minA.toFixed(1)}{" "}
+                {formatMinutes(minA, lang, 1)}{" "}
                 <span className="text-xs font-normal text-muted-foreground">
                   min
                 </span>
@@ -501,7 +584,7 @@ export default function ProductModal({
                 </SelectContent>
               </Select>
               <div className="text-lg font-bold tabular-nums">
-                {minB.toFixed(1)}{" "}
+                {formatMinutes(minB, lang, 1)}{" "}
                 <span className="text-xs font-normal text-muted-foreground">
                   min
                 </span>

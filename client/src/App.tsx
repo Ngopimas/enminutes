@@ -10,8 +10,11 @@ import NotFound from "@/pages/not-found";
 function AppRouter() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route component={NotFound} />
+      <Route path="/product/:id">
+        {(params: any) => <Home initialProductId={params?.id} />}
+      </Route>
+      <Route path="/">{() => <Home />}</Route>
+      <Route>{() => <NotFound />}</Route>
     </Switch>
   );
 }
