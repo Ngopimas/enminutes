@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { products, basketWeights } from "@/lib/data";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function BasketComposition() {
   const { lang, t } = useLang();
@@ -50,23 +51,47 @@ export default function BasketComposition() {
 
           {/* Product grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
-            {basketItems.map((item) => (
-              <div
-                key={item.id}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm border ${
-                  item.weight === 0
-                    ? "opacity-40 border-dashed"
-                    : "border-border/50"
-                }`}
-                data-testid={`basket-item-${item.id}`}
-              >
-                <span className="text-base shrink-0">{item.emoji}</span>
-                <span className="truncate flex-1">{item.name}</span>
-                <span className="text-xs font-mono text-muted-foreground shrink-0 tabular-nums">
-                  ×{item.weight}
-                </span>
-              </div>
-            ))}
+            {basketItems.map((item) => {
+              const excludedTooltip =
+                item.weight === 0
+                  ? item.id === 'cigarettes'
+                    ? t('basketExcludedCigarettes')
+                    : item.id === 'loyer'
+                    ? t('basketExcludedLoyer')
+                    : null
+                  : null;
+
+              const card = (
+                <div
+                  key={item.id}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm border ${
+                    item.weight === 0
+                      ? "opacity-40 border-dashed cursor-help"
+                      : "border-border/50"
+                  }`}
+                  data-testid={`basket-item-${item.id}`}
+                >
+                  <span className="text-base shrink-0">{item.emoji}</span>
+                  <span className="truncate flex-1">{item.name}</span>
+                  <span className="text-xs font-mono text-muted-foreground shrink-0 tabular-nums">
+                    ×{item.weight}
+                  </span>
+                </div>
+              );
+
+              if (excludedTooltip) {
+                return (
+                  <Tooltip key={item.id}>
+                    <TooltipTrigger asChild>{card}</TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs">
+                      {excludedTooltip}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }
+
+              return card;
+            })}
           </div>
 
           {/* Weight explanation */}

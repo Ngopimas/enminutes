@@ -22,29 +22,24 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, normalizeSearch } from '@/lib/utils';
 import { useLang } from '@/lib/i18n';
 import { useSalaryRef } from '@/lib/salaryRef';
-import { products, getMinutes, getYearsForRef } from '@/lib/data';
-
-// Strip diacritics for accent-insensitive search (e.g. "metro" matches "métro")
-function normalize(str: string): string {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-}
+import { products, getMinutes, getYearsForRef, DATA_END_YEAR } from '@/lib/data';
 
 export default function TimelineComparison() {
   const { lang, t } = useLang();
   const { salaryRef } = useSalaryRef();
   const [year1, setYear1] = useState('1960');
-  const [year2, setYear2] = useState('2024');
+  const [year2, setYear2] = useState(String(DATA_END_YEAR));
   const [productId, setProductId] = useState('baguette');
   const [productOpen, setProductOpen] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
   const yearOptions = useMemo(() => {
     const years: number[] = [];
-    for (let y = 1960; y <= 2024; y += 5) years.push(y);
-    if (!years.includes(2024)) years.push(2024);
+    for (let y = 1960; y <= DATA_END_YEAR; y += 5) years.push(y);
+    if (!years.includes(DATA_END_YEAR)) years.push(DATA_END_YEAR);
     return years;
   }, []);
 
@@ -137,7 +132,7 @@ export default function TimelineComparison() {
             </PopoverTrigger>
             <PopoverContent className="w-[240px] p-0" align="start">
               <Command filter={(value, search) => {
-                if (normalize(value).includes(normalize(search))) return 1;
+                if (normalizeSearch(value).includes(normalizeSearch(search))) return 1;
                 return 0;
               }}>
                 <CommandInput placeholder={t('searchProduct')} />

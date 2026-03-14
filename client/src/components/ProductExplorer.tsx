@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
 import { useSalaryRef } from '@/lib/salaryRef';
+import { normalizeSearch } from '@/lib/utils';
 import { products, categories, getMinutes, getYearsForRef, type Product } from '@/lib/data';
 import ProductModal from './ProductModal';
 
@@ -69,11 +70,10 @@ export default function ProductExplorer() {
       list = list.filter(p => p.category === category);
     }
     if (search.trim()) {
-      const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      const q = normalize(search.trim());
+      const q = normalizeSearch(search.trim());
       list = list.filter(p =>
-        normalize(p.nameFr).includes(q) ||
-        normalize(p.nameEn).includes(q)
+        normalizeSearch(p.nameFr).includes(q) ||
+        normalizeSearch(p.nameEn).includes(q)
       );
     }
     if (trend !== 'all') {

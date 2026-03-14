@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +13,7 @@ import {
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLang } from "@/lib/i18n";
@@ -55,6 +56,7 @@ export default function PurchasingPowerIndex() {
   const { lang, t } = useLang();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
+  const [mounted, setMounted] = useState(false);
   const [reverseMinutes, setReverseMinutes] = useState(true);
   const [showPresidents, setShowPresidents] = useState(true);
   const [showContext, setShowContext] = useState(true);
@@ -373,6 +375,25 @@ export default function PurchasingPowerIndex() {
       },
     },
   };
+
+  useEffect(() => { setMounted(true); }, []);
+
+  if (!mounted) {
+    return (
+      <section className="py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <Skeleton className="h-6 w-48 mb-2" />
+          <Skeleton className="h-4 w-64 mb-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <Skeleton className="h-24" />
+            <Skeleton className="h-24" />
+            <Skeleton className="h-24" />
+          </div>
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 md:py-16" data-testid="pp-index">

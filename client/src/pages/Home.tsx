@@ -8,6 +8,7 @@ import Insights from "@/components/Insights";
 import History from "@/components/History";
 import Sources from "@/components/Sources";
 import Footer from "@/components/Footer";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 
 export default function Home() {
   return (
@@ -15,9 +16,13 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <PurchasingPowerIndex />
+        <ErrorBoundary>
+          <PurchasingPowerIndex />
+        </ErrorBoundary>
         <BasketComposition />
-        <ProductExplorer />
+        <ErrorBoundary>
+          <ProductExplorer />
+        </ErrorBoundary>
         <Insights />
         <History />
         <Sources />

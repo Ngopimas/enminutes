@@ -4,7 +4,7 @@
 // ============================================================
 
 // ── Salary reference types ─────────────────────────────────
-export type SalaryRef = 'smic' | 'median' | 'mean';
+export type SalaryRef = "smic" | "median" | "mean";
 
 // ── SMIC hourly net rates (euros) ──────────────────────────
 // All three salary references now use NET hourly rates for consistent comparison.
@@ -12,62 +12,212 @@ export type SalaryRef = 'smic' | 'median' | 'mean';
 // 1950-2004: SMIC brut × (1 − cotisations salariales estimées)
 // Cotisation sources: Sécurité sociale, IPP, INSEE séries longues
 export const smicRates: Record<number, number> = {
-  1950: 0.11, 1951: 0.11, 1952: 0.14, 1953: 0.14, 1954: 0.14,
-  1955: 0.18, 1956: 0.18, 1957: 0.18, 1958: 0.2, 1959: 0.21,
-  1960: 0.22, 1961: 0.23, 1962: 0.24, 1963: 0.26, 1964: 0.27,
-  1965: 0.27, 1966: 0.29, 1967: 0.29, 1968: 0.31, 1969: 0.42,
-  1970: 0.45, 1971: 0.49, 1972: 0.53, 1973: 0.61, 1974: 0.73,
-  1975: 0.91, 1976: 1.04, 1977: 1.18, 1978: 1.33, 1979: 1.48,
-  1980: 1.69, 1981: 1.94, 1982: 2.35, 1983: 2.63, 1984: 2.91,
-  1985: 3.12, 1986: 3.33, 1987: 3.4, 1988: 3.52, 1989: 3.64,
-  1990: 3.74, 1991: 3.94, 1992: 4.03, 1993: 4.15, 1994: 4.25,
-  1995: 4.34, 1996: 4.46, 1997: 4.57, 1998: 4.75, 1999: 4.84,
-  2000: 4.91, 2001: 5.06, 2002: 5.27, 2003: 5.4, 2004: 5.68,
-  2005: 6.31, 2006: 6.3, 2007: 6.5, 2008: 6.63, 2009: 6.84,
-  2010: 6.96, 2011: 7.07, 2012: 7.23, 2013: 7.39, 2014: 7.44,
-  2015: 7.49, 2016: 7.53, 2017: 7.59, 2018: 7.74, 2019: 7.94,
-  2020: 8.03, 2021: 8.11, 2022: 8.37, 2023: 8.92, 2024: 9.22,
-  2025: 9.4, 2026: 9.51,
+  1950: 0.11,
+  1951: 0.11,
+  1952: 0.14,
+  1953: 0.14,
+  1954: 0.14,
+  1955: 0.18,
+  1956: 0.18,
+  1957: 0.18,
+  1958: 0.2,
+  1959: 0.21,
+  1960: 0.22,
+  1961: 0.23,
+  1962: 0.24,
+  1963: 0.26,
+  1964: 0.27,
+  1965: 0.27,
+  1966: 0.29,
+  1967: 0.29,
+  1968: 0.31,
+  1969: 0.42,
+  1970: 0.45,
+  1971: 0.49,
+  1972: 0.53,
+  1973: 0.61,
+  1974: 0.73,
+  1975: 0.91,
+  1976: 1.04,
+  1977: 1.18,
+  1978: 1.33,
+  1979: 1.48,
+  1980: 1.69,
+  1981: 1.94,
+  1982: 2.35,
+  1983: 2.63,
+  1984: 2.91,
+  1985: 3.12,
+  1986: 3.33,
+  1987: 3.4,
+  1988: 3.52,
+  1989: 3.64,
+  1990: 3.74,
+  1991: 3.94,
+  1992: 4.03,
+  1993: 4.15,
+  1994: 4.25,
+  1995: 4.34,
+  1996: 4.46,
+  1997: 4.57,
+  1998: 4.75,
+  1999: 4.84,
+  2000: 4.91,
+  2001: 5.06,
+  2002: 5.27,
+  2003: 5.4,
+  2004: 5.68,
+  2005: 6.31,
+  2006: 6.3,
+  2007: 6.5,
+  2008: 6.63,
+  2009: 6.84,
+  2010: 6.96,
+  2011: 7.07,
+  2012: 7.23,
+  2013: 7.39,
+  2014: 7.44,
+  2015: 7.49,
+  2016: 7.53,
+  2017: 7.59,
+  2018: 7.74,
+  2019: 7.94,
+  2020: 8.03,
+  2021: 8.11,
+  2022: 8.37,
+  2023: 8.92,
+  2024: 9.22,
+  2025: 9.4,
+  2026: 9.51,
 };
+
+export const DATA_START_YEAR = Math.min(...Object.keys(smicRates).map(Number));
+export const DATA_END_YEAR = Math.max(...Object.keys(smicRates).map(Number));
 
 // ── Mean salary net hourly rates (euros) ────────────────────
 // Source: INSEE DADS (idbank 010752366), annual net EQTP / 1820h
 export const meanSalaryRates: Record<number, number> = {
-  1950: 0.23, 1951: 0.26, 1952: 0.31, 1953: 0.31, 1954: 0.34,
-  1955: 0.38, 1956: 0.42, 1957: 0.46, 1958: 0.52, 1959: 0.55,
-  1960: 0.6, 1961: 0.65, 1962: 0.72, 1963: 0.79, 1964: 0.84,
-  1965: 0.89, 1966: 0.94, 1967: 0.99, 1968: 1.09, 1969: 1.21,
-  1970: 1.32, 1971: 1.47, 1972: 1.62, 1973: 1.81, 1974: 2.12,
-  1975: 2.43, 1976: 2.82, 1977: 3.11, 1978: 3.52, 1979: 3.82,
-  1980: 4.35, 1981: 4.93, 1982: 5.6, 1983: 6.19, 1984: 6.64,
-  1985: 7.11, 1986: 7.49, 1987: 7.69, 1988: 7.92, 1989: 8.27,
-  1990: 8.7, 1991: 9.01, 1992: 9.24, 1993: 9.47, 1994: 9.62,
-  1995: 9.88, 1996: 10.02, 1997: 10.23, 1998: 10.41, 1999: 10.63,
-  2000: 10.86, 2001: 11.09, 2002: 11.34, 2003: 11.56, 2004: 11.81,
-  2005: 12.15, 2006: 12.35, 2007: 12.74, 2008: 13.15, 2009: 13.33,
-  2010: 13.61, 2011: 13.94, 2012: 14.14, 2013: 14.24, 2014: 14.37,
-  2015: 14.54, 2016: 14.61, 2017: 14.94, 2018: 15.26, 2019: 15.52,
-  2020: 14.93, 2021: 15.56, 2022: 16.38, 2023: 17.1, 2024: 17.56,
+  1950: 0.23,
+  1951: 0.26,
+  1952: 0.31,
+  1953: 0.31,
+  1954: 0.34,
+  1955: 0.38,
+  1956: 0.42,
+  1957: 0.46,
+  1958: 0.52,
+  1959: 0.55,
+  1960: 0.6,
+  1961: 0.65,
+  1962: 0.72,
+  1963: 0.79,
+  1964: 0.84,
+  1965: 0.89,
+  1966: 0.94,
+  1967: 0.99,
+  1968: 1.09,
+  1969: 1.21,
+  1970: 1.32,
+  1971: 1.47,
+  1972: 1.62,
+  1973: 1.81,
+  1974: 2.12,
+  1975: 2.43,
+  1976: 2.82,
+  1977: 3.11,
+  1978: 3.52,
+  1979: 3.82,
+  1980: 4.35,
+  1981: 4.93,
+  1982: 5.6,
+  1983: 6.19,
+  1984: 6.64,
+  1985: 7.11,
+  1986: 7.49,
+  1987: 7.69,
+  1988: 7.92,
+  1989: 8.27,
+  1990: 8.7,
+  1991: 9.01,
+  1992: 9.24,
+  1993: 9.47,
+  1994: 9.62,
+  1995: 9.88,
+  1996: 10.02,
+  1997: 10.23,
+  1998: 10.41,
+  1999: 10.63,
+  2000: 10.86,
+  2001: 11.09,
+  2002: 11.34,
+  2003: 11.56,
+  2004: 11.81,
+  2005: 12.15,
+  2006: 12.35,
+  2007: 12.74,
+  2008: 13.15,
+  2009: 13.33,
+  2010: 13.61,
+  2011: 13.94,
+  2012: 14.14,
+  2013: 14.24,
+  2014: 14.37,
+  2015: 14.54,
+  2016: 14.61,
+  2017: 14.94,
+  2018: 15.26,
+  2019: 15.52,
+  2020: 14.93,
+  2021: 15.56,
+  2022: 16.38,
+  2023: 17.1,
+  2024: 17.56,
 };
 
 // ── Median salary net hourly rates (euros) ──────────────────
 // Source: INSEE DADS (idbank 010752342), annual net EQTP / 1820h
 // Available from 1996 onward
 export const medianSalaryRates: Record<number, number> = {
-  1996: 8.21, 1997: 8.36, 1998: 8.51, 1999: 8.62,
-  2000: 8.74, 2001: 8.92, 2002: 9.15, 2003: 9.35, 2004: 9.53,
-  2005: 9.8, 2006: 9.96, 2007: 10.23, 2008: 10.58, 2009: 10.8,
-  2010: 11.0, 2011: 11.26, 2012: 11.41, 2013: 11.51, 2014: 11.58,
-  2015: 11.67, 2016: 11.74, 2017: 11.96, 2018: 12.2, 2019: 12.64,
-  2020: 13.01, 2021: 13.0, 2022: 13.47, 2023: 14.05, 2024: 14.44,
+  1996: 8.21,
+  1997: 8.36,
+  1998: 8.51,
+  1999: 8.62,
+  2000: 8.74,
+  2001: 8.92,
+  2002: 9.15,
+  2003: 9.35,
+  2004: 9.53,
+  2005: 9.8,
+  2006: 9.96,
+  2007: 10.23,
+  2008: 10.58,
+  2009: 10.8,
+  2010: 11.0,
+  2011: 11.26,
+  2012: 11.41,
+  2013: 11.51,
+  2014: 11.58,
+  2015: 11.67,
+  2016: 11.74,
+  2017: 11.96,
+  2018: 12.2,
+  2019: 12.64,
+  2020: 13.01,
+  2021: 13.0,
+  2022: 13.47,
+  2023: 14.05,
+  2024: 14.44,
 };
 
 // ── Get rates by salary reference ──────────────────────────
 export function getRatesForRef(ref: SalaryRef): Record<number, number> {
   switch (ref) {
-    case 'median': return medianSalaryRates;
-    case 'mean': return meanSalaryRates;
-    default: return smicRates;
+    case "median":
+      return medianSalaryRates;
+    case "mean":
+      return meanSalaryRates;
+    default:
+      return smicRates;
   }
 }
 
@@ -143,11 +293,11 @@ export interface Product {
 export function getDynamicFunFact(
   product: Product,
   ref: SalaryRef,
-  lang: 'fr' | 'en',
+  lang: "fr" | "en",
 ): string {
   const mins = getMinutes(product, ref);
   const years = getYearsForRef(product, ref);
-  if (years.length < 2) return '';
+  if (years.length < 2) return "";
 
   const first = years[0];
   const last = years[years.length - 1];
@@ -155,7 +305,7 @@ export function getDynamicFunFact(
   const minLast = Math.round(mins[last]);
   const wentDown = minLast < minFirst;
 
-  if (lang === 'fr') {
+  if (lang === "fr") {
     if (wentDown) {
       return `En ${first}, il fallait ${minFirst} minutes de travail pour acheter 1 ${product.nameFr.toLowerCase()}. Aujourd'hui, environ ${minLast} minutes suffisent.`;
     }
@@ -168,18 +318,26 @@ export function getDynamicFunFact(
 }
 
 /** Get the minutes record for a product given a salary reference */
-export function getMinutes(product: Product, ref: SalaryRef): Record<number, number> {
+export function getMinutes(
+  product: Product,
+  ref: SalaryRef,
+): Record<number, number> {
   switch (ref) {
-    case 'median': return product.minutesMedian;
-    case 'mean': return product.minutesMean;
-    default: return product.minutes;
+    case "median":
+      return product.minutesMedian;
+    case "mean":
+      return product.minutesMean;
+    default:
+      return product.minutes;
   }
 }
 
 /** Get years that have data for a given salary reference */
 export function getYearsForRef(product: Product, ref: SalaryRef): number[] {
   const mins = getMinutes(product, ref);
-  return Object.keys(mins).map(Number).sort((a, b) => a - b);
+  return Object.keys(mins)
+    .map(Number)
+    .sort((a, b) => a - b);
 }
 
 export interface Category {
@@ -359,8 +517,7 @@ const rawProducts: Record<
     category: "communication",
     funFactFr:
       "Un journal quotidien coûtait 13 minutes de travail en 1960 contre 21 minutes en 2024.",
-    funFactEn:
-      "A daily newspaper cost 13 work-minutes in 1960 vs 21 in 2024.",
+    funFactEn: "A daily newspaper cost 13 work-minutes in 1960 vs 21 in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -477,7 +634,8 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Les œufs sont passés de 50 minutes de travail la douzaine en 1960 à 20 minutes en 2024.",
-    funFactEn: "Eggs went from 50 work-minutes per dozen in 1960 to 20 in 2024.",
+    funFactEn:
+      "Eggs went from 50 work-minutes per dozen in 1960 to 20 in 2024.",
     prices: {
       1960: 0.183,
       1970: 0.305,
@@ -570,8 +728,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Le camembert est passé de 46 minutes de travail en 1960 à 16 minutes en 2024.",
-    funFactEn:
-      "Camembert went from 46 work-minutes in 1960 to 16 in 2024.",
+    funFactEn: "Camembert went from 46 work-minutes in 1960 to 16 in 2024.",
     prices: {
       1960: 0.168,
       1970: 0.305,
@@ -662,8 +819,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Les pâtes sont passées de 29 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn:
-      "Pasta went from 29 work-minutes in 1960 to 10 in 2024.",
+    funFactEn: "Pasta went from 29 work-minutes in 1960 to 10 in 2024.",
     prices: {
       1960: 0.107,
       1970: 0.152,
@@ -685,8 +841,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Le sucre est passé de 33 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn:
-      "Sugar went from 33 work-minutes in 1960 to 10 in 2024.",
+    funFactEn: "Sugar went from 33 work-minutes in 1960 to 10 in 2024.",
     prices: {
       1960: 0.122,
       1970: 0.168,
@@ -708,8 +863,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "L'huile de tournesol coûtait 50 minutes de travail en 1960 et 14 minutes en 2024.",
-    funFactEn:
-      "Sunflower oil cost 50 work-minutes in 1960 and 14 in 2024.",
+    funFactEn: "Sunflower oil cost 50 work-minutes in 1960 and 14 in 2024.",
     prices: {
       1960: 0.183,
       1970: 0.229,
@@ -731,8 +885,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Les oranges sont passées de 41 minutes de travail en 1960 à 14 minutes en 2024.",
-    funFactEn:
-      "Oranges went from 41 work-minutes in 1960 to 14 in 2024.",
+    funFactEn: "Oranges went from 41 work-minutes in 1960 to 14 in 2024.",
     prices: {
       1960: 0.152,
       1970: 0.229,
@@ -752,7 +905,8 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍅",
     category: "alimentation",
-    funFactFr: "Les tomates coûtaient 46 min de travail en 1960, 18 min en 2024.",
+    funFactFr:
+      "Les tomates coûtaient 46 min de travail en 1960, 18 min en 2024.",
     funFactEn: "Tomatoes cost 46 work-minutes in 1960, 18 in 2024.",
     prices: {
       1960: 0.183,
@@ -796,8 +950,7 @@ const rawProducts: Record<
     emoji: "🥬",
     category: "alimentation",
     funFactFr: "Une salade coûtait 13 min de travail en 1960, 8 min en 2024.",
-    funFactEn:
-      "A head of lettuce cost 13 work-minutes in 1960, 8 in 2024.",
+    funFactEn: "A head of lettuce cost 13 work-minutes in 1960, 8 in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -819,8 +972,7 @@ const rawProducts: Record<
     category: "alimentation",
     funFactFr:
       "Les carottes sont passées de 13 min de travail en 1960 à 8 min en 2024.",
-    funFactEn:
-      "Carrots went from 13 work-minutes in 1960 to 8 in 2024.",
+    funFactEn: "Carrots went from 13 work-minutes in 1960 to 8 in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -886,8 +1038,7 @@ const rawProducts: Record<
     category: "loisirs",
     funFactFr:
       "Un magazine hebdomadaire coûtait 25 min de travail en 1960 et 13 min en 2024.",
-    funFactEn:
-      "A weekly magazine cost 25 work-minutes in 1960 and 13 in 2024.",
+    funFactEn: "A weekly magazine cost 25 work-minutes in 1960 and 13 in 2024.",
     prices: {
       1960: 0.091,
       1970: 0.183,
@@ -911,9 +1062,16 @@ const rawProducts: Record<
     funFactEn:
       "A kWh of electricity cost 3.8 work-minutes in 1960 and only 1.6 in 2024 - despite recent price hikes.",
     prices: {
-      1960: 0.014, 1970: 0.018, 1980: 0.046, 1990: 0.087,
-      2000: 0.11, 2005: 0.113, 2010: 0.119, 2015: 0.152,
-      2020: 0.158, 2024: 0.252,
+      1960: 0.014,
+      1970: 0.018,
+      1980: 0.046,
+      1990: 0.087,
+      2000: 0.11,
+      2005: 0.113,
+      2010: 0.119,
+      2015: 0.152,
+      2020: 0.158,
+      2024: 0.252,
     },
   },
   loyer: {
@@ -928,8 +1086,14 @@ const rawProducts: Record<
     funFactEn:
       "Rent per m² went from 61 work-minutes in 1970 to 88 in 2024 - housing weighs more and more.",
     prices: {
-      1970: 0.46, 1980: 1.83, 1990: 4.57, 2000: 6.71,
-      2005: 8.8, 2010: 10.5, 2015: 11.5, 2020: 12.5,
+      1970: 0.46,
+      1980: 1.83,
+      1990: 4.57,
+      2000: 6.71,
+      2005: 8.8,
+      2010: 10.5,
+      2015: 11.5,
+      2020: 12.5,
       2024: 13.5,
     },
   },
@@ -945,8 +1109,12 @@ const rawProducts: Record<
     funFactEn:
       "An Internet subscription went from 367 work-minutes in 2000 to 208 in 2024 - cheaper despite 1000× faster speeds.",
     prices: {
-      2000: 30.0, 2005: 29.9, 2010: 29.9, 2015: 29.9,
-      2020: 30.0, 2024: 32.0,
+      2000: 30.0,
+      2005: 29.9,
+      2010: 29.9,
+      2015: 29.9,
+      2020: 30.0,
+      2024: 32.0,
     },
   },
 };
@@ -981,7 +1149,11 @@ export const categories: Record<string, Category> = {
   transport: { nameFr: "Transport", nameEn: "Transport", emoji: "🚗" },
   tabac: { nameFr: "Tabac", nameEn: "Tobacco", emoji: "🚬" },
   services: { nameFr: "Services", nameEn: "Services", emoji: "🏥" },
-  logement: { nameFr: "Logement & Énergie", nameEn: "Housing & Energy", emoji: "🏠" },
+  logement: {
+    nameFr: "Logement & Énergie",
+    nameEn: "Housing & Energy",
+    emoji: "🏠",
+  },
   communication: {
     nameFr: "Communication",
     nameEn: "Communication",
@@ -1079,23 +1251,28 @@ export const basketWeights: Record<string, number> = {
 
 const indexBaseYear = 1960;
 const indexYears: number[] = [];
-for (let y = 1960; y <= 2026; y++) {
+for (let y = 1960; y <= DATA_END_YEAR; y++) {
   if (smicRates[y]) indexYears.push(y);
 }
 
-function computeBasketMinutes(year: number, ref: SalaryRef = 'smic'): number | null {
+function computeBasketMinutes(
+  year: number,
+  ref: SalaryRef = "smic",
+): number | null {
   let totalWeightedMinutes = 0;
   let totalWeight = 0;
+  let maxWeight = 0;
   for (const [pid, w] of Object.entries(basketWeights)) {
     if (w === 0) continue;
     const prod = products[pid];
     if (!prod) continue;
+    maxWeight += w;
     const mins = getMinutes(prod, ref);
     if (mins[year] === undefined) continue;
     totalWeightedMinutes += mins[year] * w;
     totalWeight += w;
   }
-  if (totalWeight === 0) return null;
+  if (totalWeight === 0 || totalWeight / maxWeight < 0.8) return null;
   return totalWeightedMinutes / totalWeight;
 }
 
@@ -1103,12 +1280,14 @@ function computeBasketMinutes(year: number, ref: SalaryRef = 'smic'): number | n
 export function computePurchasingPowerForRef(ref: SalaryRef) {
   const rates = getRatesForRef(ref);
   const refYears: number[] = [];
-  for (let y = 1950; y <= 2026; y++) {
+  for (let y = DATA_START_YEAR; y <= DATA_END_YEAR; y++) {
     if (rates[y]) refYears.push(y);
   }
 
   // Use the first year with basket data as base (1960 for smic/mean, 1996 for median)
-  const baseYr = refYears.find(y => y >= 1960 && computeBasketMinutes(y, ref) !== null) ?? refYears[0];
+  const baseYr =
+    refYears.find((y) => y >= 1960 && computeBasketMinutes(y, ref) !== null) ??
+    refYears[0];
 
   const bmy: Record<number, number> = {};
   const ppIdx: Record<number, number> = {};
@@ -1172,19 +1351,71 @@ const multiplier = latestIndex ? (latestIndex / 100).toFixed(1) : "?";
 //   1973-1980: ~3.0%/yr, 1980-1990: ~2.6%/yr, 1990-1995: ~1.5%/yr
 // Unit: constant EUR per hour, rebased to index 100 = 1960
 export const productivityIndex: Record<number, number> = {
-  1960: 100.0, 1961: 105.2, 1962: 110.7, 1963: 116.5, 1964: 122.5,
-  1965: 128.9, 1966: 135.6, 1967: 142.7, 1968: 150.0, 1969: 157.9,
-  1970: 166.1, 1971: 174.7, 1972: 183.8, 1973: 193.4, 1974: 199.2,
-  1975: 205.1, 1976: 211.3, 1977: 217.6, 1978: 224.1, 1979: 230.8,
-  1980: 237.8, 1981: 244.0, 1982: 250.3, 1983: 256.8, 1984: 263.5,
-  1985: 270.3, 1986: 277.4, 1987: 284.6, 1988: 292.0, 1989: 299.6,
-  1990: 307.4, 1991: 312.0, 1992: 316.7, 1993: 321.4, 1994: 326.3,
-  1995: 331.1, 1996: 334.6, 1997: 340.7, 1998: 348.3, 1999: 352.5,
-  2000: 362.4, 2001: 368.6, 2002: 379.0, 2003: 381.6, 2004: 385.9,
-  2005: 390.1, 2006: 400.4, 2007: 398.8, 2008: 396.6, 2009: 392.8,
-  2010: 398.2, 2011: 403.3, 2012: 404.1, 2013: 410.6, 2014: 414.8,
-  2015: 418.2, 2016: 417.9, 2017: 425.9, 2018: 426.5, 2019: 428.7,
-  2020: 429.4, 2021: 423.6, 2022: 418.2, 2023: 421.1, 2024: 422.4,
+  1960: 100.0,
+  1961: 105.2,
+  1962: 110.7,
+  1963: 116.5,
+  1964: 122.5,
+  1965: 128.9,
+  1966: 135.6,
+  1967: 142.7,
+  1968: 150.0,
+  1969: 157.9,
+  1970: 166.1,
+  1971: 174.7,
+  1972: 183.8,
+  1973: 193.4,
+  1974: 199.2,
+  1975: 205.1,
+  1976: 211.3,
+  1977: 217.6,
+  1978: 224.1,
+  1979: 230.8,
+  1980: 237.8,
+  1981: 244.0,
+  1982: 250.3,
+  1983: 256.8,
+  1984: 263.5,
+  1985: 270.3,
+  1986: 277.4,
+  1987: 284.6,
+  1988: 292.0,
+  1989: 299.6,
+  1990: 307.4,
+  1991: 312.0,
+  1992: 316.7,
+  1993: 321.4,
+  1994: 326.3,
+  1995: 331.1,
+  1996: 334.6,
+  1997: 340.7,
+  1998: 348.3,
+  1999: 352.5,
+  2000: 362.4,
+  2001: 368.6,
+  2002: 379.0,
+  2003: 381.6,
+  2004: 385.9,
+  2005: 390.1,
+  2006: 400.4,
+  2007: 398.8,
+  2008: 396.6,
+  2009: 392.8,
+  2010: 398.2,
+  2011: 403.3,
+  2012: 404.1,
+  2013: 410.6,
+  2014: 414.8,
+  2015: 418.2,
+  2016: 417.9,
+  2017: 425.9,
+  2018: 426.5,
+  2019: 428.7,
+  2020: 429.4,
+  2021: 423.6,
+  2022: 418.2,
+  2023: 421.1,
+  2024: 422.4,
 };
 
 // ── Annual CPI inflation rates (%) ────────────────────────
@@ -1301,9 +1532,9 @@ export const ppAnnotations: PPAnnotation[] = [
   { year: 2000, labelFr: "35 heures", labelEn: "35-hour week" },
   { year: 2002, labelFr: "Passage à l'euro", labelEn: "Euro adoption" },
   {
-    year: 2022,
-    labelFr: "Inflation post-COVID",
-    labelEn: "Post-COVID inflation",
+    year: 2020,
+    labelFr: "Confinements COVID",
+    labelEn: "COVID lockdowns",
   },
 ];
 

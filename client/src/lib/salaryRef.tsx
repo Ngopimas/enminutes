@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { SalaryRef } from './data';
 
 interface SalaryRefContextType {
@@ -9,7 +9,13 @@ interface SalaryRefContextType {
 const SalaryRefContext = createContext<SalaryRefContextType | null>(null);
 
 export function SalaryRefProvider({ children }: { children: ReactNode }) {
-  const [salaryRef, setSalaryRef] = useState<SalaryRef>('smic');
+  const [salaryRef, setSalaryRef] = useState<SalaryRef>(() => {
+    return (localStorage.getItem('salaryRef') as SalaryRef) ?? 'smic';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('salaryRef', salaryRef);
+  }, [salaryRef]);
 
   return (
     <SalaryRefContext.Provider value={{ salaryRef, setSalaryRef }}>

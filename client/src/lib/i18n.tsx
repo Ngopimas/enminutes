@@ -10,10 +10,13 @@ interface LangContextType {
 const LangContext = createContext<LangContextType | null>(null);
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>('fr');
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem('lang') as Lang) ?? 'fr';
+  });
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    localStorage.setItem('lang', lang);
   }, [lang]);
 
   const t = useCallback(
