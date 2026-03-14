@@ -37,10 +37,10 @@ export default function Header() {
           <span className="font-semibold text-sm tracking-tight">
             {t("siteTitle")}
           </span>
-          <span className="text-muted-foreground/50 text-sm select-none">
+          <span className="hidden sm:inline text-muted-foreground/50 text-sm select-none">
             ·
           </span>
-          <span className="font-serif italic text-sm text-muted-foreground">
+          <span className="hidden sm:inline font-serif italic text-sm text-muted-foreground">
             En Minutes
           </span>
         </div>
@@ -53,7 +53,8 @@ export default function Header() {
             className="text-xs gap-1"
           >
             <Globe className="w-3.5 h-3.5" />
-            {t("language")}
+            <span className="hidden sm:inline">{t("language")}</span>
+            <span className="sm:hidden uppercase">{lang}</span>
           </Button>
           <Button
             variant="ghost"
