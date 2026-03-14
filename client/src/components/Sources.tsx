@@ -57,6 +57,7 @@ export default function Sources() {
           <p className="text-xs font-medium text-muted-foreground mb-1">{t('sourcesMethodLabel')}</p>
           <p className="text-sm font-mono tabular-nums">{t('sourcesFormula')}</p>
           <p className="text-xs text-muted-foreground mt-2">{t('sourcesInterpolation')}</p>
+          <p className="text-xs text-muted-foreground/70 italic mt-2">ℹ {t('sourcesSmicNote')}</p>
         </div>
 
         {/* Source links grid */}

@@ -101,6 +101,11 @@ export default function BasketComposition() {
             <span>{t("basketNote")}</span>
           </div>
 
+          {/* Housing exclusion callout */}
+          <p className="text-xs text-amber-600 dark:text-amber-400 italic max-w-3xl mb-2">
+            ⚠ {t("basketHousingNote")}
+          </p>
+
           {/* Honest disclaimer */}
           <p className="text-xs text-muted-foreground/70 italic max-w-3xl">
             {t("basketDisclaimer")}

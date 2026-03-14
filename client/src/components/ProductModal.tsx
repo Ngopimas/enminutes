@@ -405,6 +405,26 @@ export default function ProductModal({
           </CardContent>
         </Card>
 
+        <div className="mt-2 space-y-1">
+          {salaryRef === 'median' && (
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              ℹ {t('medianAvailableFrom')}
+            </p>
+          )}
+          {salaryRef === 'mean' && (
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              ℹ {t('meanStopsAt')}
+            </p>
+          )}
+          <p className="text-[11px] text-muted-foreground/60 text-right">
+            {product.dataType === 'actual'
+              ? t('dataTypeActual')
+              : product.dataType === 'ipc_estimate'
+              ? t('dataTypeIpcEstimate')
+              : t('dataTypeManual')}
+          </p>
+        </div>
+
         {/* Interactive year comparison */}
         <div className="mt-3" data-testid="year-comparison">
           {/* Unified grid: dropdown on top, value below */}

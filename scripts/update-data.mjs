@@ -644,23 +644,53 @@ async function main() {
     }
   }
 
-  // 6. Manual products list
-  console.log("\n\nProducts without auto-update (manual):");
+  // 6. Manual products checklist
+  const MANUAL_SOURCES = {
+    cigarettes: "DGDDI / Tabac Info Service",
+    cinema:     "CNC (Centre national du cinéma)",
+    medecin:    "Assurance Maladie / CNAM",
+    metro:      "RATP / Île-de-France Mobilités",
+    timbre:     "La Poste (tarifs en vigueur)",
+    journal:    "Prix éditeur (ex: Le Monde, Le Figaro)",
+    magazine:   "Prix éditeur / kiosque",
+    cafe:       "Enquête prix services (INSEE / secteur)",
+    biere:      "Enquête prix services (INSEE / secteur)",
+    internet:   "ARCEP / opérateurs (offres entrée de gamme)",
+    electricite:"EDF / CRE (tarifs réglementés)",
+    loyer:      "OLAP / CLAMEUR / INSEE Enquête Logement",
+    baguette_tradition: "Fédération des boulangers (si applicable)",
+  };
+
   const allProductIds = [
-    ...content.matchAll(/^\s+(\w+):\s*\{[^}]*id:\s*'(\w+)'/gm),
+    ...content.matchAll(/^\s+(\w+):\s*\{[^}]*id:\s*["'](\w+)["']/gm),
   ].map((m) => m[2]);
   const autoIds = new Set([
     ...Object.keys(DIRECT_PRICE_MAP),
     ...Object.keys(INDEX_PRICE_MAP),
   ]);
   const manualProducts = allProductIds.filter((id) => !autoIds.has(id));
-  for (const id of manualProducts) {
-    console.log(`  - ${id}`);
+
+  // Find last known year for each manual product
+  function getLastYear(productId) {
+    const re = new RegExp(
+      `id:\\s*["']${productId}["'][\\s\\S]*?prices:\\s*\\{([^}]+)\\}`,
+      "m",
+    );
+    const m = content.match(re);
+    if (!m) return "?";
+    const years = [...m[1].matchAll(/(\d{4}):/g)].map((x) => Number(x[1]));
+    return years.length ? Math.max(...years) : "?";
   }
-  console.log("\nThese require manual price updates (cigarettes = tax policy,");
-  console.log(
-    "cinema/medecin/metro = regulated, café/bière = service prices).\n",
-  );
+
+  console.log("\n\n════════════════════════════════════");
+  console.log("MANUAL PRODUCTS — reviewer checklist");
+  console.log("════════════════════════════════════");
+  for (const id of manualProducts) {
+    const lastYear = getLastYear(id);
+    const source = MANUAL_SOURCES[id] ?? "source à vérifier";
+    console.log(`- [ ] ${id} (last: ${lastYear}) — ${source}`);
+  }
+  console.log("");
 
   return changes.length;
 }

@@ -511,6 +511,25 @@ export default function PurchasingPowerIndex() {
         <div className="h-[300px] md:h-[400px] pl-2 pr-2">
           <Line data={chartData} options={chartOptions as any} />
         </div>
+
+        {/* Data transparency footnotes */}
+        <div className="mt-3 space-y-1">
+          {salaryRef === 'median' && (
+            <p className="text-[11px] text-muted-foreground/70 italic">
+              ℹ {t('medianAvailableFrom')}
+            </p>
+          )}
+          {salaryRef === 'mean' && (
+            <p className="text-[11px] text-muted-foreground/70 italic">
+              ℹ {t('meanStopsAt')}
+            </p>
+          )}
+          {showProductivity && (
+            <p className="text-[11px] text-muted-foreground/70 italic">
+              ℹ {t('productivityBackProjection')}
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );

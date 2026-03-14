@@ -272,6 +272,8 @@ function computeMinutes(
 }
 
 // ── Product interface ──────────────────────────────────────
+export type ProductDataType = 'actual' | 'ipc_estimate' | 'manual';
+
 export interface Product {
   id: string;
   nameFr: string;
@@ -287,6 +289,7 @@ export interface Product {
   minutesMedian: Record<number, number>;
   minutesMean: Record<number, number>;
   years: number[];
+  dataType: ProductDataType;
 }
 
 /** Generate a dynamic fun fact for a product based on current salary reference */
@@ -419,19 +422,7 @@ const rawProducts: Record<
       "Le prix de l'essence en minutes de travail est remarquablement stable depuis 30 ans, autour de 10-12 minutes.",
     funFactEn:
       "The petrol price in work-minutes has been remarkably stable for 30 years, around 10-12 minutes.",
-    prices: {
-      1950: 0.072,
-      1960: 0.157,
-      1970: 0.175,
-      1980: 0.469,
-      1990: 0.786,
-      2000: 1.14,
-      2005: 1.16,
-      2010: 1.42,
-      2015: 1.3,
-      2020: 1.3,
-      2024: 1.75,
-    },
+    prices: {1950:0.072,1960:0.157,1970:0.175,1980:0.469,1990:0.786,2000:1.14,2005:1.16,2010:1.42,2015:1.3,2020:1.3,2024:1.75,2025:1.61},
   },
   cinema: {
     id: "cinema",
@@ -552,6 +543,7 @@ const rawProducts: Record<
       2015: 1.8,
       2020: 1.9,
       2024: 2.15,
+      2025: 2.5,
     },
   },
   cigarettes: {
@@ -562,9 +554,9 @@ const rawProducts: Record<
     emoji: "🚬",
     category: "tabac",
     funFactFr:
-      "Les cigarettes sont le produit qui a le plus augmenté en temps de travail : de 21 min en 1960 à 78 min en 2024.",
+      "Les cigarettes sont le produit qui a le plus augmenté en temps de travail : de 21 min en 1960 à 80 min en 2025.",
     funFactEn:
-      "Cigarettes saw the biggest increase in work-time: from 21 min in 1960 to 78 min in 2024.",
+      "Cigarettes saw the biggest increase in work-time: from 21 min in 1960 to 80 min in 2025.",
     prices: {
       1960: 0.076,
       1970: 0.122,
@@ -576,6 +568,7 @@ const rawProducts: Record<
       2015: 7.0,
       2020: 10.2,
       2024: 12.0,
+      2025: 12.5,
     },
   },
   lait: {
@@ -613,17 +606,7 @@ const rawProducts: Record<
       "Un kilo de bœuf coûtait 415 minutes de travail en 1960 contre 169 minutes en 2024 - 2,5 fois moins.",
     funFactEn:
       "A kilo of beef cost 415 work-minutes in 1960 vs 169 in 2024 - 2.5 times less.",
-    prices: {
-      1960: 1.52,
-      1970: 2.74,
-      1980: 6.86,
-      1990: 12.2,
-      2000: 15.24,
-      2010: 18.0,
-      2015: 19.5,
-      2020: 22.0,
-      2024: 26.0,
-    },
+    prices: {1960:1.52,1970:2.74,1980:6.86,1990:12.2,2000:15.24,2010:18,2015:19.5,2020:22,2024:26,2025:25.99},
   },
   oeufs: {
     id: "oeufs",
@@ -636,18 +619,7 @@ const rawProducts: Record<
       "Les œufs sont passés de 50 minutes de travail la douzaine en 1960 à 20 minutes en 2024.",
     funFactEn:
       "Eggs went from 50 work-minutes per dozen in 1960 to 20 in 2024.",
-    prices: {
-      1960: 0.183,
-      1970: 0.305,
-      1980: 0.762,
-      1990: 1.22,
-      2000: 1.6,
-      2005: 1.8,
-      2010: 2.0,
-      2015: 2.2,
-      2020: 2.5,
-      2024: 3.0,
-    },
+    prices: {1960:0.183,1970:0.305,1980:0.762,1990:1.22,2000:1.6,2005:1.8,2010:2,2015:2.2,2020:2.5,2024:3,2025:2.31},
   },
   cafe: {
     id: "cafe",
@@ -683,17 +655,7 @@ const rawProducts: Record<
       "La plaquette de beurre est passée de 62 min de travail en 1960 à 16 min en 2024.",
     funFactEn:
       "A 250g block of butter went from 62 work-minutes in 1960 to 16 in 2024.",
-    prices: {
-      1960: 0.228,
-      1970: 0.343,
-      1980: 0.762,
-      1990: 1.14,
-      2000: 1.34,
-      2010: 1.63,
-      2015: 1.7,
-      2020: 2.13,
-      2024: 2.5,
-    },
+    prices: {1960:0.228,1970:0.343,1980:0.762,1990:1.14,2000:1.34,2010:1.63,2015:1.7,2020:2.13,2024:2.5,2025:1.84},
   },
   croissant: {
     id: "croissant",
@@ -729,17 +691,7 @@ const rawProducts: Record<
     funFactFr:
       "Le camembert est passé de 46 minutes de travail en 1960 à 16 minutes en 2024.",
     funFactEn: "Camembert went from 46 work-minutes in 1960 to 16 in 2024.",
-    prices: {
-      1960: 0.168,
-      1970: 0.305,
-      1980: 0.762,
-      1990: 1.37,
-      2000: 1.52,
-      2010: 1.8,
-      2015: 1.9,
-      2020: 2.1,
-      2024: 2.4,
-    },
+    prices: {1960:0.168,1970:0.305,1980:0.762,1990:1.37,2000:1.52,2010:1.8,2015:1.9,2020:2.1,2024:2.4,2025:1.89},
   },
   vin: {
     id: "vin",
@@ -798,17 +750,7 @@ const rawProducts: Record<
       "Le poulet est passé de 208 min de travail/kg en 1960 à 62 min en 2024 - divisé par plus de 3.",
     funFactEn:
       "Chicken went from 208 work-min/kg in 1960 to 62 in 2024 - divided by more than 3.",
-    prices: {
-      1960: 0.762,
-      1970: 1.22,
-      1980: 3.05,
-      1990: 5.34,
-      2000: 5.8,
-      2010: 6.5,
-      2015: 7.0,
-      2020: 8.0,
-      2024: 9.5,
-    },
+    prices: {1960:0.762,1970:1.22,1980:3.05,1990:5.34,2000:5.8,2010:6.5,2015:7,2020:8,2024:9.5,2025:7.65},
   },
   pates: {
     id: "pates",
@@ -886,17 +828,7 @@ const rawProducts: Record<
     funFactFr:
       "Les oranges sont passées de 41 minutes de travail en 1960 à 14 minutes en 2024.",
     funFactEn: "Oranges went from 41 work-minutes in 1960 to 14 in 2024.",
-    prices: {
-      1960: 0.152,
-      1970: 0.229,
-      1980: 0.534,
-      1990: 1.07,
-      2000: 1.52,
-      2010: 2.0,
-      2015: 2.1,
-      2020: 2.3,
-      2024: 2.8,
-    },
+    prices: {1960:0.152,1970:0.229,1980:0.534,1990:1.07,2000:1.52,2010:2,2015:2.1,2020:2.3,2024:2.8,2025:2.72},
   },
   tomates: {
     id: "tomates",
@@ -908,17 +840,7 @@ const rawProducts: Record<
     funFactFr:
       "Les tomates coûtaient 46 min de travail en 1960, 18 min en 2024.",
     funFactEn: "Tomatoes cost 46 work-minutes in 1960, 18 in 2024.",
-    prices: {
-      1960: 0.183,
-      1970: 0.305,
-      1980: 0.61,
-      1990: 1.22,
-      2000: 1.98,
-      2010: 2.8,
-      2015: 2.5,
-      2020: 3.0,
-      2024: 3.5,
-    },
+    prices: {1960:0.183,1970:0.305,1980:0.61,1990:1.22,2000:1.98,2010:2.8,2015:2.5,2020:3,2024:3.5,2025:3.6},
   },
   pommes: {
     id: "pommes",
@@ -930,17 +852,7 @@ const rawProducts: Record<
     funFactFr:
       "Les pommes sont passées de 33 min de travail en 1960 à 14 min en 2024.",
     funFactEn: "Apples went from 30 min in 1960 to 14 min in 2024.",
-    prices: {
-      1960: 0.122,
-      1970: 0.183,
-      1980: 0.457,
-      1990: 0.91,
-      2000: 1.52,
-      2010: 2.2,
-      2015: 2.1,
-      2020: 2.4,
-      2024: 2.8,
-    },
+    prices: {1960:0.122,1970:0.183,1980:0.457,1990:0.91,2000:1.52,2010:2.2,2015:2.1,2020:2.4,2024:2.8,2025:3.02},
   },
   salade: {
     id: "salade",
@@ -1119,6 +1031,16 @@ const rawProducts: Record<
   },
 };
 
+// ── Data source classification ─────────────────────────────
+// actual: direct INSEE retail prices (Prix moyens annuels)
+// ipc_estimate: anchor price × (current IPC / anchor IPC)
+// manual: manually maintained from public sources
+const IPC_ESTIMATE_PRODUCTS = new Set([
+  'baguette', 'essence', 'lait', 'boeuf', 'oeufs', 'beurre', 'poulet',
+  'pommes_de_terre', 'sucre', 'pates', 'huile', 'camembert', 'vin', 'yaourt',
+]);
+const ACTUAL_PRICE_PRODUCTS = new Set(['tomates', 'oranges', 'pommes']);
+
 // ── Process all products ───────────────────────────────────
 export const products: Record<string, Product> = {};
 for (const [key, prod] of Object.entries(rawProducts)) {
@@ -1126,6 +1048,11 @@ for (const [key, prod] of Object.entries(rawProducts)) {
   const minutes = computeMinutes(pricesInterp);
   const minutesMedian = computeMinutes(pricesInterp, medianSalaryRates);
   const minutesMean = computeMinutes(pricesInterp, meanSalaryRates);
+  const dataType: ProductDataType = ACTUAL_PRICE_PRODUCTS.has(key)
+    ? 'actual'
+    : IPC_ESTIMATE_PRODUCTS.has(key)
+    ? 'ipc_estimate'
+    : 'manual';
   products[key] = {
     ...prod,
     pricesInterp,
@@ -1135,6 +1062,7 @@ for (const [key, prod] of Object.entries(rawProducts)) {
     years: Object.keys(minutes)
       .map(Number)
       .sort((a, b) => a - b),
+    dataType,
   };
 }
 

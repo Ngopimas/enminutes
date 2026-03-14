@@ -63,7 +63,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     methodologyText:
       "Pour chaque produit et chaque année, le temps de travail est calculé ainsi\u202F: minutes = (prix / salaire horaire net) × 60. Les prix intermédiaires sont estimés par interpolation linéaire entre les points de données connus.",
     sourcesSmicLabel: "SMIC horaire net",
-    sourcesSmicDesc: "Historique officiel du salaire minimum (net après CSG/CRDS)",
+    sourcesSmicDesc:
+      "Historique officiel du salaire minimum (net après CSG/CRDS)",
     sourcesPricesLabel: "Prix à la consommation",
     sourcesPricesDesc: "Indices et prix moyens de détail",
     sourcesPikettyLabel: "World Inequality Database",
@@ -82,6 +83,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     sourcesInterpolation:
       "Interpolation linéaire entre les points de données connus pour les années manquantes.",
     sourcesFormula: "minutes = (prix / salaire horaire net) × 60",
+    sourcesSmicNote:
+      "SMIC 2005+ : série INSEE officielle (net mensuel ÷ 151,67 h). 1970–2004 : approximation nette (±5%). Avant 1970 : SMIG avec taux de cotisations estimés (±10%).",
     footerText:
       "Données compilées à partir de sources publiques françaises. Les prix intermédiaires sont interpolés.",
     createdWith: "Créé avec",
@@ -99,7 +102,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppIndexTitle: "Le SMIC achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexSub:
       "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 16 biens courants (base 100 = 1960)",
-    ppKpiMultiplier: "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
+    ppKpiMultiplier:
+      "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket1960: "Minutes pour le panier en",
     ppKpiBasketNow: "Minutes pour le panier aujourd'hui",
     ppChartYLabel: "Indice pouvoir d'achat (base 100 = 1960)",
@@ -143,14 +147,32 @@ export const translations: Record<Lang, Record<string, string>> = {
     salaryRefNote: "Données depuis {year}",
     chartYLabelMedian: "Minutes de salaire médian",
     chartYLabelMean: "Minutes de salaire moyen",
-    ppIndexSubMedian: "Indice composite basé sur le salaire net médian, panier de 16 biens courants (base 100 = 1996)",
-    ppIndexSubMean: "Indice composite basé sur le salaire net moyen, panier de 16 biens courants (base 100 = 1960)",
-    ppIndexTitleMedian: "Le salaire médian achète-t-il plus ou moins qu'avant\u202F?",
-    ppIndexTitleMean: "Le salaire moyen achète-t-il plus ou moins qu'avant\u202F?",
-    ppKpiMultiplierMedian: "Le pouvoir d'achat du salaire médian a augmenté de {mult}× depuis {year}",
-    ppKpiMultiplierMean: "Le pouvoir d'achat du salaire moyen a augmenté de {mult}× depuis {year}",
-    basketExcludedCigarettes: "Exclu du panier\u202F: la hausse reflète une politique fiscale, pas le coût de la vie",
-    basketExcludedLoyer: "Exclu du panier\u202F: les données nationales masquent les fortes disparités régionales",
+    ppIndexSubMedian:
+      "Indice composite basé sur le salaire net médian, panier de 16 biens courants (base 100 = 1996)",
+    ppIndexSubMean:
+      "Indice composite basé sur le salaire net moyen, panier de 16 biens courants (base 100 = 1960)",
+    ppIndexTitleMedian:
+      "Le salaire médian achète-t-il plus ou moins qu'avant\u202F?",
+    ppIndexTitleMean:
+      "Le salaire moyen achète-t-il plus ou moins qu'avant\u202F?",
+    ppKpiMultiplierMedian:
+      "Le pouvoir d'achat du salaire médian a augmenté de {mult}× depuis {year}",
+    ppKpiMultiplierMean:
+      "Le pouvoir d'achat du salaire moyen a augmenté de {mult}× depuis {year}",
+    basketExcludedCigarettes:
+      "Exclu du panier\u202F: la hausse reflète une politique fiscale, pas le coût de la vie",
+    basketExcludedLoyer:
+      "Exclu du panier\u202F: les données nationales masquent les fortes disparités régionales",
+    dataTypeActual: "Prix réel (source INSEE directe)",
+    dataTypeIpcEstimate: "Prix estimé via indice IPC (INSEE)",
+    dataTypeManual: "Prix actuel vérifié manuellement",
+    medianAvailableFrom:
+      "Salaire médian disponible à partir de 1996 (INSEE DADS).",
+    meanStopsAt: "Salaire moyen disponible jusqu'en 2024 (INSEE DADS).",
+    productivityBackProjection:
+      "Productivité : données OCDE réelles à partir de 1995. Avant 1995\u202F: rétroprojection à partir de taux documentés.",
+    basketHousingNote:
+      "Le logement est exclu du panier composite\u202F: les données nationales masquent de fortes disparités régionales.",
     notFoundTitle: "Page introuvable",
     notFoundMessage: "Cette page n'existe pas.",
   },
@@ -229,6 +251,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     sourcesInterpolation:
       "Linear interpolation between known data points for missing years.",
     sourcesFormula: "minutes = (price / net hourly salary) × 60",
+    sourcesSmicNote:
+      "SMIC 2005+: official INSEE series (net monthly ÷ 151.67 h). 1970–2004: net approximation (±5%). Before 1970: SMIG with estimated contribution rates (±10%).",
     footerText:
       "Data compiled from French public sources. Intermediate prices are interpolated.",
     createdWith: "Created with",
@@ -246,7 +270,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppIndexTitle: "Does the minimum wage buy more or less than before?",
     ppIndexSub:
       "Composite purchasing power index of the SMIC, based on a basket of 16 everyday goods (base 100 = 1960)",
-    ppKpiMultiplier: "SMIC purchasing power has been multiplied by {mult} since {year}",
+    ppKpiMultiplier:
+      "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket1960: "Minutes for the basket in",
     ppKpiBasketNow: "Minutes for the basket today",
     ppChartYLabel: "Purchasing power index (base 100 = 1960)",
@@ -290,14 +315,30 @@ export const translations: Record<Lang, Record<string, string>> = {
     salaryRefNote: "Data from {year}",
     chartYLabelMedian: "Minutes of median salary",
     chartYLabelMean: "Minutes of mean salary",
-    ppIndexSubMedian: "Composite index based on net median salary, basket of 16 everyday goods (base 100 = 1996)",
-    ppIndexSubMean: "Composite index based on net mean salary, basket of 16 everyday goods (base 100 = 1960)",
+    ppIndexSubMedian:
+      "Composite index based on net median salary, basket of 16 everyday goods (base 100 = 1996)",
+    ppIndexSubMean:
+      "Composite index based on net mean salary, basket of 16 everyday goods (base 100 = 1960)",
     ppIndexTitleMedian: "Does the median salary buy more or less than before?",
     ppIndexTitleMean: "Does the mean salary buy more or less than before?",
-    ppKpiMultiplierMedian: "Median salary purchasing power increased {mult}× since {year}",
-    ppKpiMultiplierMean: "Mean salary purchasing power increased {mult}× since {year}",
-    basketExcludedCigarettes: "Excluded from basket: price increases reflect tax policy, not cost-of-living trends",
-    basketExcludedLoyer: "Excluded from basket: national averages mask large regional disparities",
+    ppKpiMultiplierMedian:
+      "Median salary purchasing power increased {mult}× since {year}",
+    ppKpiMultiplierMean:
+      "Mean salary purchasing power increased {mult}× since {year}",
+    basketExcludedCigarettes:
+      "Excluded from basket: price increases reflect tax policy, not cost-of-living trends",
+    basketExcludedLoyer:
+      "Excluded from basket: national averages mask large regional disparities",
+    dataTypeActual: "Actual price (direct INSEE source)",
+    dataTypeIpcEstimate: "Estimated via CPI index (INSEE)",
+    dataTypeManual: "Current price manually sourced & verified",
+    medianAvailableFrom:
+      "Median salary available from 1996 onwards (INSEE DADS).",
+    meanStopsAt: "Mean salary available through 2024 (INSEE DADS).",
+    productivityBackProjection:
+      "Productivity: real OECD data from 1995. Before 1995: back-projected from documented growth rates.",
+    basketHousingNote:
+      "Housing is excluded from the composite basket: national averages mask large regional disparities.",
     notFoundTitle: "Page not found",
     notFoundMessage: "This page does not exist.",
   },
