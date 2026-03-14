@@ -1,9 +1,12 @@
 // ============================================================
 // Pouvoir d'Achat - Data Module (TypeScript ES Module)
-// All prices in euros, SMIC hourly rates, minutes of work
+// All prices in euros, hourly rates, minutes of work
 // ============================================================
 
-// ── SMIC hourly rates (euros) ──────────────────────────────
+// ── Salary reference types ─────────────────────────────────
+export type SalaryRef = 'smic' | 'median' | 'mean';
+
+// ── SMIC hourly brut rates (euros) ─────────────────────────
 export const smicRates: Record<number, number> = {
   1950: 0.12,
   1951: 0.12,
@@ -84,6 +87,47 @@ export const smicRates: Record<number, number> = {
   2026: 12.02,
 };
 
+// ── Mean salary net hourly rates (euros) ────────────────────
+// Source: INSEE DADS (idbank 010752366), annual net EQTP / 1820h
+export const meanSalaryRates: Record<number, number> = {
+  1950: 0.23, 1951: 0.26, 1952: 0.31, 1953: 0.31, 1954: 0.34,
+  1955: 0.38, 1956: 0.42, 1957: 0.46, 1958: 0.52, 1959: 0.55,
+  1960: 0.6, 1961: 0.65, 1962: 0.72, 1963: 0.79, 1964: 0.84,
+  1965: 0.89, 1966: 0.94, 1967: 0.99, 1968: 1.09, 1969: 1.21,
+  1970: 1.32, 1971: 1.47, 1972: 1.62, 1973: 1.81, 1974: 2.12,
+  1975: 2.43, 1976: 2.82, 1977: 3.11, 1978: 3.52, 1979: 3.82,
+  1980: 4.35, 1981: 4.93, 1982: 5.6, 1983: 6.19, 1984: 6.64,
+  1985: 7.11, 1986: 7.49, 1987: 7.69, 1988: 7.92, 1989: 8.27,
+  1990: 8.7, 1991: 9.01, 1992: 9.24, 1993: 9.47, 1994: 9.62,
+  1995: 9.88, 1996: 10.02, 1997: 10.23, 1998: 10.41, 1999: 10.63,
+  2000: 10.86, 2001: 11.09, 2002: 11.34, 2003: 11.56, 2004: 11.81,
+  2005: 12.15, 2006: 12.35, 2007: 12.74, 2008: 13.15, 2009: 13.33,
+  2010: 13.61, 2011: 13.94, 2012: 14.14, 2013: 14.24, 2014: 14.37,
+  2015: 14.54, 2016: 14.61, 2017: 14.94, 2018: 15.26, 2019: 15.52,
+  2020: 14.93, 2021: 15.56, 2022: 16.38, 2023: 17.1, 2024: 17.56,
+};
+
+// ── Median salary net hourly rates (euros) ──────────────────
+// Source: INSEE DADS (idbank 010752342), annual net EQTP / 1820h
+// Available from 1996 onward
+export const medianSalaryRates: Record<number, number> = {
+  1996: 8.21, 1997: 8.36, 1998: 8.51, 1999: 8.62,
+  2000: 8.74, 2001: 8.92, 2002: 9.15, 2003: 9.35, 2004: 9.53,
+  2005: 9.8, 2006: 9.96, 2007: 10.23, 2008: 10.58, 2009: 10.8,
+  2010: 11.0, 2011: 11.26, 2012: 11.41, 2013: 11.51, 2014: 11.58,
+  2015: 11.67, 2016: 11.74, 2017: 11.96, 2018: 12.2, 2019: 12.64,
+  2020: 13.01, 2021: 13.0, 2022: 13.47, 2023: 14.05, 2024: 14.44,
+};
+
+// ── Get rates by salary reference ──────────────────────────
+export function getRatesForRef(ref: SalaryRef): Record<number, number> {
+  switch (ref) {
+    case 'median': return medianSalaryRates;
+    case 'mean': return meanSalaryRates;
+    default: return smicRates;
+  }
+}
+
 // ── Helper: linear interpolation ───────────────────────────
 function interpolate(
   rawPoints: Record<number, number>,
@@ -121,13 +165,14 @@ function interpolate(
 // ── Helper: compute minutes of work ────────────────────────
 function computeMinutes(
   pricesInterp: Record<number, number>,
+  rates: Record<number, number> = smicRates,
 ): Record<number, number> {
   const result: Record<number, number> = {};
   for (const [y, price] of Object.entries(pricesInterp)) {
     const yr = Number(y);
-    const smic = smicRates[yr];
-    if (smic) {
-      result[yr] = +((price / smic) * 60).toFixed(1);
+    const rate = rates[yr];
+    if (rate) {
+      result[yr] = +((price / rate) * 60).toFixed(1);
     }
   }
   return result;
@@ -146,7 +191,24 @@ export interface Product {
   prices: Record<number, number>;
   pricesInterp: Record<number, number>;
   minutes: Record<number, number>;
+  minutesMedian: Record<number, number>;
+  minutesMean: Record<number, number>;
   years: number[];
+}
+
+/** Get the minutes record for a product given a salary reference */
+export function getMinutes(product: Product, ref: SalaryRef): Record<number, number> {
+  switch (ref) {
+    case 'median': return product.minutesMedian;
+    case 'mean': return product.minutesMean;
+    default: return product.minutes;
+  }
+}
+
+/** Get years that have data for a given salary reference */
+export function getYearsForRef(product: Product, ref: SalaryRef): number[] {
+  const mins = getMinutes(product, ref);
+  return Object.keys(mins).map(Number).sort((a, b) => a - b);
 }
 
 export interface Category {
@@ -872,10 +934,14 @@ export const products: Record<string, Product> = {};
 for (const [key, prod] of Object.entries(rawProducts)) {
   const pricesInterp = interpolate(prod.prices);
   const minutes = computeMinutes(pricesInterp);
+  const minutesMedian = computeMinutes(pricesInterp, medianSalaryRates);
+  const minutesMean = computeMinutes(pricesInterp, meanSalaryRates);
   products[key] = {
     ...prod,
     pricesInterp,
     minutes,
+    minutesMedian,
+    minutesMean,
     years: Object.keys(minutes)
       .map(Number)
       .sort((a, b) => a - b),
@@ -991,18 +1057,64 @@ for (let y = 1960; y <= 2026; y++) {
   if (smicRates[y]) indexYears.push(y);
 }
 
-function computeBasketMinutes(year: number): number | null {
+function computeBasketMinutes(year: number, ref: SalaryRef = 'smic'): number | null {
   let totalWeightedMinutes = 0;
   let totalWeight = 0;
   for (const [pid, w] of Object.entries(basketWeights)) {
     if (w === 0) continue;
     const prod = products[pid];
-    if (!prod || prod.minutes[year] === undefined) continue;
-    totalWeightedMinutes += prod.minutes[year] * w;
+    if (!prod) continue;
+    const mins = getMinutes(prod, ref);
+    if (mins[year] === undefined) continue;
+    totalWeightedMinutes += mins[year] * w;
     totalWeight += w;
   }
   if (totalWeight === 0) return null;
   return totalWeightedMinutes / totalWeight;
+}
+
+/** Compute purchasing power data for any salary reference */
+export function computePurchasingPowerForRef(ref: SalaryRef) {
+  const rates = getRatesForRef(ref);
+  const refYears: number[] = [];
+  for (let y = 1950; y <= 2026; y++) {
+    if (rates[y]) refYears.push(y);
+  }
+
+  // Use the first year with basket data as base (1960 for smic/mean, 1996 for median)
+  const baseYr = refYears.find(y => y >= 1960 && computeBasketMinutes(y, ref) !== null) ?? refYears[0];
+
+  const bmy: Record<number, number> = {};
+  const ppIdx: Record<number, number> = {};
+  const base = computeBasketMinutes(baseYr, ref);
+
+  refYears.forEach((y) => {
+    const m = computeBasketMinutes(y, ref);
+    if (m !== null && base !== null) {
+      bmy[y] = +m.toFixed(2);
+      ppIdx[y] = +((base / m) * 100).toFixed(1);
+    }
+  });
+
+  let latest = refYears[refYears.length - 1];
+  for (let i = refYears.length - 1; i >= 0; i--) {
+    if (ppIdx[refYears[i]] !== undefined) {
+      latest = refYears[i];
+      break;
+    }
+  }
+  const latIdx = ppIdx[latest];
+  const mult = latIdx ? (latIdx / 100).toFixed(1) : "?";
+
+  return {
+    indexYears: refYears.filter((y) => ppIdx[y] !== undefined),
+    indexBaseYear: baseYr,
+    basketMinutesByYear: bmy,
+    purchasingPowerIndex: ppIdx,
+    multiplier: mult,
+    latestIndexYear: latest,
+    latestIndex: latIdx,
+  };
 }
 
 const basketMinutesByYear: Record<number, number> = {};

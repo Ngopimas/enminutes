@@ -44,14 +44,17 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "data: update prices and SMIC rates"
+          commit-message: "data: update prices, SMIC, and salary rates"
           title: "📊 Annual data update"
           body: |
-            Automated data update from INSEE consumer price indices.
+            Automated data update from INSEE.
 
             **What changed:**
             - Updated product prices from INSEE IPC annual averages
-            - Added new SMIC rates (if configured in the script)
+            - Added new SMIC rates (if available)
+            - Updated mean salary (net EQTP, idbank 010752366)
+            - Updated median salary (net EQTP, idbank 010752342)
+            - Updated CPI inflation rates
 
             **Script output:**
             ```

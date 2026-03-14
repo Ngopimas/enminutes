@@ -3,7 +3,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useLang } from '@/lib/i18n';
-import { products, categories, type Product } from '@/lib/data';
+import { useSalaryRef } from '@/lib/salaryRef';
+import { products, categories, getMinutes, getYearsForRef, type Product } from '@/lib/data';
 import ProductModal from './ProductModal';
 
 function Sparkline({ data }: { data: number[] }) {
@@ -38,19 +39,9 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
-function getTrend(product: Product) {
-  const years = product.years;
-  if (years.length < 2) return 'stable';
-  const last = product.minutes[years[years.length - 1]];
-  const prev = product.minutes[years[Math.max(0, years.length - 4)]];
-  const pctChange = ((last - prev) / prev) * 100;
-  if (pctChange > 5) return 'up';
-  if (pctChange < -5) return 'down';
-  return 'stable';
-}
-
 export default function ProductExplorer() {
   const { lang, t } = useLang();
+  const { salaryRef } = useSalaryRef();
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [trend, setTrend] = useState<'all' | 'up' | 'down' | 'stable'>('all');
@@ -58,6 +49,19 @@ export default function ProductExplorer() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const productList = useMemo(() => Object.values(products), []);
+
+  function getTrend(product: Product) {
+    const mins = getMinutes(product, salaryRef);
+    const years = getYearsForRef(product, salaryRef);
+    if (years.length < 2) return 'stable';
+    const last = mins[years[years.length - 1]];
+    const prev = mins[years[Math.max(0, years.length - 4)]];
+    if (!prev) return 'stable';
+    const pctChange = ((last - prev) / prev) * 100;
+    if (pctChange > 5) return 'up';
+    if (pctChange < -5) return 'down';
+    return 'stable';
+  }
 
   const filtered = useMemo(() => {
     let list = productList;
@@ -75,8 +79,10 @@ export default function ProductExplorer() {
     if (trend !== 'all') {
       list = list.filter(p => getTrend(p) === trend);
     }
+    // Filter out products with no data for this salary ref
+    list = list.filter(p => getYearsForRef(p, salaryRef).length > 0);
     return list;
-  }, [category, search, trend, productList]);
+  }, [category, search, trend, productList, salaryRef]);
 
   const handleCardClick = (product: Product) => {
     setSelectedProduct(product);
@@ -142,13 +148,15 @@ export default function ProductExplorer() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filtered.map(product => {
-              const years = product.years;
+              const mins = getMinutes(product, salaryRef);
+              const years = getYearsForRef(product, salaryRef);
+              if (years.length === 0) return null;
               const lastYear = years[years.length - 1];
-              const lastMin = product.minutes[lastYear];
-              const trend = getTrend(product);
+              const lastMin = mins[lastYear];
+              const trendVal = getTrend(product);
               const trendLabel =
-                trend === 'up' ? t('trendUp') : trend === 'down' ? t('trendDown') : t('trendStable');
-              const sparkData = years.map(y => product.minutes[y]);
+                trendVal === 'up' ? t('trendUp') : trendVal === 'down' ? t('trendDown') : t('trendStable');
+              const sparkData = years.map(y => mins[y]);
 
               return (
                 <Card

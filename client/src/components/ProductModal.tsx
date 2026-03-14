@@ -33,7 +33,8 @@ import {
 import { ArrowRight, Equal } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
-import type { Product } from "@/lib/data";
+import { useSalaryRef } from "@/lib/salaryRef";
+import { getMinutes, getYearsForRef, type Product } from "@/lib/data";
 
 ChartJS.register(
   CategoryScale,
@@ -110,27 +111,42 @@ export default function ProductModal({
 }: ProductModalProps) {
   const { lang, t } = useLang();
   const { isDark } = useTheme();
+  const { salaryRef } = useSalaryRef();
   const [showPrice, setShowPrice] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
 
-  // Reset selected years when product changes
+  // Reset selected years when product or salary ref changes
   useEffect(() => {
     if (product) {
-      setYearA(product.years[0]);
-      setYearB(product.years[product.years.length - 1]);
+      const yrs = getYearsForRef(product, salaryRef);
+      if (yrs.length > 0) {
+        setYearA(yrs[0]);
+        setYearB(yrs[yrs.length - 1]);
+      }
     }
-  }, [product?.id]);
+  }, [product?.id, salaryRef]);
 
   if (!product) return null;
 
+  const minutes = getMinutes(product, salaryRef);
+  const years = getYearsForRef(product, salaryRef);
+
+  if (years.length === 0) return null;
+
   const name = lang === "fr" ? product.nameFr : product.nameEn;
   const funFact = lang === "fr" ? product.funFactFr : product.funFactEn;
-  const years = product.years;
+
+  // Chart Y label based on salary ref
+  const yLabel = salaryRef === 'median'
+    ? t("chartYLabelMedian")
+    : salaryRef === 'mean'
+      ? t("chartYLabelMean")
+      : t("chartYLabel");
 
   // Comparison values
-  const minA = product.minutes[yearA] ?? 0;
-  const minB = product.minutes[yearB] ?? 0;
+  const minA = minutes[yearA] ?? 0;
+  const minB = minutes[yearB] ?? 0;
   const priceA = product.pricesInterp[yearA] ?? 0;
   const priceB = product.pricesInterp[yearB] ?? 0;
   const formattedA = formatPrice(priceA, yearA);
@@ -180,7 +196,7 @@ export default function ProductModal({
   const datasets: any[] = [
     {
       label: `${name} (${t("minutesAbbr")})`,
-      data: years.map((y) => product.minutes[y]),
+      data: years.map((y) => minutes[y]),
       borderColor: chartColor(1),
       backgroundColor: chartColorAlpha(1, 0.08),
       fill: true,
@@ -222,7 +238,7 @@ export default function ProductModal({
       position: "left" as const,
       title: {
         display: true,
-        text: t("chartYLabel"),
+        text: yLabel,
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },
@@ -324,15 +340,13 @@ export default function ProductModal({
     // Determine direction based on chronological order
     const chronoFirst = yearA < yearB ? yearA : yearB;
     const chronoLast = yearA < yearB ? yearB : yearA;
-    const minFirst = product.minutes[chronoFirst] ?? 0;
-    const minLast = product.minutes[chronoLast] ?? 0;
+    const minFirst = minutes[chronoFirst] ?? 0;
+    const minLast = minutes[chronoLast] ?? 0;
     const cheaper = minLast < minFirst;
 
     if (cheaper) {
-      // e.g. "2× plus rapide à gagner · −5.2 min"
       return `${ratioStr}× ${t("fasterToBuy")} · −${absDiff} min`;
     }
-    // e.g. "3.3× plus long à gagner · +42.8 min"
     return `${ratioStr}× ${t("slowerToBuy")} · +${absDiff} min`;
   };
 
@@ -340,8 +354,8 @@ export default function ProductModal({
     if (isSameYear || isSameValue) return "text-muted-foreground";
     const chronoFirst = yearA < yearB ? yearA : yearB;
     const chronoLast = yearA < yearB ? yearB : yearA;
-    const minFirst = product.minutes[chronoFirst] ?? 0;
-    const minLast = product.minutes[chronoLast] ?? 0;
+    const minFirst = minutes[chronoFirst] ?? 0;
+    const minLast = minutes[chronoLast] ?? 0;
     return minLast < minFirst
       ? "text-emerald-600 dark:text-emerald-400"
       : "text-red-600 dark:text-red-400";

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,7 +17,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
-import { purchasingPower, ppAnnotations } from "@/lib/data";
+import { useSalaryRef } from "@/lib/salaryRef";
+import { purchasingPower, ppAnnotations, computePurchasingPowerForRef } from "@/lib/data";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
 
 ChartJS.register(
@@ -53,26 +54,74 @@ const presidentColors = {
 export default function PurchasingPowerIndex() {
   const { lang, t } = useLang();
   const { isDark } = useTheme();
+  const { salaryRef } = useSalaryRef();
   const [reverseMinutes, setReverseMinutes] = useState(true);
   const [showPresidents, setShowPresidents] = useState(true);
   const [showContext, setShowContext] = useState(true);
   const [showInflation, setShowInflation] = useState(false);
 
+  // Compute PP data based on salary ref
+  const ppData = useMemo(() => {
+    if (salaryRef === 'smic') {
+      return {
+        indexYears: purchasingPower.indexYears,
+        indexBaseYear: purchasingPower.indexBaseYear,
+        purchasingPowerIndex: purchasingPower.purchasingPowerIndex,
+        basketMinutesByYear: purchasingPower.basketMinutesByYear,
+        multiplier: purchasingPower.multiplier,
+        inflationRates: purchasingPower.inflationRates,
+      };
+    }
+    const computed = computePurchasingPowerForRef(salaryRef);
+    return {
+      ...computed,
+      inflationRates: purchasingPower.inflationRates,
+    };
+  }, [salaryRef]);
+
   const {
     indexYears,
+    indexBaseYear: ppBaseYear,
     purchasingPowerIndex: ppIndex,
     basketMinutesByYear,
     multiplier,
     inflationRates,
-  } = purchasingPower;
+  } = ppData;
 
   const labels = indexYears.filter((y) => ppIndex[y] !== undefined);
   const indexData = labels.map((y) => ppIndex[y]);
   const minutesData = labels.map((y) => basketMinutesByYear[y]);
   const inflationData = labels.map((y) => inflationRates[y] ?? null);
 
-  const basket1960 = basketMinutesByYear[1960];
+  const basket1960 = basketMinutesByYear[ppBaseYear];
   const basketNow = basketMinutesByYear[labels[labels.length - 1]];
+
+  // Title and subtitle based on salary ref
+  const title = salaryRef === 'median'
+    ? t("ppIndexTitleMedian")
+    : salaryRef === 'mean'
+      ? t("ppIndexTitleMean")
+      : t("ppIndexTitle");
+
+  const subtitle = salaryRef === 'median'
+    ? t("ppIndexSubMedian")
+    : salaryRef === 'mean'
+      ? t("ppIndexSubMean")
+      : t("ppIndexSub");
+
+  // KPI multiplier label based on salary ref
+  const kpiMultiplierLabel = salaryRef === 'median'
+    ? t("ppKpiMultiplierMedian").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
+    : salaryRef === 'mean'
+      ? t("ppKpiMultiplierMean").replace("{mult}", multiplier).replace("{year}", String(ppBaseYear))
+      : t("ppKpiMultiplier");
+
+  // Chart Y labels
+  const yLabel2 = salaryRef === 'median'
+    ? t("chartYLabelMedian").replace("Minutes", "Min.") + " (" + t("ppLegendMinutes").split("(")[1]
+    : salaryRef === 'mean'
+      ? t("chartYLabelMean").replace("Minutes", "Min.") + " (" + t("ppLegendMinutes").split("(")[1]
+      : t("ppChartYLabel2");
 
   // Build annotations
   const annotations: Record<string, object> = {};
@@ -197,7 +246,7 @@ export default function PurchasingPowerIndex() {
       position: "left" as const,
       title: {
         display: true,
-        text: t("ppChartYLabel"),
+        text: t("ppChartYLabel").replace("1960", String(ppBaseYear)),
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },
@@ -215,7 +264,7 @@ export default function PurchasingPowerIndex() {
       position: "right" as const,
       title: {
         display: true,
-        text: t("ppChartYLabel2"),
+        text: yLabel2,
         font: { size: 10 },
         color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
       },
@@ -299,8 +348,8 @@ export default function PurchasingPowerIndex() {
   return (
     <section className="py-12 md:py-16" data-testid="pp-index">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-xl font-bold mb-1">{t("ppIndexTitle")}</h2>
-        <p className="text-sm text-muted-foreground mb-8">{t("ppIndexSub")}</p>
+        <h2 className="text-xl font-bold mb-1">{title}</h2>
+        <p className="text-sm text-muted-foreground mb-8">{subtitle}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <Card data-testid="kpi-multiplier">
@@ -309,7 +358,7 @@ export default function PurchasingPowerIndex() {
                 {multiplier}&times;
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiMultiplier")}
+                {kpiMultiplierLabel}
               </p>
             </CardContent>
           </Card>
@@ -319,7 +368,7 @@ export default function PurchasingPowerIndex() {
                 {basket1960 ? Math.round(basket1960) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasket1960")}
+                {t("ppKpiBasket1960")} {ppBaseYear}
               </p>
             </CardContent>
           </Card>

@@ -24,7 +24,8 @@ import {
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLang } from '@/lib/i18n';
-import { products } from '@/lib/data';
+import { useSalaryRef } from '@/lib/salaryRef';
+import { products, getMinutes, getYearsForRef } from '@/lib/data';
 
 // Strip diacritics for accent-insensitive search (e.g. "metro" matches "métro")
 function normalize(str: string): string {
@@ -33,6 +34,7 @@ function normalize(str: string): string {
 
 export default function TimelineComparison() {
   const { lang, t } = useLang();
+  const { salaryRef } = useSalaryRef();
   const [year1, setYear1] = useState('1960');
   const [year2, setYear2] = useState('2024');
   const [productId, setProductId] = useState('baguette');
@@ -59,8 +61,9 @@ export default function TimelineComparison() {
     const prod = products[productId];
     if (!prod) return;
 
-    const min1 = prod.minutes[y1];
-    const min2 = prod.minutes[y2];
+    const mins = getMinutes(prod, salaryRef);
+    const min1 = mins[y1];
+    const min2 = mins[y2];
     if (min1 === undefined || min2 === undefined) {
       setResult(null);
       return;

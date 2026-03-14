@@ -45,6 +45,23 @@ const SMIC_IDBANK = "000822484";
 const CPI_IDBANK = "001759970";
 
 /**
+ * Mean salary net annual EQTP (all workers) - INSEE DADS, idbank 010752366
+ * Annual net salary in euros, converted to hourly by dividing by 1820h.
+ * Source: https://www.insee.fr/fr/statistiques/serie/010752366
+ */
+const MEAN_SALARY_IDBANK = "010752366";
+
+/**
+ * Median salary net annual EQTP (all workers) - INSEE DADS, idbank 010752342
+ * Annual net salary in euros, converted to hourly by dividing by 1820h.
+ * Available from 1996 onward.
+ * Source: https://www.insee.fr/fr/statistiques/serie/010752342
+ */
+const MEDIAN_SALARY_IDBANK = "010752342";
+
+const HOURS_PER_YEAR = 1820; // Standard full-time equivalent hours
+
+/**
  * METHOD A: Products with "Prix moyens annuels de vente au détail" series.
  * These return ACTUAL retail prices in EUR - the most accurate method.
  * idbanks from: https://www.insee.fr/fr/statistiques/series/103157792
@@ -276,6 +293,25 @@ function extractSmicRates(content) {
   return rates;
 }
 
+function extractSalaryRates(content, varName) {
+  const regex = new RegExp(`${varName}[^{]*\\{([\\s\\S]*?)\\};`, "m");
+  const match = content.match(regex);
+  if (!match) return {};
+  const rates = {};
+  const pairRegex = /(\d{4})\s*:\s*([\d.]+)/g;
+  let m;
+  while ((m = pairRegex.exec(match[1])) !== null) {
+    rates[parseInt(m[1])] = parseFloat(m[2]);
+  }
+  return rates;
+}
+
+function replaceSalaryRates(content, varName, newRates) {
+  const formatted = formatBlock(newRates);
+  const regex = new RegExp(`(${varName}[^{]*)\\{[\\s\\S]*?\\}`, "m");
+  return content.replace(regex, `$1${formatted}`);
+}
+
 function extractInflationRates(content) {
   const match = content.match(/inflationRates[^{]*\{([^}]+)\}/s);
   if (!match) return {};
@@ -360,7 +396,75 @@ async function main() {
     }
   }
 
-  // 2. Update CPI inflation rates
+  // 2. Update mean salary rates (INSEE DADS)
+  console.log("\nStep 2a: Mean salary net hourly (INSEE 010752366)");
+  const existingMeanRates = extractSalaryRates(content, "meanSalaryRates");
+  const maxMeanYear =
+    Object.keys(existingMeanRates).length > 0
+      ? Math.max(...Object.keys(existingMeanRates).map(Number))
+      : 2024;
+  console.log(`  Current data: up to ${maxMeanYear}`);
+
+  try {
+    console.log(`  Fetching mean salary (${MEAN_SALARY_IDBANK})...`);
+    const meanXml = await fetchInseeXml(MEAN_SALARY_IDBANK, maxMeanYear);
+    const meanObsRegex = /TIME_PERIOD="(\d{4})"\s+OBS_VALUE="([^"]+)"/g;
+    let meanMatch;
+    let meanUpdated = false;
+    while ((meanMatch = meanObsRegex.exec(meanXml)) !== null) {
+      const year = parseInt(meanMatch[1]);
+      const annualNet = parseFloat(meanMatch[2]);
+      if (!isNaN(annualNet) && year > maxMeanYear && year <= currentYear) {
+        const hourly = +(annualNet / HOURS_PER_YEAR).toFixed(2);
+        existingMeanRates[year] = hourly;
+        changes.push(`Mean salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`);
+        meanUpdated = true;
+      }
+    }
+    if (meanUpdated) {
+      content = replaceSalaryRates(content, "meanSalaryRates", existingMeanRates);
+    } else {
+      console.log("  No new mean salary data available.");
+    }
+  } catch (err) {
+    console.warn(`  ⚠ Failed to fetch mean salary: ${err.message}`);
+  }
+
+  // 2b. Update median salary rates (INSEE DADS)
+  console.log("\nStep 2b: Median salary net hourly (INSEE 010752342)");
+  const existingMedianRates = extractSalaryRates(content, "medianSalaryRates");
+  const maxMedianYear =
+    Object.keys(existingMedianRates).length > 0
+      ? Math.max(...Object.keys(existingMedianRates).map(Number))
+      : 2024;
+  console.log(`  Current data: up to ${maxMedianYear}`);
+
+  try {
+    console.log(`  Fetching median salary (${MEDIAN_SALARY_IDBANK})...`);
+    const medianXml = await fetchInseeXml(MEDIAN_SALARY_IDBANK, maxMedianYear);
+    const medianObsRegex = /TIME_PERIOD="(\d{4})"\s+OBS_VALUE="([^"]+)"/g;
+    let medianMatch;
+    let medianUpdated = false;
+    while ((medianMatch = medianObsRegex.exec(medianXml)) !== null) {
+      const year = parseInt(medianMatch[1]);
+      const annualNet = parseFloat(medianMatch[2]);
+      if (!isNaN(annualNet) && year > maxMedianYear && year <= currentYear) {
+        const hourly = +(annualNet / HOURS_PER_YEAR).toFixed(2);
+        existingMedianRates[year] = hourly;
+        changes.push(`Median salary: added ${year} → ${hourly} €/h (from ${annualNet} €/year)`);
+        medianUpdated = true;
+      }
+    }
+    if (medianUpdated) {
+      content = replaceSalaryRates(content, "medianSalaryRates", existingMedianRates);
+    } else {
+      console.log("  No new median salary data available.");
+    }
+  } catch (err) {
+    console.warn(`  ⚠ Failed to fetch median salary: ${err.message}`);
+  }
+
+  // 3. Update CPI inflation rates
   console.log("\nStep 2: CPI inflation (INSEE 001759970)");
   const existingInflation = extractInflationRates(content);
   const maxInflationYear =

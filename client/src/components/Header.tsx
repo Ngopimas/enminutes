@@ -1,11 +1,21 @@
 import { Sun, Moon, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
+import { useSalaryRef } from "@/lib/salaryRef";
+import type { SalaryRef } from "@/lib/data";
 
 export default function Header() {
   const { lang, setLang, t } = useLang();
   const { isDark, toggle } = useTheme();
+  const { salaryRef, setSalaryRef } = useSalaryRef();
 
   return (
     <header
@@ -45,6 +55,27 @@ export default function Header() {
           </span>
         </div>
         <div className="flex items-center gap-1">
+          {/* Salary reference selector */}
+          <Select value={salaryRef} onValueChange={(v) => setSalaryRef(v as SalaryRef)}>
+            <SelectTrigger
+              className="h-8 w-auto text-xs gap-1 border-primary/30"
+              data-testid="salary-ref-select"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="smic" data-testid="salary-ref-smic">
+                <span className="text-xs">{t("salaryRefSmic")}</span>
+              </SelectItem>
+              <SelectItem value="median" data-testid="salary-ref-median">
+                <span className="text-xs">{t("salaryRefMedian")}</span>
+              </SelectItem>
+              <SelectItem value="mean" data-testid="salary-ref-mean">
+                <span className="text-xs">{t("salaryRefMean")}</span>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
           <Button
             variant="outline"
             size="sm"

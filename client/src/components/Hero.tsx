@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLang } from '@/lib/i18n';
-import { products, featuredProducts } from '@/lib/data';
+import { useSalaryRef } from '@/lib/salaryRef';
+import { products, featuredProducts, getMinutes, getYearsForRef } from '@/lib/data';
 
 export default function Hero() {
   const { lang, t } = useLang();
+  const { salaryRef } = useSalaryRef();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -16,17 +18,25 @@ export default function Hero() {
 
   const productId = featuredProducts[index];
   const product = products[productId];
-  const years = product.years;
+  const minutes = getMinutes(product, salaryRef);
+  const years = getYearsForRef(product, salaryRef);
+
+  if (years.length === 0) return null;
+
   const firstYear = years[0];
   const lastYear = years[years.length - 1];
-  const firstMin = Math.round(product.minutes[firstYear]);
-  const lastMin = Math.round(product.minutes[lastYear]);
-  const name = lang === 'fr' ? product.nameFr : product.nameEn;
-  // Add article for French (un/une are in the product name already via nameFr)
+  const firstMin = Math.round(minutes[firstYear]);
+  const lastMin = Math.round(minutes[lastYear]);
   const nameDisplay = lang === 'fr'
     ? product.nameFr.toLowerCase()
     : product.nameEn.toLowerCase();
   const wentDown = lastMin < firstMin;
+
+  const refLabel = salaryRef === 'smic'
+    ? (lang === 'fr' ? 'SMIC' : 'min. wage')
+    : salaryRef === 'median'
+      ? (lang === 'fr' ? 'salaire médian' : 'median salary')
+      : (lang === 'fr' ? 'salaire moyen' : 'mean salary');
 
   return (
     <section className="py-12 md:py-16" data-testid="hero">
@@ -35,12 +45,17 @@ export default function Hero() {
           {t('heroHeadline')}
         </h1>
         <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto mb-8">
-          {t('heroSubtitle')}
+          {salaryRef === 'smic'
+            ? t('heroSubtitle')
+            : salaryRef === 'median'
+              ? t('heroSubtitleMedian')
+              : t('heroSubtitleMean')
+          }
         </p>
         <div className="min-h-[48px] flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.p
-              key={productId}
+              key={`${productId}-${salaryRef}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -52,7 +67,7 @@ export default function Hero() {
                 <>
                   En {firstYear}, il fallait{' '}
                   <span className="font-semibold text-foreground">{firstMin}</span>{' '}
-                  min de SMIC pour acheter 1 {nameDisplay}.{' '}
+                  min de {refLabel} pour acheter 1 {nameDisplay}.{' '}
                   {wentDown
                     ? <>Aujourd&apos;hui, <span className="font-semibold text-foreground">{lastMin}</span> min suffisent.</>
                     : <>Aujourd&apos;hui, il en faut <span className="font-semibold text-foreground">{lastMin}</span>.</>
@@ -62,7 +77,7 @@ export default function Hero() {
                 <>
                   In {firstYear}, it took{' '}
                   <span className="font-semibold text-foreground">{firstMin}</span>{' '}
-                  min of min. wage for 1 {nameDisplay}.{' '}
+                  min of {refLabel} for 1 {nameDisplay}.{' '}
                   {wentDown
                     ? <>Today, <span className="font-semibold text-foreground">{lastMin}</span> min is enough.</>
                     : <>Today, it takes <span className="font-semibold text-foreground">{lastMin}</span>.</>

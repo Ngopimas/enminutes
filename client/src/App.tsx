@@ -3,6 +3,7 @@ import { useHashLocation } from "wouter/use-hash-location";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LangProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
+import { SalaryRefProvider } from "@/lib/salaryRef";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 
@@ -20,9 +21,11 @@ function App() {
     <TooltipProvider>
       <ThemeProvider>
         <LangProvider>
-<Router hook={useHashLocation}>
-            <AppRouter />
-          </Router>
+          <SalaryRefProvider>
+            <Router hook={useHashLocation}>
+              <AppRouter />
+            </Router>
+          </SalaryRefProvider>
         </LangProvider>
       </ThemeProvider>
     </TooltipProvider>
