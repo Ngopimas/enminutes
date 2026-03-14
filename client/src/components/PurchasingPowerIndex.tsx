@@ -21,7 +21,7 @@ import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
 import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex, DATA_END_YEAR } from "@/lib/data";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
-import { Slider } from "@/components/ui/slider";
+import { YearRangeSlider } from "@/components/YearRangeSlider";
 
 ChartJS.register(
   CategoryScale,
@@ -520,17 +520,13 @@ export default function PurchasingPowerIndex() {
         </div>
 
         {/* Year range filter */}
-        <div className="mt-4 flex items-center gap-3 px-1">
-          <span className="text-xs text-muted-foreground w-9 text-right tabular-nums shrink-0">{yearStart}</span>
-          <Slider
+        <div className="mt-4">
+          <YearRangeSlider
             min={labels[0] ?? 1960}
             max={DATA_END_YEAR}
-            step={1}
             value={[yearStart, yearEnd]}
             onValueChange={([s, e]) => { setYearStart(s); setYearEnd(e); }}
-            className="flex-1"
           />
-          <span className="text-xs text-muted-foreground w-9 tabular-nums shrink-0">{yearEnd}</span>
         </div>
 
         {/* Data transparency footnotes */}

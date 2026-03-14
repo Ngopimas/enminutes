@@ -1266,11 +1266,6 @@ export const historicalEvents: HistoricalEvent[] = [
     en: 'SMIG becomes SMIC ("Growth" Minimum Wage)',
   },
   {
-    year: 1975,
-    fr: "Carte Orange (transports Paris)",
-    en: "Carte Orange (Paris transit pass)",
-  },
-  {
     year: 1981,
     fr: "Coup de pouce Mitterrand (+10%)",
     en: "Mitterrand boost (+10%)",
@@ -1291,11 +1286,6 @@ export const historicalEvents: HistoricalEvent[] = [
     year: 2012,
     fr: "Dernier coup de pouce gouvernemental",
     en: "Last government discretionary raise",
-  },
-  {
-    year: 2012,
-    fr: "Free Mobile : disruption des forfaits (−65 %)",
-    en: "Free Mobile disrupts mobile plans (−65%)",
   },
   {
     year: 2022,
