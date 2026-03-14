@@ -43,7 +43,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightCigarettes:
       "Cigarettes : le produit qui a le plus augmenté en temps de travail",
     insightCigarettesSub:
-      "De 14 minutes en 1960 à 62 minutes en 2024. Les taxes anti-tabac ont multiplié le coût par plus de 4 en temps de travail.",
+      "De 19 minutes en 1960 à 62 minutes en 2024. Les taxes anti-tabac ont multiplié le coût par plus de 3 en temps de travail.",
     insightBaguette: "Baguette : 3× plus accessible qu'en 1960",
     insightBaguetteSub:
       "De 17 minutes de SMIC en 1960 à environ 5 minutes aujourd'hui. Le pain reste le symbole de l'accessibilité alimentaire.",
@@ -164,7 +164,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsTitle: "Key Insights",
     insightCigarettes: "Cigarettes: the biggest increase in work-time cost",
     insightCigarettesSub:
-      "From 14 minutes in 1960 to 62 minutes in 2024. Anti-tobacco taxes multiplied the work-time cost by over 4×.",
+      "From 19 minutes in 1960 to 62 minutes in 2024. Anti-tobacco taxes multiplied the work-time cost by over 3×.",
     insightBaguette: "Baguette: 3× more affordable than in 1960",
     insightBaguetteSub:
       "From 17 minutes of minimum wage in 1960 to about 5 minutes today. Bread remains the symbol of food affordability.",

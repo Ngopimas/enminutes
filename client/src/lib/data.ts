@@ -299,9 +299,9 @@ const rawProducts: Record<
     emoji: "📮",
     category: "communication",
     funFactFr:
-      "Le timbre a quintuplé en minutes de travail depuis 2000 : de 4 à 8 minutes, reflet du déclin du courrier papier.",
+      "Le timbre a doublé en minutes de travail depuis 2000 : de 4 à 8 minutes, reflet du déclin du courrier papier.",
     funFactEn:
-      "A stamp costs 5× more work-minutes since 2000: from 4 to 8 min, reflecting the decline of paper mail.",
+      "A stamp costs twice as many work-minutes as in 2000: from 4 to 8 min, reflecting the decline of paper mail.",
     prices: {
       1950: 0.023,
       1960: 0.038,
@@ -324,9 +324,9 @@ const rawProducts: Record<
     emoji: "📰",
     category: "communication",
     funFactFr:
-      "Un journal quotidien coûtait 8 minutes de SMIC en 1950 contre 16 minutes en 2024 - le double !",
+      "Un journal quotidien coûtait 12 minutes de SMIC en 1960 contre 16 minutes en 2024.",
     funFactEn:
-      "A daily newspaper cost 8 min of minimum wage in 1950 vs 16 min in 2024 - double!",
+      "A daily newspaper cost 12 min of minimum wage in 1960 vs 16 min in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -371,9 +371,9 @@ const rawProducts: Record<
     emoji: "🚬",
     category: "tabac",
     funFactFr:
-      "Les cigarettes sont le produit qui a le plus augmenté en temps de travail : de 14 min en 1960 à 62 min en 2024.",
+      "Les cigarettes sont le produit qui a le plus augmenté en temps de travail : de 19 min en 1960 à 62 min en 2024.",
     funFactEn:
-      "Cigarettes saw the biggest increase in work-time: from 14 min in 1960 to 62 min in 2024.",
+      "Cigarettes saw the biggest increase in work-time: from 19 min in 1960 to 62 min in 2024.",
     prices: {
       1960: 0.076,
       1970: 0.122,
