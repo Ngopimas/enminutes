@@ -609,11 +609,9 @@ export default function PurchasingPowerIndex() {
               ℹ {t("meanStopsAt")}
             </p>
           )}
-          {showProductivity && (
-            <p className="text-[11px] text-muted-foreground/70 italic">
-              ℹ {t("productivityBackProjection")}
-            </p>
-          )}
+          <p className={`text-[11px] text-muted-foreground/70 italic transition-opacity duration-200 ${showProductivity ? "opacity-100" : "opacity-0 select-none"}`}>
+            ℹ {t("productivityBackProjection")}
+          </p>
         </div>
       </div>
     </section>
