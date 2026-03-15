@@ -41,7 +41,7 @@ export default function Hero() {
   return (
     <section className="py-12 md:py-16" data-testid="hero">
       <div className="max-w-6xl mx-auto px-4 text-center">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3">
           {t('heroHeadline')}
         </h1>
         <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto mb-8">
