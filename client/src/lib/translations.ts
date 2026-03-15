@@ -212,6 +212,11 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Le logement est exclu du panier composite\u202F: les données nationales masquent de fortes disparités régionales.",
     notFoundTitle: "Page introuvable",
     notFoundMessage: "Cette page n'existe pas.",
+    noDataForRef: "Aucune donnée disponible pour ce salaire de référence.",
+    downloadChart: "Télécharger le graphique",
+    insightsMostImproved: "Les plus accessibles",
+    insightsMostDegraded: "Les plus dégradés",
+    insightsOverPeriod: "sur la période disponible",
   },
   en: {
     siteTitle: "Purchasing Power",
@@ -414,5 +419,10 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Housing is excluded from the composite basket: national averages mask large regional disparities.",
     notFoundTitle: "Page not found",
     notFoundMessage: "This page does not exist.",
+    noDataForRef: "No data available for this salary reference.",
+    downloadChart: "Download chart",
+    insightsMostImproved: "Most affordable gains",
+    insightsMostDegraded: "Most degraded",
+    insightsOverPeriod: "over available period",
   },
 };

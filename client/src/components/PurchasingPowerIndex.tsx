@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,10 +12,12 @@ import {
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Camera } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
@@ -67,6 +69,16 @@ export default function PurchasingPowerIndex() {
   const [showProductivity, setShowProductivity] = useState(false);
   const [yearStart, setYearStart] = useState(1960);
   const [yearEnd, setYearEnd] = useState(DATA_END_YEAR);
+  const chartRef = useRef<any>(null);
+
+  function handleDownload() {
+    if (!chartRef.current) return;
+    const url = chartRef.current.toBase64Image('image/png', 1);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enminutes-pouvoir-achat-${salaryRef}.png`;
+    a.click();
+  }
 
   // Compute PP data based on salary ref
   const ppData = useMemo(() => {
@@ -522,10 +534,20 @@ export default function PurchasingPowerIndex() {
               {t("ppShowProductivity")}
             </Label>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDownload}
+            title={t("downloadChart")}
+            aria-label={t("downloadChart")}
+            className="ml-auto h-7 w-7 text-muted-foreground/40 hover:text-muted-foreground"
+          >
+            <Camera className="h-3.5 w-3.5" />
+          </Button>
         </div>
 
         <div className="h-[300px] md:h-[400px] pl-2 pr-2" role="img" aria-label={t("ppChartAriaLabel")}>
-          <Line data={chartData} options={chartOptions as any} />
+          <Line ref={chartRef} data={chartData} options={chartOptions as any} />
         </div>
 
         {/* Year range filter */}

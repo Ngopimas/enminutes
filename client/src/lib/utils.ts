@@ -19,6 +19,10 @@ export function formatMinutes(value: number, lang: string, decimals = 0): string
   });
 }
 
+export function isEmbedMode(): boolean {
+  return new URLSearchParams(window.location.search).get("embed") === "1";
+}
+
 export function useIsMobile(breakpoint = MOBILE_BREAKPOINT): boolean {
   const [mobile, setMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < breakpoint : false

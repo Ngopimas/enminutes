@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -59,13 +59,15 @@ export default function ProductExplorer({
   initialProductId?: string;
 }) {
   const { lang, t } = useLang();
-  const { salaryRef } = useSalaryRef();
+  const { salaryRef, setSalaryRef } = useSalaryRef();
   const isMobile = useIsMobile();
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [trend, setTrend] = useState<"all" | "up" | "down" | "stable">("all");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deepLinkYearA, setDeepLinkYearA] = useState<number | undefined>(undefined);
+  const [deepLinkYearB, setDeepLinkYearB] = useState<number | undefined>(undefined);
 
   const productList = useMemo(() => Object.values(products), []);
 
@@ -103,12 +105,31 @@ export default function ProductExplorer({
     return list;
   }, [category, search, trend, productList, salaryRef]);
 
-  // Open modal when navigating directly to /#/product/:id
+  // Open modal when navigating directly to /#/product/:id?ref=...&from=...&to=...
+  // wouter captures query params as part of :id, so we strip them first
+  const deepLinkApplied = useRef(false);
   useEffect(() => {
-    if (initialProductId && products[initialProductId]) {
-      setSelectedProduct(products[initialProductId]);
-      setModalOpen(true);
+    if (!initialProductId) return;
+    const productId = initialProductId.split('?')[0];
+    if (!products[productId]) return;
+
+    if (!deepLinkApplied.current) {
+      deepLinkApplied.current = true;
+      const qIdx = initialProductId.indexOf('?');
+      if (qIdx >= 0) {
+        const params = new URLSearchParams(initialProductId.slice(qIdx + 1));
+        const ref = params.get('ref');
+        if (ref === 'smic' || ref === 'median' || ref === 'mean') {
+          setSalaryRef(ref);
+        }
+        const from = params.get('from');
+        const to = params.get('to');
+        if (from) setDeepLinkYearA(Number(from));
+        if (to) setDeepLinkYearB(Number(to));
+      }
     }
+    setSelectedProduct(products[productId]);
+    setModalOpen(true);
   }, [initialProductId]);
 
   const handleCardClick = (product: Product) => {
@@ -291,6 +312,8 @@ export default function ProductExplorer({
         product={selectedProduct}
         open={modalOpen}
         onOpenChange={setModalOpen}
+        initialYearA={deepLinkYearA}
+        initialYearB={deepLinkYearB}
       />
     </section>
   );

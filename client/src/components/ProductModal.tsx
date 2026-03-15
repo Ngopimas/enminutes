@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
 import {
   Chart as ChartJS,
@@ -31,12 +31,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Equal, Share2, Check, X } from "lucide-react";
+import { ArrowRight, Equal, Share2, Check, X, Camera } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useIsMobile, formatMinutes } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
-import { useLocation } from "wouter";
 import {
   getMinutes,
   getYearsForRef,
@@ -108,32 +107,47 @@ interface ProductModalProps {
   product: Product | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialYearA?: number;
+  initialYearB?: number;
 }
 
 export default function ProductModal({
   product,
   open,
   onOpenChange,
+  initialYearA,
+  initialYearB,
 }: ProductModalProps) {
   const { lang, t } = useLang();
   const isMobile = useIsMobile();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
-  const [, navigate] = useLocation();
   const [showPrice, setShowPrice] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
+  const chartRef = useRef<any>(null);
 
   // Reset selected years when product or salary ref changes
   useEffect(() => {
     if (product) {
       const yrs = getYearsForRef(product, salaryRef);
       if (yrs.length > 0) {
-        setYearA(yrs[0]);
-        setYearB(yrs[yrs.length - 1]);
+        const defaultA = yrs[0];
+        const defaultB = yrs[yrs.length - 1];
+        // Use URL-provided years if valid for this product
+        const validA =
+          initialYearA !== undefined && yrs.includes(initialYearA)
+            ? initialYearA
+            : defaultA;
+        const validB =
+          initialYearB !== undefined && yrs.includes(initialYearB)
+            ? initialYearB
+            : defaultB;
+        setYearA(validA);
+        setYearB(validB);
       }
     }
   }, [product?.id, salaryRef]);
@@ -142,10 +156,26 @@ export default function ProductModal({
 
   const minutes = getMinutes(product, salaryRef);
   const years = getYearsForRef(product, salaryRef);
-
-  if (years.length === 0) return null;
-
   const name = lang === "fr" ? product.nameFr : product.nameEn;
+
+  // 8.4 — Empty state when no data for current salary ref
+  if (years.length === 0) {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <span className="text-xl">{product.emoji}</span>
+              {name}
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            {t("noDataForRef")}
+          </p>
+        </DialogContent>
+      </Dialog>
+    );
+  }
   const funFact = getDynamicFunFact(
     product,
     salaryRef,
@@ -481,16 +511,25 @@ export default function ProductModal({
       : "text-red-600 dark:text-red-400";
   };
 
+  function buildShareUrl() {
+    const from = Math.min(yearA, yearB);
+    const to = Math.max(yearA, yearB);
+    return `${window.location.origin}${window.location.pathname}#/product/${product!.id}?ref=${salaryRef}&from=${from}&to=${to}`;
+  }
+
   function buildShareText() {
-    const url = `${window.location.origin}${window.location.pathname}#/product/${product!.id}`;
+    const url = buildShareUrl();
     const suffix = lang === "fr" ? "(en France)" : "(in France)";
     return `${funFact} ${suffix}\n${url}`;
   }
 
   function handleShare() {
     const text = buildShareText();
+    const from = Math.min(yearA, yearB);
+    const to = Math.max(yearA, yearB);
+    const hash = `#/product/${product!.id}?ref=${salaryRef}&from=${from}&to=${to}`;
     navigator.clipboard.writeText(text).then(() => {
-      navigate(`/product/${product!.id}`);
+      window.history.replaceState(null, '', window.location.pathname + hash);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }).catch(() => {
@@ -499,8 +538,17 @@ export default function ProductModal({
     });
   }
 
+  function handleDownload() {
+    if (!chartRef.current) return;
+    const url = chartRef.current.toBase64Image("image/png", 1);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `enminutes-${product!.id}-${salaryRef}.png`;
+    a.click();
+  }
+
   function handleOpenChange(v: boolean) {
-    if (!v) navigate("/");
+    if (!v) window.history.replaceState(null, '', window.location.pathname + '#/');
     onOpenChange(v);
   }
 
@@ -529,7 +577,7 @@ export default function ProductModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Price + context toggles */}
+        {/* Price + context toggles + download */}
         <div className="flex items-center gap-4 -mt-1">
           <div className="flex items-center gap-2">
             <Switch
@@ -561,10 +609,21 @@ export default function ProductModal({
               </Label>
             </div>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDownload}
+            title={t("downloadChart")}
+            aria-label={t("downloadChart")}
+            className="ml-auto h-6 w-6"
+          >
+            <Camera className="h-3.5 w-3.5" />
+          </Button>
         </div>
 
         <div className="h-[250px] mt-1" role="img" aria-label={`${name} — ${yLabel}`}>
           <Line
+            ref={chartRef}
             data={{ labels: years, datasets }}
             options={chartOptions as any}
             plugins={[crosshairPlugin]}
