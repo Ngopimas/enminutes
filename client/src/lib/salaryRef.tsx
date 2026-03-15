@@ -10,10 +10,20 @@ const SalaryRefContext = createContext<SalaryRefContextType | null>(null);
 
 export function SalaryRefProvider({ children }: { children: ReactNode }) {
   const [salaryRef, setSalaryRef] = useState<SalaryRef>(() => {
-    return (localStorage.getItem('salaryRef') as SalaryRef) ?? 'smic';
+    try {
+      return (localStorage.getItem('salaryRef') as SalaryRef) ?? 'smic';
+    } catch {
+      return 'smic';
+    }
   });
 
-  useEffect(() => { localStorage.setItem('salaryRef', salaryRef); }, [salaryRef]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('salaryRef', salaryRef);
+    } catch {
+      // storage unavailable, ignore
+    }
+  }, [salaryRef]);
 
   return (
     <SalaryRefContext.Provider value={{ salaryRef, setSalaryRef }}>

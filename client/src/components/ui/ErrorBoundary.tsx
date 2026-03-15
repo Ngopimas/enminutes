@@ -16,8 +16,8 @@ export default class ErrorBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("Chart render error:", error, info.componentStack);
+  componentDidCatch(_error: Error, _info: ErrorInfo) {
+    // error reporting hook can be wired here (e.g. Sentry)
   }
 
   render() {

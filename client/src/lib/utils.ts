@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { useState, useEffect } from "react"
+import { MOBILE_BREAKPOINT } from "@/lib/constants"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -18,7 +19,7 @@ export function formatMinutes(value: number, lang: string, decimals = 0): string
   });
 }
 
-export function useIsMobile(breakpoint = 640): boolean {
+export function useIsMobile(breakpoint = MOBILE_BREAKPOINT): boolean {
   const [mobile, setMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
   );

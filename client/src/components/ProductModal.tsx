@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, Equal, Share2, Check } from "lucide-react";
+import { ArrowRight, Equal, Share2, Check, X } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useIsMobile, formatMinutes } from "@/lib/utils";
 import { useTheme } from "@/lib/theme";
@@ -43,6 +43,7 @@ import {
   getDynamicFunFact,
   type Product,
 } from "@/lib/data";
+import { EURO_TO_FRANC } from "@/lib/constants";
 
 ChartJS.register(
   CategoryScale,
@@ -77,9 +78,6 @@ const crosshairPlugin = {
     ctx.restore();
   },
 };
-
-// Euro-to-franc conversion factor (1 euro = 6.55957 FRF)
-const EURO_TO_FRANC = 6.55957;
 
 // Convert euro price to old francs for pre-1960, new francs for 1960-2001, euros for 2002+
 function formatPrice(
@@ -125,6 +123,7 @@ export default function ProductModal({
   const [showPrice, setShowPrice] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
 
@@ -490,10 +489,14 @@ export default function ProductModal({
 
   function handleShare() {
     const text = buildShareText();
-    navigator.clipboard.writeText(text).catch(() => {});
-    navigate(`/product/${product!.id}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(text).then(() => {
+      navigate(`/product/${product!.id}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      setCopyFailed(true);
+      setTimeout(() => setCopyFailed(false), 2000);
+    });
   }
 
   function handleOpenChange(v: boolean) {
@@ -560,7 +563,7 @@ export default function ProductModal({
           )}
         </div>
 
-        <div className="h-[250px] mt-1">
+        <div className="h-[250px] mt-1" role="img" aria-label={`${name} — ${yLabel}`}>
           <Line
             data={{ labels: years, datasets }}
             options={chartOptions as any}
@@ -687,10 +690,13 @@ export default function ProductModal({
                 size="icon"
                 onClick={handleShare}
                 title={t("shareProduct")}
+                aria-label={copied ? t("copied") : copyFailed ? t("copyFailed") : t("shareProduct")}
                 className="shrink-0 -mt-3 -mr-5"
               >
                 {copied ? (
                   <Check className="w-4 h-4 text-emerald-500" />
+                ) : copyFailed ? (
+                  <X className="w-4 h-4 text-red-500" />
                 ) : (
                   <Share2 className="w-4 h-4" />
                 )}

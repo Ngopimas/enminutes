@@ -11,12 +11,20 @@ const LangContext = createContext<LangContextType | null>(null);
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>(() => {
-    return (localStorage.getItem('lang') as Lang) ?? 'fr';
+    try {
+      return (localStorage.getItem('lang') as Lang) ?? 'fr';
+    } catch {
+      return 'fr';
+    }
   });
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    localStorage.setItem('lang', lang);
+    try {
+      localStorage.setItem('lang', lang);
+    } catch {
+      // storage unavailable, ignore
+    }
   }, [lang]);
 
   const t = useCallback(

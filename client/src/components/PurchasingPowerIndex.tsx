@@ -524,7 +524,7 @@ export default function PurchasingPowerIndex() {
           </div>
         </div>
 
-        <div className="h-[300px] md:h-[400px] pl-2 pr-2">
+        <div className="h-[300px] md:h-[400px] pl-2 pr-2" role="img" aria-label={t("ppChartAriaLabel")}>
           <Line data={chartData} options={chartOptions as any} />
         </div>
 

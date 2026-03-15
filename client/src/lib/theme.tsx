@@ -9,14 +9,22 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDark, setIsDark] = useState(() => {
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored === 'dark';
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+    } catch {
+      // storage unavailable, fall back to system preference
+    }
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch {
+      // storage unavailable, ignore
+    }
   }, [isDark]);
 
   const toggle = useCallback(() => setIsDark(d => !d), []);
