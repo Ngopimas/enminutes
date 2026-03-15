@@ -231,4 +231,9 @@ export const ppAnnotations: PPAnnotation[] = [
     labelFr: "Confinements COVID",
     labelEn: "COVID lockdowns",
   },
+  {
+    year: 2022,
+    labelFr: "Crise énergétique",
+    labelEn: "Energy crisis",
+  },
 ];
