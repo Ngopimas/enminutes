@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -62,6 +63,7 @@ export default function ProductExplorer({
   const { lang, t } = useLang();
   const { salaryRef, setSalaryRef } = useSalaryRef();
   const isMobile = useIsMobile();
+  const [, navigate] = useLocation();
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [trend, setTrend] = useState<"all" | "up" | "down" | "stable">("all");
@@ -138,8 +140,13 @@ export default function ProductExplorer({
   }, [initialProductId]);
 
   const handleCardClick = (product: Product) => {
-    setSelectedProduct(product);
-    setModalOpen(true);
+    if (isMobile) {
+      sessionStorage.setItem("homeScrollY", String(window.scrollY));
+      navigate(`/product/${product.id}`);
+    } else {
+      setSelectedProduct(product);
+      setModalOpen(true);
+    }
   };
 
   return (

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PurchasingPowerIndex from "@/components/PurchasingPowerIndex";
@@ -13,6 +14,15 @@ import { isEmbedMode } from "@/lib/utils";
 
 export default function Home({ initialProductId }: { initialProductId?: string }) {
   const embed = isEmbedMode();
+
+  useEffect(() => {
+    const savedY = sessionStorage.getItem("homeScrollY");
+    if (savedY !== null) {
+      sessionStorage.removeItem("homeScrollY");
+      // rAF ensures the DOM has fully painted before scrolling
+      requestAnimationFrame(() => window.scrollTo(0, parseInt(savedY, 10)));
+    }
+  }, []);
 
   if (embed) {
     return (

@@ -27,6 +27,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     smicHourly: "SMIC horaire",
     viewDetails: "Voir le détail",
     close: "Fermer",
+    back: "Retour",
     didYouKnow: "Le saviez-vous\u202F?",
     productExplorer: "Explorateur de produits",
     productExplorerSub:
@@ -134,7 +135,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     perHour: "/heure",
     ppIndexTitle: "Le SMIC achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexSub:
-      "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 16 biens courants (base 100 = 1960)",
+      "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 17 biens courants (base 100 = 1960)",
     ppKpiMultiplier:
       "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket1960: "Minutes pour le panier en",
@@ -168,10 +169,12 @@ export const translations: Record<Lang, Record<string, string>> = {
     euroTransition: "Passage à l'euro",
     basketTitle: "Composition du panier",
     basketExplain:
-      "L'indice composite est calculé à partir de 16 produits courants, pondérés selon leur fréquence d'achat typique (poids ci-dessous). Ce n'est pas un budget-type de ménage\u202F: il mesure l'évolution du pouvoir d'achat sur un panier diversifié.",
+      "L'indice composite est calculé à partir de 17 produits courants, pondérés selon leur fréquence d'achat typique (poids ci-dessous). Ce n'est pas un budget-type de ménage\u202F: il mesure l'évolution du pouvoir d'achat sur un panier stable depuis 1960.",
     basketWeight: "Poids",
     basketNote:
-      "Les cigarettes (poids 0) sont exclues du panier car leur hausse reflète une politique fiscale volontaire, pas l'évolution du coût de la vie.",
+      "Les produits avec poids 0 sont exclus de l'indice composite mais restent explorables individuellement. Les cigarettes, par exemple, sont exclues car leur hausse reflète une politique fiscale volontaire, pas l'évolution du coût de la vie.",
+    basketModernNote:
+      "Internet, mobile et streaming représentent des charges nouvelles inexistantes en 1960. Leur historique de prix ne démarre qu'en 2000–2014\u202F: les inclure créerait une rupture artificielle de ~50\u202F% dans la série. Ils sont exclus de l'indice mais disponibles dans l'explorateur.",
     basketDisclaimer:
       "Cet indice ne prétend pas refléter la structure réelle de consommation des ménages - qui achète autant de beurre que de bière\u202F? Il permet toutefois de suivre une tendance de long terme sur un panier diversifié de biens courants.",
     identicalYears: "Même année sélectionnée",
@@ -187,9 +190,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     chartYLabelMedian: "Minutes de salaire médian",
     chartYLabelMean: "Minutes de salaire moyen",
     ppIndexSubMedian:
-      "Indice composite basé sur le salaire net médian, panier de 16 biens courants (base 100 = 1996)",
+      "Indice composite basé sur le salaire net médian, panier de 17 biens courants (base 100 = 1996)",
     ppIndexSubMean:
-      "Indice composite basé sur le salaire net moyen, panier de 16 biens courants (base 100 = 1960)",
+      "Indice composite basé sur le salaire net moyen, panier de 17 biens courants (base 100 = 1960)",
     ppIndexTitleMedian:
       "Le salaire médian achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexTitleMean:
@@ -208,6 +211,14 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Exclu du panier\u202F: achat ponctuel, non récurrent comme les postes de consommation courante",
     basketExcludedVoiture:
       "Exclu du panier\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
+    basketExcludedInternet:
+      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+    basketExcludedMobile:
+      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+    basketExcludedStreaming:
+      "Exclu du panier\u202F: données disponibles à partir de 2014 seulement",
+    basketExcludedGaz:
+      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
     dataTypeActual: "Prix réel (source INSEE directe)",
     dataTypeIpcEstimate:
       "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
@@ -249,6 +260,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     smicHourly: "Min. wage (hourly)",
     viewDetails: "View details",
     close: "Close",
+    back: "Back",
     didYouKnow: "Did you know?",
     productExplorer: "Product Explorer",
     productExplorerSub: "Click a product to see its evolution in work-time",
@@ -352,7 +364,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     perHour: "/hour",
     ppIndexTitle: "Does the minimum wage buy more or less than before?",
     ppIndexSub:
-      "Composite purchasing power index of the SMIC, based on a basket of 16 everyday goods (base 100 = 1960)",
+      "Composite purchasing power index of the SMIC, based on a basket of 17 everyday goods (base 100 = 1960)",
     ppKpiMultiplier:
       "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket1960: "Minutes for the basket in",
@@ -386,10 +398,12 @@ export const translations: Record<Lang, Record<string, string>> = {
     euroTransition: "Euro adoption",
     basketTitle: "Basket composition",
     basketExplain:
-      "The composite index is built from 16 everyday products, weighted by typical purchase frequency (weights below). This is not a household budget - it measures purchasing power trends across a diversified basket of goods.",
+      "The composite index is built from 17 everyday products, weighted by typical purchase frequency (weights below). This is not a household budget - it measures purchasing power trends across a stable basket of goods available since 1960.",
     basketWeight: "Weight",
     basketNote:
-      "Cigarettes (weight 0) are excluded from the basket because their increase reflects deliberate tax policy, not cost-of-living trends.",
+      "Products with weight 0 are excluded from the composite index but remain individually explorable. Cigarettes, for example, are excluded because their price increases reflect deliberate tax policy, not cost-of-living trends.",
+    basketModernNote:
+      "Internet, mobile, and streaming represent new costs that didn't exist in 1960. Their price history only starts in 2000–2014: including them would create an artificial ~50% break in the series. They are excluded from the index but available in the explorer.",
     basketDisclaimer:
       "This index does not claim to reflect actual household spending patterns - who buys as much butter as beer? It does, however, track a long-term trend across a diversified basket of everyday goods.",
     identicalYears: "Same year selected",
@@ -405,9 +419,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     chartYLabelMedian: "Minutes of median salary",
     chartYLabelMean: "Minutes of mean salary",
     ppIndexSubMedian:
-      "Composite index based on net median salary, basket of 16 everyday goods (base 100 = 1996)",
+      "Composite index based on net median salary, basket of 17 everyday goods (base 100 = 1996)",
     ppIndexSubMean:
-      "Composite index based on net mean salary, basket of 16 everyday goods (base 100 = 1960)",
+      "Composite index based on net mean salary, basket of 17 everyday goods (base 100 = 1960)",
     ppIndexTitleMedian: "Does the median salary buy more or less than before?",
     ppIndexTitleMean: "Does the mean salary buy more or less than before?",
     ppKpiMultiplierMedian:
@@ -424,6 +438,14 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Excluded from basket: one-off purchase, not a recurring monthly expense",
     basketExcludedVoiture:
       "Excluded from basket: high-value one-off purchase, difficult to weight in a monthly basket",
+    basketExcludedInternet:
+      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+    basketExcludedMobile:
+      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+    basketExcludedStreaming:
+      "Excluded from basket: data only available from 2014",
+    basketExcludedGaz:
+      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
     dataTypeActual: "Actual price (direct INSEE source)",
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",

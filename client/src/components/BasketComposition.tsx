@@ -58,12 +58,20 @@ export default function BasketComposition() {
                     ? t('basketExcludedCigarettes')
                     : item.id === 'loyer'
                     ? t('basketExcludedLoyer')
-                    : item.id === 'loyer_paris'
+                    : item.id === 'loyer_paris' || item.id === 'loyer_national'
                     ? t('basketExcludedLoyerParis')
                     : item.id === 'smartphone'
                     ? t('basketExcludedSmartphone')
                     : item.id === 'voiture_milieu_gamme'
                     ? t('basketExcludedVoiture')
+                    : item.id === 'internet'
+                    ? t('basketExcludedInternet')
+                    : item.id === 'forfait_mobile'
+                    ? t('basketExcludedMobile')
+                    : item.id === 'streaming'
+                    ? t('basketExcludedStreaming')
+                    : item.id === 'gaz'
+                    ? t('basketExcludedGaz')
                     : null
                   : null;
 
@@ -100,17 +108,22 @@ export default function BasketComposition() {
             })}
           </div>
 
-          {/* Weight explanation */}
+          {/* Weight explanation + general exclusion note */}
           <div className="flex items-start gap-2 text-xs text-muted-foreground mb-3">
             <span className="font-mono shrink-0">Σ = {totalWeight}</span>
             <span>-</span>
             <span>{t("basketNote")}</span>
           </div>
 
-          {/* Housing exclusion callout */}
-          <p className="text-xs text-amber-600 dark:text-amber-400 italic max-w-3xl mb-2">
-            ⚠ {t("basketHousingNote")}
-          </p>
+          {/* Notable exclusions */}
+          <div className="space-y-1 mb-3">
+            <p className="text-xs text-muted-foreground/70 italic max-w-3xl">
+              ℹ {t("basketModernNote")}
+            </p>
+            <p className="text-xs text-muted-foreground/70 italic max-w-3xl">
+              ℹ {t("basketHousingNote")}
+            </p>
+          </div>
 
           {/* Honest disclaimer */}
           <p className="text-xs text-muted-foreground/70 italic max-w-3xl">
