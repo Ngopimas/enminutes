@@ -21,7 +21,13 @@ import { Camera } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSalaryRef } from "@/lib/salaryRef";
-import { purchasingPower, ppAnnotations, computePurchasingPowerForRef, productivityIndex, DATA_END_YEAR } from "@/lib/data";
+import {
+  purchasingPower,
+  ppAnnotations,
+  computePurchasingPowerForRef,
+  productivityIndex,
+  DATA_END_YEAR,
+} from "@/lib/data";
 import { useIsMobile } from "@/lib/utils";
 import { chartColor, chartColorAlpha } from "@/lib/chartColors";
 import { YearRangeSlider } from "@/components/YearRangeSlider";
@@ -73,8 +79,8 @@ export default function PurchasingPowerIndex() {
 
   function handleDownload() {
     if (!chartRef.current) return;
-    const url = chartRef.current.toBase64Image('image/png', 1);
-    const a = document.createElement('a');
+    const url = chartRef.current.toBase64Image("image/png", 1);
+    const a = document.createElement("a");
     a.href = url;
     a.download = `enminutes-pouvoir-achat-${salaryRef}.png`;
     a.click();
@@ -82,7 +88,7 @@ export default function PurchasingPowerIndex() {
 
   // Compute PP data based on salary ref
   const ppData = useMemo(() => {
-    if (salaryRef === 'smic') {
+    if (salaryRef === "smic") {
       return {
         indexYears: purchasingPower.indexYears,
         indexBaseYear: purchasingPower.indexBaseYear,
@@ -121,57 +127,67 @@ export default function PurchasingPowerIndex() {
 
   const labels = indexYears.filter((y) => ppIndex[y] !== undefined);
 
-  // When the salary ref changes, the available year range may shift (e.g. median starts at 1996).
-  // Clamp yearStart/yearEnd to the new valid range so the slider doesn't get stuck.
-  useEffect(() => {
-    const minYear = labels[0];
-    const maxYear = labels[labels.length - 1];
-    if (minYear !== undefined && yearStart < minYear) setYearStart(minYear);
-    if (maxYear !== undefined && yearEnd > maxYear) setYearEnd(maxYear);
-  }, [labels[0], labels[labels.length - 1]]);
+  // Clamp the user's stored filter to the data available for the current ref,
+  // without mutating state. This way switching refs never loses the user's intent.
+  const effectiveStart = Math.max(yearStart, labels[0] ?? yearStart);
+  const effectiveEnd = Math.min(yearEnd, labels[labels.length - 1] ?? yearEnd);
 
   // Filtered labels drive both the chart and the KPI cards
-  const filteredLabels = labels.filter((y) => y >= yearStart && y <= yearEnd);
+  const filteredLabels = labels.filter(
+    (y) => y >= effectiveStart && y <= effectiveEnd,
+  );
 
   // KPI values derived from the visible range
   const kpiStartYear = filteredLabels[0] ?? ppBaseYear;
-  const kpiEndYear = filteredLabels[filteredLabels.length - 1] ?? labels[labels.length - 1];
+  const kpiEndYear =
+    filteredLabels[filteredLabels.length - 1] ?? labels[labels.length - 1];
   const basket1960 = basketMinutesByYear[kpiStartYear];
   const basketNow = basketMinutesByYear[kpiEndYear];
-  const kpiMult = (ppIndex[kpiStartYear] && ppIndex[kpiEndYear])
-    ? (ppIndex[kpiEndYear] / ppIndex[kpiStartYear]).toFixed(1)
-    : "?";
+  const kpiMult =
+    ppIndex[kpiStartYear] && ppIndex[kpiEndYear]
+      ? (ppIndex[kpiEndYear] / ppIndex[kpiStartYear]).toFixed(1)
+      : "?";
   const ppRebaseVal = ppIndex[kpiStartYear];
   const indexData = filteredLabels.map((y) =>
-    ppRebaseVal ? +((ppIndex[y] / ppRebaseVal) * 100).toFixed(1) : ppIndex[y]
+    ppRebaseVal ? +((ppIndex[y] / ppRebaseVal) * 100).toFixed(1) : ppIndex[y],
   );
   const minutesData = filteredLabels.map((y) => basketMinutesByYear[y]);
   const inflationData = filteredLabels.map((y) => inflationRates[y] ?? null);
   const prodRebaseVal = productivityData[kpiStartYear];
   const prodData = filteredLabels.map((y) => {
     const v = productivityData[y] ?? null;
-    return v !== null && prodRebaseVal ? +((v / prodRebaseVal) * 100).toFixed(1) : null;
+    return v !== null && prodRebaseVal
+      ? +((v / prodRebaseVal) * 100).toFixed(1)
+      : null;
   });
 
   // Title and subtitle based on salary ref
-  const title = salaryRef === 'median'
-    ? t("ppIndexTitleMedian")
-    : salaryRef === 'mean'
-      ? t("ppIndexTitleMean")
-      : t("ppIndexTitle");
+  const title =
+    salaryRef === "median"
+      ? t("ppIndexTitleMedian")
+      : salaryRef === "mean"
+        ? t("ppIndexTitleMean")
+        : t("ppIndexTitle");
 
-  const subtitle = (salaryRef === 'median'
-    ? t("ppIndexSubMedian")
-    : salaryRef === 'mean'
-      ? t("ppIndexSubMean")
-      : t("ppIndexSub")).replace(/= \d{4}/, `= ${kpiStartYear}`);
+  const subtitle = (
+    salaryRef === "median"
+      ? t("ppIndexSubMedian")
+      : salaryRef === "mean"
+        ? t("ppIndexSubMean")
+        : t("ppIndexSub")
+  ).replace(/= \d{4}/, `= ${kpiStartYear}`);
 
   // Chart Y labels
-  const yLabel2 = salaryRef === 'median'
-    ? t("chartYLabelMedian").replace("Minutes", "Min.") + " (" + t("ppLegendMinutes").split("(")[1]
-    : salaryRef === 'mean'
-      ? t("chartYLabelMean").replace("Minutes", "Min.") + " (" + t("ppLegendMinutes").split("(")[1]
-      : t("ppChartYLabel2");
+  const yLabel2 =
+    salaryRef === "median"
+      ? t("chartYLabelMedian").replace("Minutes", "Min.") +
+        " (" +
+        t("ppLegendMinutes").split("(")[1]
+      : salaryRef === "mean"
+        ? t("chartYLabelMean").replace("Minutes", "Min.") +
+          " (" +
+          t("ppLegendMinutes").split("(")[1]
+        : t("ppChartYLabel2");
 
   // Build annotations
   const annotations: Record<string, object> = {};
@@ -183,9 +199,12 @@ export default function PurchasingPowerIndex() {
       const end = Math.min(pres.end, filteredLabels[filteredLabels.length - 1]);
       if (start >= end) return;
 
-      const startIdx = filteredLabels.indexOf(start) >= 0 ? filteredLabels.indexOf(start) : 0;
+      const startIdx =
+        filteredLabels.indexOf(start) >= 0 ? filteredLabels.indexOf(start) : 0;
       const endIdx =
-        filteredLabels.indexOf(end) >= 0 ? filteredLabels.indexOf(end) : filteredLabels.length - 1;
+        filteredLabels.indexOf(end) >= 0
+          ? filteredLabels.indexOf(end)
+          : filteredLabels.length - 1;
 
       const colors = isDark ? presidentColors.dark : presidentColors.light;
       annotations[`pres${i}`] = {
@@ -411,7 +430,9 @@ export default function PurchasingPowerIndex() {
     },
   };
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return (
@@ -555,7 +576,11 @@ export default function PurchasingPowerIndex() {
           </Button>
         </div>
 
-        <div className="h-[300px] md:h-[400px] pl-2 pr-2" role="img" aria-label={t("ppChartAriaLabel")}>
+        <div
+          className="h-[300px] md:h-[400px] pl-2 pr-2"
+          role="img"
+          aria-label={t("ppChartAriaLabel")}
+        >
           <Line ref={chartRef} data={chartData} options={chartOptions as any} />
         </div>
 
@@ -564,26 +589,29 @@ export default function PurchasingPowerIndex() {
           <YearRangeSlider
             min={labels[0] ?? 1960}
             max={DATA_END_YEAR}
-            value={[yearStart, yearEnd]}
-            onValueChange={([s, e]) => { setYearStart(s); setYearEnd(e); }}
+            value={[effectiveStart, effectiveEnd]}
+            onValueChange={([s, e]) => {
+              setYearStart(s);
+              setYearEnd(e);
+            }}
           />
         </div>
 
         {/* Data transparency footnotes */}
         <div className="mt-3 space-y-1">
-          {salaryRef === 'median' && (
+          {salaryRef === "median" && (
             <p className="text-[11px] text-muted-foreground/70 italic">
-              ℹ {t('medianAvailableFrom')}
+              ℹ {t("medianAvailableFrom")}
             </p>
           )}
-          {salaryRef === 'mean' && (
+          {salaryRef === "mean" && (
             <p className="text-[11px] text-muted-foreground/70 italic">
-              ℹ {t('meanStopsAt')}
+              ℹ {t("meanStopsAt")}
             </p>
           )}
           {showProductivity && (
             <p className="text-[11px] text-muted-foreground/70 italic">
-              ℹ {t('productivityBackProjection')}
+              ℹ {t("productivityBackProjection")}
             </p>
           )}
         </div>
