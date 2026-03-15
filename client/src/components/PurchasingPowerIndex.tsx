@@ -62,7 +62,7 @@ export default function PurchasingPowerIndex() {
   const [mounted, setMounted] = useState(false);
   const [reverseMinutes, setReverseMinutes] = useState(true);
   const [showPresidents, setShowPresidents] = useState(true);
-  const [showContext, setShowContext] = useState(true);
+  const [showContext, setShowContext] = useState(false);
   const [showInflation, setShowInflation] = useState(false);
   const [showProductivity, setShowProductivity] = useState(false);
   const [yearStart, setYearStart] = useState(1960);
