@@ -67,8 +67,12 @@ export default function ProductExplorer({
   const [trend, setTrend] = useState<"all" | "up" | "down" | "stable">("all");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [deepLinkYearA, setDeepLinkYearA] = useState<number | undefined>(undefined);
-  const [deepLinkYearB, setDeepLinkYearB] = useState<number | undefined>(undefined);
+  const [deepLinkYearA, setDeepLinkYearA] = useState<number | undefined>(
+    undefined,
+  );
+  const [deepLinkYearB, setDeepLinkYearB] = useState<number | undefined>(
+    undefined,
+  );
 
   const productList = useMemo(() => Object.values(products), []);
 
@@ -111,20 +115,20 @@ export default function ProductExplorer({
   const deepLinkApplied = useRef(false);
   useEffect(() => {
     if (!initialProductId) return;
-    const productId = initialProductId.split('?')[0];
+    const productId = initialProductId.split("?")[0];
     if (!products[productId]) return;
 
     if (!deepLinkApplied.current) {
       deepLinkApplied.current = true;
-      const qIdx = initialProductId.indexOf('?');
+      const qIdx = initialProductId.indexOf("?");
       if (qIdx >= 0) {
         const params = new URLSearchParams(initialProductId.slice(qIdx + 1));
-        const ref = params.get('ref');
-        if (ref === 'smic' || ref === 'median' || ref === 'mean') {
+        const ref = params.get("ref");
+        if (ref === "smic" || ref === "median" || ref === "mean") {
           setSalaryRef(ref);
         }
-        const from = params.get('from');
-        const to = params.get('to');
+        const from = params.get("from");
+        const to = params.get("to");
         if (from) setDeepLinkYearA(Number(from));
         if (to) setDeepLinkYearB(Number(to));
       }
@@ -192,7 +196,7 @@ export default function ProductExplorer({
           </div>
         </div>
 
-        {/* Row 2: category filter — Select on mobile, Tabs on larger screens */}
+        {/* Row 2: category filter - Select on mobile, Tabs on larger screens */}
         <div className="mb-6">
           {isMobile ? (
             <Select value={category} onValueChange={setCategory}>

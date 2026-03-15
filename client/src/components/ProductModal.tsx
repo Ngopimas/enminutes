@@ -158,7 +158,7 @@ export default function ProductModal({
   const years = getYearsForRef(product, salaryRef);
   const name = lang === "fr" ? product.nameFr : product.nameEn;
 
-  // 8.4 — Empty state when no data for current salary ref
+  // 8.4 - Empty state when no data for current salary ref
   if (years.length === 0) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -251,7 +251,8 @@ export default function ProductModal({
       borderWidth: 0,
       label: {
         display: true,
-        content: lang === "fr" ? "Données estimées (±10%)" : "Estimated data (±10%)",
+        content:
+          lang === "fr" ? "Données estimées (±10%)" : "Estimated data (±10%)",
         position: { x: "start" as const, y: "end" as const },
         color: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)",
         font: { size: 8 },
@@ -528,14 +529,17 @@ export default function ProductModal({
     const from = Math.min(yearA, yearB);
     const to = Math.max(yearA, yearB);
     const hash = `#/product/${product!.id}?ref=${salaryRef}&from=${from}&to=${to}`;
-    navigator.clipboard.writeText(text).then(() => {
-      window.history.replaceState(null, '', window.location.pathname + hash);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }).catch(() => {
-      setCopyFailed(true);
-      setTimeout(() => setCopyFailed(false), 2000);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        window.history.replaceState(null, "", window.location.pathname + hash);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        setCopyFailed(true);
+        setTimeout(() => setCopyFailed(false), 2000);
+      });
   }
 
   function handleDownload() {
@@ -548,7 +552,8 @@ export default function ProductModal({
   }
 
   function handleOpenChange(v: boolean) {
-    if (!v) window.history.replaceState(null, '', window.location.pathname + '#/');
+    if (!v)
+      window.history.replaceState(null, "", window.location.pathname + "#/");
     onOpenChange(v);
   }
 
@@ -621,7 +626,11 @@ export default function ProductModal({
           </Button>
         </div>
 
-        <div className="h-[250px] mt-1" role="img" aria-label={`${name} — ${yLabel}`}>
+        <div
+          className="h-[250px] mt-1"
+          role="img"
+          aria-label={`${name} - ${yLabel}`}
+        >
           <Line
             ref={chartRef}
             data={{ labels: years, datasets }}
@@ -749,7 +758,13 @@ export default function ProductModal({
                 size="icon"
                 onClick={handleShare}
                 title={t("shareProduct")}
-                aria-label={copied ? t("copied") : copyFailed ? t("copyFailed") : t("shareProduct")}
+                aria-label={
+                  copied
+                    ? t("copied")
+                    : copyFailed
+                      ? t("copyFailed")
+                      : t("shareProduct")
+                }
                 className="shrink-0 -mt-3 -mr-5"
               >
                 {copied ? (
