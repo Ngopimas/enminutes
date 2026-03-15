@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import { useLang } from "@/lib/i18n";
@@ -163,8 +164,10 @@ export default function ProductExplorer({
             data-testid="trend-filter"
           >
             {(["all", "up", "down", "stable"] as const).map((t_) => (
-              <button
+              <Button
                 key={t_}
+                variant={trend === t_ ? "default" : "outline"}
+                size="sm"
                 onClick={() => setTrend(t_)}
                 title={
                   t_ === "up"
@@ -175,11 +178,7 @@ export default function ProductExplorer({
                         ? t("trendStableTooltip")
                         : t("trendAllTooltip")
                 }
-                className={`h-8 px-2.5 rounded-md border text-xs transition-colors ${
-                  trend === t_
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-input bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                }`}
+                className="h-8 px-2.5 text-xs"
               >
                 {t_ === "all"
                   ? t("allCategories")
@@ -188,7 +187,7 @@ export default function ProductExplorer({
                     : t_ === "down"
                       ? "↘"
                       : "→"}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
