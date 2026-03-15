@@ -73,6 +73,16 @@ const sources = [
     url: 'https://www.ameli.fr/medecin/exercice-liberal/remuneration/honoraires-conventionnels',
   },
   {
+    labelKey: 'sourcesIrlLabel',
+    descKey: 'sourcesIrlDesc',
+    url: 'https://www.insee.fr/fr/statistiques/serie/001515333',
+  },
+  {
+    labelKey: 'sourcesDreesLabel',
+    descKey: 'sourcesDreesDesc',
+    url: 'https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/les-remuneration-des-medecins-liberaux',
+  },
+  {
     labelKey: 'sourcesManualLabel',
     descKey: 'sourcesManualDesc',
     url: 'https://www.lesnumeriques.com/',

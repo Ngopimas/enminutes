@@ -1,147 +1,210 @@
 # En Minutes
 
-Interactive visualization of French purchasing power since 1950, measured in work-minutes per everyday good.
+Interactive visualization of French purchasing power since 1950, measured in **work-minutes per everyday good**.
+
+Live: [ngopimas.github.io/enminutes](https://ngopimas.github.io/enminutes/)
+
+---
+
+## Overview
+
+*En Minutes* answers the question: "how many minutes did I have to work to buy this in 1980 vs today?" It tracks 35+ consumer goods across food, energy, housing, transport, healthcare, and leisure — computed against SMIC, median salary, or mean salary — and presents the results as an interactive chart, a sparkline grid, and a composite purchasing power index.
+
+---
 
 ## Features
 
-- **30+ consumer products** tracked from 1950 to present (food, energy, housing, tobacco, services…)
-- **Composite purchasing power index** (base 100) with multiple overlays:
-  - CPI inflation rate (IPC)
-  - Labour productivity (GDP per hour worked, OECD)
-  - French president timeline
-  - Historical context markers (Grenelle, 35h, euro, etc.)
-- **Salary reference selector** - switch between SMIC (minimum wage), median salary, or mean salary
-- Product explorer with sparklines, search filter, and per-product detail charts
-- Two-era comparison tool with searchable product selector
-- Dynamic insights section - all figures computed from data, adapts to salary reference
-- Methodology & Sources section with clickable links to all data sources
-- Bilingual FR/EN toggle
-- Light/Dark mode with distinct chart color palettes per theme
-- Fully static - no backend required
+- **35+ consumer products** tracked from 1950 to present
+- **Three salary references**: SMIC (minimum wage), median salary, mean salary
+- **Composite purchasing power index** (base 100 in 1960) with overlays:
+  - CPI inflation rate
+  - Labour productivity (OECD GDP per hour worked)
+  - French presidential timeline
+  - Historical context markers (Grenelle, 35h, euro, 2008 crisis…)
+- **Per-product detail modal** with:
+  - Two-era comparison + year range slider
+  - Confidence bands for IPC-estimated products (±5%)
+  - Pre-1970 shading for higher-uncertainty estimates
+  - Inflection annotations (oil shock, Free Mobile, IRL spike…)
+  - Data quality badge (actual / IPC estimate / manual)
+  - Dynamic "Did you know?" fun fact that updates with the selected years
+  - Share button (copies fun fact + deep link encoding ref and year range)
+  - Download chart as PNG
+- **Product explorer**: sparklines, search, category tabs, trend filter (↗ ↘ →)
+- **Shareable deep links**: `/#/product/baguette?ref=median&from=1980&to=2024`
+- **Embed mode**: `?embed=1` renders a stripped-down single-product card for iframes
+- **Dynamic Insights**: top 3 most improved and most degraded products, adapts to salary reference
+- **Methodology & Sources** section with links to all data sources
+- Bilingual FR/EN, light/dark mode
+- Fully static — no backend required
+
+---
 
 ## Tech Stack
 
-- **Vite** + **React 18** + **TypeScript**
-- **shadcn/ui** + **Tailwind CSS v3**
-- **Chart.js** + `chartjs-plugin-annotation` + `react-chartjs-2`
-- **Framer Motion** for subtle animations
+| Layer | Libraries |
+|---|---|
+| Build | Vite 7 + TypeScript |
+| UI | React 18, shadcn/ui, Tailwind CSS v3, Radix UI |
+| Charts | Chart.js, chartjs-plugin-annotation, react-chartjs-2 |
+| Routing | wouter (hash router) |
+| Animation | Framer Motion |
+| Testing | Vitest |
+
+---
 
 ## Getting Started
 
 ```bash
 npm install
-npm run dev
+npm run dev       # dev server on http://localhost:5000
+npm run build     # static output → dist/public/
+npm run check     # TypeScript type-check
+npm run test      # Vitest unit tests
 ```
 
-Open [http://localhost:5000](http://localhost:5000).
-
-## Build & Deploy
-
-```bash
-npm run build
-# Static output in dist/public/ - deploy anywhere (Vercel, Netlify, S3, GitHub Pages…)
-```
-
-## Data Sources
-
-All data lives in [`client/src/lib/data.ts`](client/src/lib/data.ts):
-
-- **SMIC net hourly rates**: INSEE series [000879878](https://www.insee.fr/fr/statistiques/serie/000879878) (monthly net / 151.67h for 2005+, estimated via cotisation rates for 1950–2004)
-- **Mean salary**: INSEE DADS series [010752366](https://www.insee.fr/fr/statistiques/serie/010752366) (annual net EQTP / 1820h)
-- **Median salary**: INSEE DADS series [010752342](https://www.insee.fr/fr/statistiques/serie/010752342) (annual net EQTP / 1820h, from 1996)
-- **Product prices**: INSEE consumer price indices (IPC), INSEE prix moyens de détail, Thomas Piketty (PSE/ENS), fiche-paie.fr, Blog Didier, Guichet du Savoir (Bibliothèque de Lyon)
-- **CPI inflation**: INSEE IPC ensemble series [001759970](https://www.insee.fr/fr/statistiques/serie/001759970)
-- **Productivity**: OECD Productivity Levels - GDP per hour worked, constant prices ([data explorer](https://data-explorer.oecd.org/vis?lc=en&df[id]=DSD_PDB%40DF_PDB_LV&dq=FRA.A.GDPHRS..XDC_H.Q))
-- **Interpolation**: Linear interpolation between known data points
-
-## Automatic Data Updates
-
-A GitHub Action runs every February 1st (or on demand) to fetch the latest INSEE data and propose a PR with updated prices.
-
-### How it works
-
-1. The script (`scripts/update-data.mjs`) fetches multiple data types:
-   - **SMIC monthly net** (idbank `000879878`): Auto-fetched from INSEE BDM - uses January value per year, converted to hourly (÷ 151.67h)
-   - **Mean salary** (idbank `010752366`): Annual net EQTP, converted to hourly (÷ 1820h)
-   - **Median salary** (idbank `010752342`): Annual net EQTP, converted to hourly (÷ 1820h)
-   - **CPI inflation** (idbank `001759970`): IPC ensemble (base 2015) - computes annual average then YoY %
-   - **Direct retail prices** (Method A): For some products, INSEE publishes actual retail prices in EUR via their ["Prix moyens annuels"](https://www.insee.fr/fr/statistiques/series/103157792) series. These are the most accurate.
-   - **IPC index estimates** (Method B): For other products, the script fetches [IPC consumer price indices](https://www.insee.fr/en/information/2868055) (base 100 = 2015) and converts them to estimated prices using a known anchor price.
-2. New year data points are **added** to `data.ts` - historical data is never modified
-3. A Pull Request is created for human review before merging
-4. Includes retry logic (3 retries with exponential backoff) and data validation (SMIC range checks)
-
-### Manual trigger
-
-Go to **Actions** → **Update Purchasing Power Data** → **Run workflow**
-
-### What's auto-updated vs manual
-
-| Method                       | Data                                                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SMIC net hourly** (auto)   | Fetched from INSEE idbank `000879878`                                                                                                                                                             |
-| **Mean salary** (auto)       | Fetched from INSEE idbank `010752366`                                                                                                                                                             |
-| **Median salary** (auto)     | Fetched from INSEE idbank `010752342`                                                                                                                                                             |
-| **CPI inflation** (auto)     | Fetched from INSEE idbank `001759970`                                                                                                                                                             |
-| **Direct prices** (Method A) | Tomates, oranges, pommes                                                                                                                                                                          |
-| **IPC estimates** (Method B) | Baguette, essence, lait, bœuf, œufs, beurre, poulet, pommes de terre, sucre, pâtes, huile, camembert, vin, yaourt                                                                                 |
-| **Manual update needed**     | Cigarettes (tax policy), cinema (CNC), médecin (CNAM), métro (RATP), café/bière (service prices), timbre (La Poste), journal, magazine, croissant, carottes, salade, électricité, loyer, internet |
-
-### SMIC updates
-
-SMIC net hourly rates are **auto-fetched** from INSEE (idbank `000879878`). The script reads the monthly net value and divides by 151.67h. If INSEE data is unavailable (e.g., the new rate was just published), you can add a manual override in `scripts/update-data.mjs`:
-
-```js
-const SMIC_UPDATES = {
-  2027: 9.XX,  // ← manual override (net hourly, takes precedence over API)
-};
-```
-
-Then run the update script or trigger the GitHub Action.
-
-### Adding a new product
-
-1. Find the INSEE idbank:
-   - For direct prices: search [Prix moyens](https://www.insee.fr/fr/statistiques/series/103157792)
-   - For IPC indices: search [IPC series](https://www.insee.fr/fr/statistiques/series/102342213)
-2. Add an entry to `DIRECT_PRICE_MAP` or `INDEX_PRICE_MAP` in `scripts/update-data.mjs`
-3. Add the product to `rawProducts` in `data.ts` with historical anchor prices
-4. Run `node scripts/update-data.mjs --write` to populate recent years
-
-### Running the update locally
-
-```bash
-# Dry-run - shows what would change without modifying files
-node scripts/update-data.mjs
-
-# Write mode - updates data.ts with new data points
-node scripts/update-data.mjs --write
-```
+---
 
 ## Project Structure
 
 ```
 client/
   src/
-    components/   # React components (Header, Hero, Charts, Insights, etc.)
+    components/
+      Header.tsx                  # Language / salary ref / theme toggles
+      Hero.tsx                    # Animated intro with featured product rotation
+      PurchasingPowerIndex.tsx    # Main composite index chart
+      ProductExplorer.tsx         # Sparkline grid with filters
+      ProductModal.tsx            # Per-product detail chart + comparison
+      Insights.tsx                # Dynamic top 3 improved / degraded
+      BasketComposition.tsx       # Basket weights table
+      Sources.tsx                 # Methodology & sources cards
+      ui/                         # shadcn/ui primitives + ErrorBoundary
     lib/
-      data.ts         # All product prices, salary rates, inflation, productivity, computed minutes
-      translations.ts # FR/EN translation strings
-      i18n.tsx        # Language context provider
-      theme.tsx       # Dark/light mode context
-      salaryRef.tsx   # Salary reference context (SMIC / median / mean)
-      chartColors.ts  # Theme-aware chart color helpers
+      data.ts                     # Re-export barrel (imports everything below)
+      salary-rates.ts             # SMIC, mean, median hourly rates + DATA_START/END_YEAR
+      calculations.ts             # interpolate(), computeMinutes()
+      macroeconomics.ts           # inflationRates, productivityIndex, historicalEvents
+      products.ts                 # rawProducts, basketWeights, getDynamicFunFact()…
+      translations.ts             # FR/EN strings
+      i18n.tsx                    # Language context
+      theme.tsx                   # Dark/light mode context
+      salaryRef.tsx               # Salary reference context
+      chartColors.ts              # Theme-aware palette helpers
+      constants.ts                # EURO_TO_FRANC, MOBILE_BREAKPOINT
     pages/
-      Home.tsx        # Main page layout
+      Home.tsx                    # Root layout, embed mode detection
 scripts/
-  update-data.mjs     # INSEE data fetcher + data.ts updater
+  update-data.mjs                 # INSEE data fetcher + file updater
 .github/
   workflows/
-    update-data.yml   # Yearly auto-update GitHub Action
+    update-data.yml               # Annual GitHub Action (runs 1 Feb)
 ```
+
+---
+
+## Data Sources
+
+Salary and macroeconomic series are fetched automatically from INSEE. Product prices use three methods:
+
+| Method | Description |
+|---|---|
+| **A — Direct prices** | INSEE "Prix moyens annuels de vente au détail" — actual retail prices in EUR |
+| **B — IPC estimate** | IPC consumer price index (base 100 = 2015) anchored to a known 2015 price |
+| **C — IRL estimate** | INSEE IRL rent revision index anchored to a known 2015 market rent |
+| **Manual** | Maintained from public sources (tariff tables, press releases, surveys) |
+
+### What is updated automatically vs. manually
+
+> The update script (`scripts/update-data.mjs`) only **adds** new year entries — it never modifies historical values.
+
+| Data | Method | Source / idbank |
+|---|---|---|
+| SMIC net hourly | Auto | INSEE `000879878` — January monthly net ÷ 151.67h |
+| Mean salary net hourly | Auto | INSEE DADS `010752366` — annual net EQTP ÷ 1820h |
+| Median salary net hourly | Auto | INSEE DADS `010752342` — annual net EQTP ÷ 1820h (from 1996) |
+| CPI inflation | Auto | INSEE IPC `001759970` — annual average, YoY % change |
+| Tomates, oranges, pommes | Auto — Method A | INSEE Prix moyens `000641464`, `000641386`, `000641388` |
+| Baguette, essence, lait, bœuf, œufs, beurre, poulet, pommes de terre, sucre, pâtes, huile, camembert, vin, yaourt | Auto — Method B | INSEE IPC indices (see `INDEX_PRICE_MAP` in `update-data.mjs`) |
+| Loyer national moyen | Auto — Method C | INSEE IRL `001515333` — anchor €12.0/m² in 2015 |
+| **Cigarettes** | Manual | DGDDI / Tabac Info Service |
+| **Cinéma** | Manual | CNC (Centre national du cinéma) |
+| **Médecin généraliste** | Manual | Assurance Maladie / CNAM |
+| **Consultation spécialiste** | Manual | DREES / SNDS (ophtalmologiste secteur 2) |
+| **Métro Paris** | Manual | RATP / Île-de-France Mobilités |
+| **Timbre** | Manual | La Poste (tarifs en vigueur) |
+| **Journal** | Manual | Prix éditeur |
+| **Café** | Manual | Enquête prix services INSEE |
+| **Électricité** | Manual | EDF / CRE (tarifs réglementés) |
+| **Gaz** | Manual | CRE / DGEC |
+| **Loyer Paris** | Manual | OLAP Paris / CLAMEUR |
+| **Internet (box)** | Manual | ARCEP / opérateurs |
+| **Forfait mobile** | Manual | ARCEP / opérateurs |
+| **Streaming** | Manual | Netflix France |
+| **Smartphone** | Manual | GSMArena / Lesnumériques |
+| **Voiture milieu de gamme** | Manual | Peugeot France (205 → 208) |
+
+### Reviewer checklist
+
+When the annual GitHub Action opens a PR, all **Manual** rows above must be verified. The update script prints a checklist at the end of its run:
+
+```
+MANUAL PRODUCTS - reviewer checklist
+- [ ] cigarettes (last: 2024) - DGDDI / Tabac Info Service
+- [ ] cinema (last: 2024) - CNC (Centre national du cinéma)
+...
+```
+
+---
+
+## Automatic Data Updates
+
+A GitHub Action runs every **February 1st** (or on demand) to fetch fresh INSEE data and open a PR for review.
+
+### Trigger manually
+
+**Actions → Update Purchasing Power Data → Run workflow**
+
+### Run locally
+
+```bash
+# Dry-run — prints what would change without writing any files
+node scripts/update-data.mjs
+
+# Write mode — updates the three data files
+node scripts/update-data.mjs --write
+```
+
+In write mode, the script updates:
+- `client/src/lib/salary-rates.ts` — SMIC, mean, and median rates
+- `client/src/lib/macroeconomics.ts` — annual CPI inflation rates
+- `client/src/lib/products.ts` — product prices (Methods A, B, C)
+
+### Adding a new auto-updated product
+
+1. Find the INSEE idbank:
+   - Direct prices: [Prix moyens annuels](https://www.insee.fr/fr/statistiques/series/103157792)
+   - IPC indices: [IPC series browser](https://www.insee.fr/fr/statistiques/series/102342213)
+2. Add an entry to `DIRECT_PRICE_MAP` or `INDEX_PRICE_MAP` in `scripts/update-data.mjs`
+3. Add the product to `rawProducts` in `client/src/lib/products.ts` with historical anchor prices
+4. Run `node scripts/update-data.mjs --write` to populate recent years
+
+---
+
+## Testing
+
+```bash
+npm run test
+```
+
+14 unit tests covering:
+- `interpolate()` edge cases
+- `computeMinutes()` for each salary reference
+- Basket / composite purchasing power index computation
+- Data integrity (no missing years, no negative prices, valid salary rates)
+
+---
 
 ## License
 
-CC BY 4.0 - see [LICENSE](LICENSE).
-
-Attribution required: credit Romain Coupey and link to this repository.
+[CC BY 4.0](LICENSE) — attribution required: credit **Romain Coupey** and link to this repository.

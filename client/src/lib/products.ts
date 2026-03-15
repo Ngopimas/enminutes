@@ -82,6 +82,8 @@ const PRODUCT_SOURCES: Record<string, string> = {
   internet: "ARCEP / opérateurs",
   gaz: "CRE / DGEC",
   loyer_paris: "OLAP Paris / CLAMEUR",
+  loyer_national: "INSEE IRL / INSEE Enquête Logement",
+  consultation_specialiste: "DREES / Assurance Maladie (SNDS)",
   forfait_mobile: "ARCEP / opérateurs",
   streaming: "Netflix France",
   smartphone: "GSMArena / Lesnumériques",
@@ -117,6 +119,26 @@ const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
       labelEn: "Rent control reinstated",
     },
   ],
+  loyer_national: [
+    { year: 2006, labelFr: "IRL remplace ICC", labelEn: "IRL replaces ICC" },
+    {
+      year: 2022,
+      labelFr: "Hausse IRL +6,5%",
+      labelEn: "IRL +6.5% (inflation spike)",
+    },
+  ],
+  consultation_specialiste: [
+    {
+      year: 2012,
+      labelFr: "Contrats secteur optionnel",
+      labelEn: "Optional sector contracts",
+    },
+    {
+      year: 2017,
+      labelFr: "Accord dépassements",
+      labelEn: "Fee excess reform",
+    },
+  ],
   baguette: [{ year: 2022, labelFr: "Hausse blé +60%", labelEn: "Wheat +60%" }],
   voiture_milieu_gamme: [
     { year: 2020, labelFr: "Virage électrique", labelEn: "EV shift" },
@@ -128,6 +150,14 @@ const PRODUCT_DISCLAIMERS: Record<string, { fr: string; en: string }> = {
   loyer_paris: {
     fr: "Données OLAP/CLAMEUR : loyers de marché à Paris intra-muros (logements remis en location). Non représentatif des loyers nationaux ni des locataires en place.",
     en: "OLAP/CLAMEUR data: market rents in Paris intra-muros (re-let dwellings). Not representative of national rents or sitting tenants.",
+  },
+  loyer_national: {
+    fr: "Données estimées à partir de l'IRL INSEE (indice légal de révision) et de l'Enquête Logement INSEE. Reflète le loyer moyen de marché national (nouveaux baux), non les loyers réellement payés ni les logements sociaux.",
+    en: "Estimates based on INSEE IRL (legal revision index) and INSEE Housing Survey. Reflects national average market rent (new leases), not actual paid rents or social housing.",
+  },
+  consultation_specialiste: {
+    fr: "Prix moyen d'une consultation d'ophtalmologiste en secteur 2 (avec dépassements d'honoraires). Les tarifs varient fortement selon la spécialité, le secteur et la région. Source : DREES / SNDS.",
+    en: "Average ophthalmologist consultation fee in sector 2 (with excess charges). Prices vary significantly by specialty, sector and region. Source: DREES / SNDS.",
   },
 };
 
@@ -1100,6 +1130,67 @@ const rawProducts: Record<
       2024: 23500.0,
     },
   },
+  loyer_national: {
+    id: "loyer_national",
+    nameFr: "Loyer national moyen (1 m² / mois)",
+    nameEn: "National avg. rent (1 m² / month)",
+    unit: "1 m²/mois",
+    emoji: "🏘️",
+    category: "logement",
+    funFactFr:
+      "Le loyer moyen national au m² est passé de ~70 min de travail en 1970 à ~94 min en 2024 - moins que Paris, mais la tendance est la même.",
+    funFactEn:
+      "The national average rent per m² went from ~70 work-minutes in 1970 to ~94 in 2024 - less than Paris, but the trend is the same.",
+    // Anchor: ~12.0 €/m² in 2015 (INSEE Enquête Logement + OLAP national)
+    // 2006–2024: projected via INSEE IRL quarterly index (idbank 001515333)
+    // Pre-2006: projected via ICC (Indice du Coût de la Construction)
+    prices: {
+      1970: 0.46,
+      1975: 0.75,
+      1980: 1.5,
+      1985: 2.7,
+      1990: 4.2,
+      1995: 5.6,
+      2000: 6.7,
+      2005: 8.4,
+      2008: 10.2,
+      2010: 10.9,
+      2012: 11.6,
+      2015: 12.0,
+      2018: 12.4,
+      2020: 12.7,
+      2022: 13.2,
+      2024: 14.2,
+    },
+  },
+  consultation_specialiste: {
+    id: "consultation_specialiste",
+    nameFr: "Consultation ophtalmologiste",
+    nameEn: "Ophthalmologist consultation",
+    unit: "1 consultation",
+    emoji: "👁️",
+    category: "services",
+    funFactFr:
+      "Une consultation chez l'ophtalmologiste représentait ~280 min de travail en 2000. En 2024, il faut ~360 min - l'accès aux soins spécialisés se dégrade.",
+    funFactEn:
+      "An ophthalmologist consultation cost ~280 work-minutes in 2000. In 2024 it takes ~360 minutes - access to specialist care is getting harder.",
+    // Source: DREES Données statistiques sur les professions libérales de santé
+    // Average total fee (secteur 2, dépassements d'honoraires inclus)
+    prices: {
+      1990: 25.0,
+      1995: 33.0,
+      2000: 43.0,
+      2005: 52.0,
+      2010: 61.0,
+      2013: 65.0,
+      2015: 68.0,
+      2017: 72.0,
+      2019: 82.0,
+      2021: 87.0,
+      2023: 92.0,
+      2024: 95.0,
+    },
+  },
 };
 
 // ── Data source classification ─────────────────────────────
@@ -1217,6 +1308,8 @@ export const basketWeights: Record<string, number> = {
   streaming: 1,
   gaz: 1,
   loyer_paris: 0,
+  loyer_national: 0,
+  consultation_specialiste: 0,
   smartphone: 0,
   voiture_milieu_gamme: 0,
 };

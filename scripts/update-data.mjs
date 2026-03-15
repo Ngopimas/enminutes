@@ -25,7 +25,10 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = resolve(__dirname, "../client/src/lib/data.ts");
+// After the data split, salary/macro data lives in these files:
+const SALARY_FILE = resolve(__dirname, "../client/src/lib/salary-rates.ts");
+const MACRO_FILE = resolve(__dirname, "../client/src/lib/macroeconomics.ts");
+const PRODUCTS_FILE = resolve(__dirname, "../client/src/lib/products.ts");
 const WRITE_MODE = process.argv.includes("--write");
 
 // ─── Configuration ─────────────────────────────────────────────
@@ -83,6 +86,7 @@ const DIRECT_PRICE_MAP = {
  * To find idbanks: https://www.insee.fr/fr/statistiques/series/102342213
  */
 const INDEX_PRICE_MAP = {
+  // NOTE: loyer_national uses IRL (see IRL_RENT_MAP below), not IPC
   baguette: { idbank: "001762397", anchorYear: 2015, anchorPrice: 0.86 },
   essence: { idbank: "001762471", anchorYear: 2015, anchorPrice: 1.3 },
   lait: { idbank: "001762395", anchorYear: 2015, anchorPrice: 0.87 },
@@ -97,6 +101,21 @@ const INDEX_PRICE_MAP = {
   camembert: { idbank: "001762391", anchorYear: 2015, anchorPrice: 1.9 },
   vin: { idbank: "001762413", anchorYear: 2015, anchorPrice: 2.3 },
   yaourt: { idbank: "001762415", anchorYear: 2015, anchorPrice: 0.8 },
+};
+
+/**
+ * METHOD C: Products using INSEE IRL (Indice de Référence des Loyers) index.
+ * IRL is the legal quarterly rent revision index published by INSEE.
+ * idbank 001515333 = IRL national quarterly (base 100 = Q4 2022 reference).
+ * We take annual averages and project from an anchor price.
+ *
+ * IMPORTANT: IRL reflects sitting-tenant rent increases. Market rent estimates
+ * (new leases) closely follow IRL in the medium term. Reviewer should spot-check
+ * against Observatoire des Loyers (OLAP) and CLAMEUR annual reports.
+ * To find idbanks: https://www.insee.fr/fr/statistiques/series/102342213
+ */
+const IRL_RENT_MAP = {
+  loyer_national: { idbank: "001515333", anchorYear: 2015, anchorPrice: 12.0 },
 };
 
 // ─── INSEE API fetching ────────────────────────────────────────
@@ -282,10 +301,18 @@ function indexToPrice(indexByYear, anchorYear, anchorPrice) {
   return prices;
 }
 
-// ─── data.ts parsing and updating ─────────────────────────────
+// ─── File parsing and updating ────────────────────────────────
 
-function readDataFile() {
-  return readFileSync(DATA_FILE, "utf-8");
+function readSalaryFile() {
+  return readFileSync(SALARY_FILE, "utf-8");
+}
+
+function readMacroFile() {
+  return readFileSync(MACRO_FILE, "utf-8");
+}
+
+function readProductsFile() {
+  return readFileSync(PRODUCTS_FILE, "utf-8");
 }
 
 function extractPrices(content, productId) {
@@ -391,13 +418,15 @@ async function main() {
   console.log("Pouvoir d'Achat - Data Updater");
   console.log("==============================\n");
 
-  let content = readDataFile();
+  let salaryContent = readSalaryFile();
+  let macroContent = readMacroFile();
+  let productsContent = readProductsFile();
   const changes = [];
   const currentYear = new Date().getFullYear();
 
   // 1. Update SMIC rates (automatically from INSEE API)
   console.log("Step 1: SMIC net hourly rates (INSEE 000879878)");
-  const existingSmicRates = extractSmicRates(content);
+  const existingSmicRates = extractSmicRates(salaryContent);
   const maxSmicYear = Math.max(...Object.keys(existingSmicRates).map(Number));
   console.log(`  Current data: up to ${maxSmicYear}`);
 
@@ -424,7 +453,7 @@ async function main() {
           break;
         }
       }
-      if (smicUpdated) content = replaceSmicRates(content, existingSmicRates);
+      if (smicUpdated) salaryContent = replaceSmicRates(salaryContent, existingSmicRates);
     } else {
       console.log("  No new SMIC rates available.");
     }
@@ -432,7 +461,7 @@ async function main() {
 
   // 2. Update mean salary rates (INSEE DADS)
   console.log("\nStep 2a: Mean salary net hourly (INSEE 010752366)");
-  const existingMeanRates = extractSalaryRates(content, "meanSalaryRates");
+  const existingMeanRates = extractSalaryRates(salaryContent, "meanSalaryRates");
   const maxMeanYear =
     Object.keys(existingMeanRates).length > 0
       ? Math.max(...Object.keys(existingMeanRates).map(Number))
@@ -458,8 +487,8 @@ async function main() {
       }
     }
     if (meanUpdated) {
-      content = replaceSalaryRates(
-        content,
+      salaryContent = replaceSalaryRates(
+        salaryContent,
         "meanSalaryRates",
         existingMeanRates,
       );
@@ -472,7 +501,7 @@ async function main() {
 
   // 2b. Update median salary rates (INSEE DADS)
   console.log("\nStep 2b: Median salary net hourly (INSEE 010752342)");
-  const existingMedianRates = extractSalaryRates(content, "medianSalaryRates");
+  const existingMedianRates = extractSalaryRates(salaryContent, "medianSalaryRates");
   const maxMedianYear =
     Object.keys(existingMedianRates).length > 0
       ? Math.max(...Object.keys(existingMedianRates).map(Number))
@@ -498,8 +527,8 @@ async function main() {
       }
     }
     if (medianUpdated) {
-      content = replaceSalaryRates(
-        content,
+      salaryContent = replaceSalaryRates(
+        salaryContent,
         "medianSalaryRates",
         existingMedianRates,
       );
@@ -512,7 +541,7 @@ async function main() {
 
   // 3. Update CPI inflation rates
   console.log("\nStep 2: CPI inflation (INSEE 001759970)");
-  const existingInflation = extractInflationRates(content);
+  const existingInflation = extractInflationRates(macroContent);
   const maxInflationYear =
     Object.keys(existingInflation).length > 0
       ? Math.max(...Object.keys(existingInflation).map(Number))
@@ -535,7 +564,7 @@ async function main() {
       }
     }
     if (inflationUpdated) {
-      content = replaceInflationRates(content, existingInflation);
+      macroContent = replaceInflationRates(macroContent, existingInflation);
     } else {
       console.log("  No new inflation data available.");
     }
@@ -547,10 +576,10 @@ async function main() {
   for (const [productId, config] of Object.entries(DIRECT_PRICE_MAP)) {
     console.log(`\n  [${productId}] - direct prices`);
 
-    const existingPrices = extractPrices(content, productId);
+    const existingPrices = extractPrices(productsContent, productId);
     if (!existingPrices) {
       console.warn(
-        `  ⚠ Could not find product "${productId}" in data.ts - skipping`,
+        `  ⚠ Could not find product "${productId}" in products.ts - skipping`,
       );
       continue;
     }
@@ -579,7 +608,7 @@ async function main() {
     }
 
     if (updated) {
-      content = replacePrices(content, productId, existingPrices);
+      productsContent = replacePrices(productsContent, productId, existingPrices);
       console.log(`  ✓ Updated.`);
     } else {
       console.log(`  No new years available.`);
@@ -595,10 +624,10 @@ async function main() {
   for (const [productId, config] of Object.entries(INDEX_PRICE_MAP)) {
     console.log(`\n  [${productId}] - IPC estimate`);
 
-    const existingPrices = extractPrices(content, productId);
+    const existingPrices = extractPrices(productsContent, productId);
     if (!existingPrices) {
       console.warn(
-        `  ⚠ Could not find product "${productId}" in data.ts - skipping`,
+        `  ⚠ Could not find product "${productId}" in products.ts - skipping`,
       );
       continue;
     }
@@ -636,14 +665,71 @@ async function main() {
     }
 
     if (updated) {
-      content = replacePrices(content, productId, existingPrices);
+      productsContent = replacePrices(productsContent, productId, existingPrices);
       console.log(`  ✓ Updated.`);
     } else {
       console.log(`  No new years available.`);
     }
   }
 
-  // 5. Summary
+  // 5. Update loyer_national via IRL index (Method C)
+  console.log("\n\nStep 3c: IRL index-based rent estimates (loyer_national)");
+  console.log(
+    "  ℹ IRL = Indice de Référence des Loyers (INSEE quarterly). Review against OLAP/CLAMEUR.\n",
+  );
+
+  for (const [productId, config] of Object.entries(IRL_RENT_MAP)) {
+    console.log(`\n  [${productId}] - IRL estimate`);
+
+    const existingPrices = extractPrices(productsContent, productId);
+    if (!existingPrices) {
+      console.warn(
+        `  ⚠ Could not find product "${productId}" in products.ts - skipping`,
+      );
+      continue;
+    }
+
+    const maxYear = Math.max(...Object.keys(existingPrices).map(Number));
+    console.log(`  Current data: up to ${maxYear}`);
+
+    if (maxYear >= currentYear) {
+      console.log(`  Already up to date.`);
+      continue;
+    }
+
+    const indexData = await fetchInseeAnnualIndex(
+      config.idbank,
+      config.anchorYear,
+    );
+    if (!indexData) {
+      console.log(`  No new data from INSEE IRL.`);
+      continue;
+    }
+
+    const estimatedPrices = indexToPrice(
+      indexData,
+      config.anchorYear,
+      config.anchorPrice,
+    );
+    let updated = false;
+
+    for (const [year, price] of Object.entries(estimatedPrices)) {
+      if (year > maxYear && year <= currentYear) {
+        existingPrices[year] = price;
+        changes.push(`${productId}: added ${year} → ${price} €/m² (IRL estimate)`);
+        updated = true;
+      }
+    }
+
+    if (updated) {
+      productsContent = replacePrices(productsContent, productId, existingPrices);
+      console.log(`  ✓ Updated.`);
+    } else {
+      console.log(`  No new years available.`);
+    }
+  }
+
+  // 6. Summary
   console.log("\n\n══════════════════════════════════");
   if (changes.length === 0) {
     console.log("No changes detected. Data is up to date.");
@@ -654,8 +740,13 @@ async function main() {
     }
 
     if (WRITE_MODE) {
-      writeFileSync(DATA_FILE, content, "utf-8");
-      console.log(`\n✓ Written to ${DATA_FILE}`);
+      writeFileSync(SALARY_FILE, salaryContent, "utf-8");
+      writeFileSync(MACRO_FILE, macroContent, "utf-8");
+      writeFileSync(PRODUCTS_FILE, productsContent, "utf-8");
+      console.log(`\n✓ Written to:`);
+      console.log(`    ${SALARY_FILE}`);
+      console.log(`    ${MACRO_FILE}`);
+      console.log(`    ${PRODUCTS_FILE}`);
     } else {
       console.log("\n⚠ Dry run - use --write to save changes.");
     }
@@ -678,6 +769,8 @@ async function main() {
     baguette_tradition: "Fédération des boulangers (si applicable)",
     gaz: "CRE / DGEC (tarifs réglementés ou prix spot marché)",
     loyer_paris: "OLAP Paris / CLAMEUR (m² Paris intra-muros)",
+    consultation_specialiste:
+      "DREES Données stat. professions libérales santé (ophtalmologiste secteur 2, honoraires totaux moyens)",
     forfait_mobile: "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
     streaming: "Netflix France (abonnement standard)",
     smartphone: "GSM Arena / Lesnumeriques (milieu de gamme référence)",
@@ -685,11 +778,12 @@ async function main() {
   };
 
   const allProductIds = [
-    ...content.matchAll(/^\s+(\w+):\s*\{[^}]*id:\s*["'](\w+)["']/gm),
+    ...productsContent.matchAll(/^\s+(\w+):\s*\{[^}]*id:\s*["'](\w+)["']/gm),
   ].map((m) => m[2]);
   const autoIds = new Set([
     ...Object.keys(DIRECT_PRICE_MAP),
     ...Object.keys(INDEX_PRICE_MAP),
+    ...Object.keys(IRL_RENT_MAP),
   ]);
   const manualProducts = allProductIds.filter((id) => !autoIds.has(id));
 
@@ -699,7 +793,7 @@ async function main() {
       `id:\\s*["']${productId}["'][\\s\\S]*?prices:\\s*\\{([^}]+)\\}`,
       "m",
     );
-    const m = content.match(re);
+    const m = productsContent.match(re);
     if (!m) return "?";
     const years = [...m[1].matchAll(/(\d{4}):/g)].map((x) => Number(x[1]));
     return years.length ? Math.max(...years) : "?";
