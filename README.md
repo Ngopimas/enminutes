@@ -8,9 +8,9 @@ Live: [ngopimas.github.io/enminutes](https://ngopimas.github.io/enminutes/)
 
 A baguette costs around €1.20 today. But is that expensive? Compared to what?
 
-Raw prices are deceiving. In 1960, a baguette cost the equivalent of €0.07 — which sounds absurdly cheap, until you realize the net minimum wage was €0.22/h. That baguette took **18 minutes of work** to earn. Today, with a net SMIC of €9.52/h, it takes **7 minutes**.
+Raw prices are deceiving. In 1960, a baguette cost the equivalent of €0.07 - which sounds absurdly cheap, until you realize the net minimum wage was €0.22/h. That baguette took **18 minutes of work** to earn. Today, with a net SMIC of €9.52/h, it takes **7 minutes**.
 
-_En Minutes_ converts every price into minutes of work at a given salary — a unit that cuts through inflation, currency changes, and seven decades of economic shifts. It tracks 35+ everyday goods from the 1950s to today, against SMIC, median salary, or mean salary, and presents the results as interactive items and charts.
+_En Minutes_ converts every price into minutes of work at a given salary - a unit that cuts through inflation, currency changes, and seven decades of economic shifts. It tracks 35+ everyday goods in France from the 1950s to today, against SMIC, median salary, or mean salary, and presents the results as interactive items and charts.
 
 ---
 
