@@ -121,6 +121,15 @@ export default function PurchasingPowerIndex() {
 
   const labels = indexYears.filter((y) => ppIndex[y] !== undefined);
 
+  // When the salary ref changes, the available year range may shift (e.g. median starts at 1996).
+  // Clamp yearStart/yearEnd to the new valid range so the slider doesn't get stuck.
+  useEffect(() => {
+    const minYear = labels[0];
+    const maxYear = labels[labels.length - 1];
+    if (minYear !== undefined && yearStart < minYear) setYearStart(minYear);
+    if (maxYear !== undefined && yearEnd > maxYear) setYearEnd(maxYear);
+  }, [labels[0], labels[labels.length - 1]]);
+
   // Filtered labels drive both the chart and the KPI cards
   const filteredLabels = labels.filter((y) => y >= yearStart && y <= yearEnd);
 

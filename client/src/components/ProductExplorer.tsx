@@ -150,7 +150,7 @@ export default function ProductExplorer({
           {t("productExplorerSub")}
         </p>
 
-        {/* Row 1: search + trend filter */}
+        {/* Row 1: search bar (mobile) | search + trend (desktop) */}
         <div className="flex items-center gap-2 mb-3">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -163,45 +163,47 @@ export default function ProductExplorer({
               data-testid="product-search"
             />
           </div>
-          <div
-            className="flex items-center gap-1 shrink-0"
-            data-testid="trend-filter"
-          >
-            {(["all", "up", "down", "stable"] as const).map((t_) => (
-              <Button
-                key={t_}
-                variant={trend === t_ ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTrend(t_)}
-                title={
-                  t_ === "up"
-                    ? t("trendUpTooltip")
-                    : t_ === "down"
-                      ? t("trendDownTooltip")
-                      : t_ === "stable"
-                        ? t("trendStableTooltip")
-                        : t("trendAllTooltip")
-                }
-                className="h-8 px-2.5 text-xs"
-              >
-                {t_ === "all"
-                  ? t("allCategories")
-                  : t_ === "up"
-                    ? "↗"
-                    : t_ === "down"
-                      ? "↘"
-                      : "→"}
-              </Button>
-            ))}
-          </div>
+          {!isMobile && (
+            <div
+              className="flex items-center gap-1 shrink-0"
+              data-testid="trend-filter"
+            >
+              {(["all", "up", "down", "stable"] as const).map((t_) => (
+                <Button
+                  key={t_}
+                  variant={trend === t_ ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTrend(t_)}
+                  title={
+                    t_ === "up"
+                      ? t("trendUpTooltip")
+                      : t_ === "down"
+                        ? t("trendDownTooltip")
+                        : t_ === "stable"
+                          ? t("trendStableTooltip")
+                          : t("trendAllTooltip")
+                  }
+                  className="h-8 px-2.5 text-xs"
+                >
+                  {t_ === "all"
+                    ? t("allCategories")
+                    : t_ === "up"
+                      ? "↗"
+                      : t_ === "down"
+                        ? "↘"
+                        : "→"}
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Row 2: category filter - Select on mobile, Tabs on larger screens */}
-        <div className="mb-6">
-          {isMobile ? (
+        {/* Row 2 (mobile only): category dropdown + trend filters */}
+        {isMobile && (
+          <div className="flex items-center gap-2 mb-6">
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger
-                className="h-8 text-xs w-48"
+                className="h-8 text-xs flex-1"
                 data-testid="category-tabs"
               >
                 <SelectValue />
@@ -217,7 +219,43 @@ export default function ProductExplorer({
                 ))}
               </SelectContent>
             </Select>
-          ) : (
+            <div
+              className="flex items-center gap-1 shrink-0"
+              data-testid="trend-filter"
+            >
+              {(["all", "up", "down", "stable"] as const).map((t_) => (
+                <Button
+                  key={t_}
+                  variant={trend === t_ ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTrend(t_)}
+                  title={
+                    t_ === "up"
+                      ? t("trendUpTooltip")
+                      : t_ === "down"
+                        ? t("trendDownTooltip")
+                        : t_ === "stable"
+                          ? t("trendStableTooltip")
+                          : t("trendAllTooltip")
+                  }
+                  className="h-8 px-2.5 text-xs"
+                >
+                  {t_ === "all"
+                    ? t("allCategories")
+                    : t_ === "up"
+                      ? "↗"
+                      : t_ === "down"
+                        ? "↘"
+                        : "→"}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Row 3 (desktop only): category tabs */}
+        {!isMobile && (
+          <div className="mb-6">
             <Tabs value={category} onValueChange={setCategory}>
               <TabsList
                 className="flex flex-wrap h-auto gap-1"
@@ -233,8 +271,8 @@ export default function ProductExplorer({
                 ))}
               </TabsList>
             </Tabs>
-          )}
-        </div>
+          </div>
+        )}
 
         {filtered.length === 0 ? (
           <p
