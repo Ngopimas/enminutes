@@ -40,6 +40,8 @@ export interface Product {
   years: number[];
   dataType: ProductDataType;
   source?: string;
+  disclaimerFr?: string;
+  disclaimerEn?: string;
   inflections?: ProductInflection[];
 }
 
@@ -119,6 +121,14 @@ const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
   voiture_milieu_gamme: [
     { year: 2020, labelFr: "Virage électrique", labelEn: "EV shift" },
   ],
+};
+
+// ── Product-level disclaimers ──────────────────────────────
+const PRODUCT_DISCLAIMERS: Record<string, { fr: string; en: string }> = {
+  loyer_paris: {
+    fr: "Données OLAP/CLAMEUR : loyers de marché à Paris intra-muros (logements remis en location). Non représentatif des loyers nationaux ni des locataires en place.",
+    en: "OLAP/CLAMEUR data: market rents in Paris intra-muros (re-let dwellings). Not representative of national rents or sitting tenants.",
+  },
 };
 
 /** Generate a dynamic fun fact for a product based on current salary reference */
@@ -625,7 +635,6 @@ const rawProducts: Record<
       2015: 7,
       2020: 8,
       2024: 9.5,
-      2025: 7.65,
     },
   },
   pates: {
@@ -1138,6 +1147,8 @@ for (const [key, prod] of Object.entries(rawProducts)) {
       .sort((a, b) => a - b),
     dataType,
     source: PRODUCT_SOURCES[key],
+    disclaimerFr: PRODUCT_DISCLAIMERS[key]?.fr,
+    disclaimerEn: PRODUCT_DISCLAIMERS[key]?.en,
     inflections: PRODUCT_INFLECTIONS[key],
   };
 }

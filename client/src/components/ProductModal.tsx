@@ -210,9 +210,29 @@ export default function ProductModal({
     return y % 5 === 0;
   });
 
+  // Pre-1970 uncertainty shading (SMIG era, estimated rates ±10%)
+  const pre1970EndIdx = years.findIndex((y) => y >= 1970);
+  const annotations: Record<string, object> = {};
+  if (pre1970EndIdx > 0) {
+    annotations["pre1970"] = {
+      type: "box" as const,
+      xMin: 0,
+      xMax: pre1970EndIdx - 1,
+      backgroundColor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
+      borderWidth: 0,
+      label: {
+        display: true,
+        content: lang === "fr" ? "Données estimées (±10%)" : "Estimated data (±10%)",
+        position: { x: "start" as const, y: "end" as const },
+        color: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)",
+        font: { size: 8 },
+        padding: { top: 2, bottom: 2, left: 3, right: 3 },
+      },
+    };
+  }
+
   // Euro transition annotation (vertical line at 2002)
   const euroIdx = years.indexOf(2002);
-  const annotations: Record<string, object> = {};
   if (showPrice && euroIdx >= 0) {
     annotations["euroLine"] = {
       type: "line" as const,
@@ -680,6 +700,11 @@ export default function ProductModal({
         </Card>
 
         <div className="mt-2 space-y-1">
+          {(product.disclaimerFr || product.disclaimerEn) && (
+            <p className="text-[11px] text-amber-600/80 dark:text-amber-400/70 italic">
+              ⚠ {lang === "fr" ? product.disclaimerFr : product.disclaimerEn}
+            </p>
+          )}
           {salaryRef === "median" && (
             <p className="text-[11px] text-muted-foreground/60 italic">
               ℹ {t("medianAvailableFrom")}
