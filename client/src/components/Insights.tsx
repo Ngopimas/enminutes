@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
+import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLang } from "@/lib/i18n";
 import { useSalaryRef } from "@/lib/salaryRef";
+import { useIsMobile } from "@/lib/utils";
 import { products, getMinutes, getYearsForRef, type Product } from "@/lib/data";
 import ProductModal from "./ProductModal";
 
@@ -116,6 +118,8 @@ const insightDefs: InsightDef[] = [
 export default function Insights() {
   const { lang } = useLang();
   const { salaryRef } = useSalaryRef();
+  const isMobile = useIsMobile();
+  const [, navigate] = useLocation();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -141,8 +145,13 @@ export default function Insights() {
   }, [lang, salaryRef]);
 
   const handleCardClick = (product: Product) => {
-    setSelectedProduct(product);
-    setModalOpen(true);
+    if (isMobile) {
+      sessionStorage.setItem("homeScrollY", String(window.scrollY));
+      navigate(`/product/${product.id}`);
+    } else {
+      setSelectedProduct(product);
+      setModalOpen(true);
+    }
   };
 
   return (
