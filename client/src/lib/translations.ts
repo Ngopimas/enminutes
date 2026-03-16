@@ -114,8 +114,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     footerText:
       "Données compilées à partir de sources publiques françaises. Les prix intermédiaires sont interpolés.",
     footerCreatedBy: "👨‍💻 Créé par",
-    footerViewSource: "Voir le code source sur GitHub",
-    footerReadArticle: "Comment ce projet a été construit",
+    footerViewSource: "Code source",
+    footerReadArticle: "Comment c'est construit",
     createdWith: "Créé avec",
     darkMode: "Mode sombre",
     lightMode: "Mode clair",
@@ -343,8 +343,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     footerText:
       "Data compiled from French public sources. Intermediate prices are interpolated.",
     footerCreatedBy: "👨‍💻 Created by",
-    footerViewSource: "View source code on GitHub",
-    footerReadArticle: "How this project was built",
+    footerViewSource: "Source code",
+    footerReadArticle: "How it was built",
     createdWith: "Created with",
     darkMode: "Dark mode",
     lightMode: "Light mode",
