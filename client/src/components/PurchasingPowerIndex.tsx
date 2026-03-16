@@ -406,6 +406,9 @@ export default function PurchasingPowerIndex() {
         bodyFont: { size: 11 },
         boxWidth: 8,
         boxHeight: 8,
+        footerColor: isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)",
+        footerFont: { size: 10, style: "italic" as const },
+        footerMarginTop: 6,
         callbacks: {
           labelColor: (ctx: any) => ({
             borderColor: ctx.dataset.borderColor,
@@ -421,6 +424,13 @@ export default function PurchasingPowerIndex() {
               return ` ${label}: ${value.toFixed(1)}%`;
             }
             return ` ${label}: ${value.toFixed(1)}`;
+          },
+          footer: (items: any[]) => {
+            if (!items.length) return [];
+            const year = filteredLabels[items[0].dataIndex];
+            const ann = ppAnnotations.find((a) => a.year === year);
+            if (!ann) return [];
+            return [`→ ${lang === "fr" ? ann.labelFr : ann.labelEn}`];
           },
         },
       },
