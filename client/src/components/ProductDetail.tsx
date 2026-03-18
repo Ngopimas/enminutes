@@ -100,24 +100,38 @@ interface ProductDetailProps {
   product: Product;
   initialYearA?: number;
   initialYearB?: number;
+  onYearsChange?: (yearA: number, yearB: number) => void;
 }
 
 export default function ProductDetail({
   product,
   initialYearA,
   initialYearB,
+  onYearsChange,
 }: ProductDetailProps) {
   const { lang, t } = useLang();
   const isMobile = useIsMobile();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
-  const [showPrice, setShowPrice] = useState(false);
-  const [showContext, setShowContext] = useState(false);
+  const [showPrice, setShowPrice] = useState(() => {
+    try { return localStorage.getItem("pref_showPrice") === "true"; } catch { return false; }
+  });
+  const [showContext, setShowContext] = useState(() => {
+    try { return localStorage.getItem("pref_showContext") === "true"; } catch { return false; }
+  });
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
   const [yearA, setYearA] = useState<number>(0);
   const [yearB, setYearB] = useState<number>(0);
   const chartRef = useRef<any>(null);
+
+  // Persist toggle preferences globally
+  useEffect(() => {
+    try { localStorage.setItem("pref_showPrice", String(showPrice)); } catch {}
+  }, [showPrice]);
+  useEffect(() => {
+    try { localStorage.setItem("pref_showContext", String(showContext)); } catch {}
+  }, [showContext]);
 
   // Reset selected years when product or salary ref changes
   useEffect(() => {
@@ -126,20 +140,45 @@ export default function ProductDetail({
       if (yrs.length > 0) {
         const defaultA = yrs[0];
         const defaultB = yrs[yrs.length - 1];
-        // Use URL-provided years if valid for this product
+        // Read per-product saved years, falling back if year not available for this ref
+        let savedA: number | undefined;
+        let savedB: number | undefined;
+        try {
+          const saved = localStorage.getItem(`pref_years_${product.id}`);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (typeof parsed.yearA === "number" && yrs.includes(parsed.yearA)) savedA = parsed.yearA;
+            if (typeof parsed.yearB === "number" && yrs.includes(parsed.yearB)) savedB = parsed.yearB;
+          }
+        } catch {}
+        // URL-provided years take highest priority, then localStorage, then defaults
         const validA =
           initialYearA !== undefined && yrs.includes(initialYearA)
             ? initialYearA
-            : defaultA;
+            : (savedA ?? defaultA);
         const validB =
           initialYearB !== undefined && yrs.includes(initialYearB)
             ? initialYearB
-            : defaultB;
+            : (savedB ?? defaultB);
         setYearA(validA);
         setYearB(validB);
       }
     }
   }, [product?.id, salaryRef]);
+
+  // Keyboard shortcuts: p = toggle price, c = toggle context
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea") return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (document.querySelector("[data-radix-popper-content-wrapper]")) return;
+      if (e.key === "p") setShowPrice((v) => !v);
+      if (e.key === "c" && (product.inflections?.length ?? 0) > 0) setShowContext((v) => !v);
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [product.inflections?.length]);
 
   const minutes = getMinutes(product, salaryRef);
   const years = getYearsForRef(product, salaryRef);
@@ -573,7 +612,7 @@ export default function ProductDetail({
       </div>
 
       {/* Price + context toggles + download */}
-      <div className="flex items-center gap-4 -mt-1">
+      <div className="flex items-center gap-4 mt-2">
         <div className="flex items-center gap-2">
           <Switch
             id="show-price"
@@ -631,15 +670,20 @@ export default function ProductDetail({
 
       {/* Interactive year comparison */}
       <div className="mt-3" data-testid="year-comparison">
-        {/* Unified grid: dropdown on top, value below */}
+        {/* 3×3 grid: selects / [minutes + arrow] / prices */}
         <div
-          className={`grid grid-cols-[1fr_auto_1fr] items-end gap-x-3 ${isSameYear ? "opacity-50" : ""}`}
+          className={`grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-1.5 ${isSameYear ? "opacity-50" : ""}`}
         >
-          {/* Left column: Year A */}
-          <div className="flex flex-col items-center gap-1.5">
+          {/* Row 1: Year selects */}
+          <div className="flex justify-center">
             <Select
               value={String(yearA)}
-              onValueChange={(v) => setYearA(Number(v))}
+              onValueChange={(v) => {
+                const n = Number(v);
+                setYearA(n);
+                try { localStorage.setItem(`pref_years_${product.id}`, JSON.stringify({ yearA: n, yearB })); } catch {}
+                onYearsChange?.(n, yearB);
+              }}
             >
               <SelectTrigger
                 className="w-[90px] h-8 text-sm"
@@ -655,40 +699,17 @@ export default function ProductDetail({
                 ))}
               </SelectContent>
             </Select>
-            <div className="text-lg font-bold tabular-nums">
-              {formatMinutes(minA, lang, 1)}{" "}
-              <span className="text-xs font-normal text-muted-foreground">
-                min
-              </span>
-            </div>
-            <div
-              className="text-xs tabular-nums -mt-1"
-              style={{
-                color: showPrice
-                  ? isDark
-                    ? priceColors.dark
-                    : priceColors.light
-                  : "transparent",
-              }}
-            >
-              {formattedA.value} {formattedA.currency}
-            </div>
           </div>
-
-          {/* Center: arrow */}
-          <div className="flex justify-center pb-1">
-            {isSameYear || isSameValue ? (
-              <Equal className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            )}
-          </div>
-
-          {/* Right column: Year B */}
-          <div className="flex flex-col items-center gap-1.5">
+          <div />
+          <div className="flex justify-center">
             <Select
               value={String(yearB)}
-              onValueChange={(v) => setYearB(Number(v))}
+              onValueChange={(v) => {
+                const n = Number(v);
+                setYearB(n);
+                try { localStorage.setItem(`pref_years_${product.id}`, JSON.stringify({ yearA, yearB: n })); } catch {}
+                onYearsChange?.(yearA, n);
+              }}
             >
               <SelectTrigger
                 className="w-[90px] h-8 text-sm"
@@ -704,24 +725,58 @@ export default function ProductDetail({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Row 2: Minutes values + arrow */}
+          <div className="flex justify-center items-center">
+            <div className="text-lg font-bold tabular-nums">
+              {formatMinutes(minA, lang, 1)}{" "}
+              <span className="text-xs font-normal text-muted-foreground">
+                min
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-center items-center">
+            {isSameYear || isSameValue ? (
+              <Equal className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            )}
+          </div>
+          <div className="flex justify-center items-center">
             <div className="text-lg font-bold tabular-nums">
               {formatMinutes(minB, lang, 1)}{" "}
               <span className="text-xs font-normal text-muted-foreground">
                 min
               </span>
             </div>
-            <div
-              className="text-xs tabular-nums -mt-1"
-              style={{
-                color: showPrice
-                  ? isDark
-                    ? priceColors.dark
-                    : priceColors.light
-                  : "transparent",
-              }}
-            >
-              {formattedB.value} {formattedB.currency}
-            </div>
+          </div>
+
+          {/* Row 3: Prices */}
+          <div
+            className="flex justify-center text-xs tabular-nums"
+            style={{
+              color: showPrice
+                ? isDark
+                  ? priceColors.dark
+                  : priceColors.light
+                : "transparent",
+            }}
+          >
+            {formattedA.value} {formattedA.currency}
+          </div>
+          <div />
+          <div
+            className="flex justify-center text-xs tabular-nums"
+            style={{
+              color: showPrice
+                ? isDark
+                  ? priceColors.dark
+                  : priceColors.light
+                : "transparent",
+            }}
+          >
+            {formattedB.value} {formattedB.currency}
           </div>
         </div>
 

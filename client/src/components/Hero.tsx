@@ -50,12 +50,12 @@ export default function Hero() {
           : "mean salary";
 
   return (
-    <section className="py-12 md:py-24" data-testid="hero">
+    <section className="py-16 md:py-28" data-testid="hero">
       <div className="max-w-6xl mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">
           {t("heroHeadline")}
         </h1>
-        <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto mb-8">
+        <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto mb-8 text-balance">
           {salaryRef === "smic"
             ? t("heroSubtitle")
             : salaryRef === "median"

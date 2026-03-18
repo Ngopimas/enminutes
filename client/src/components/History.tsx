@@ -5,7 +5,7 @@ export default function History() {
   const { lang, t } = useLang();
 
   return (
-    <section className="py-12 md:py-16" data-testid="history">
+    <section className="py-12 md:py-20" data-testid="history">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-1">{t("historyTitle")}</h2>
         <p className="text-sm text-muted-foreground mb-8">{t("historySub")}</p>

@@ -82,7 +82,7 @@ export default function TimelineComparison() {
   };
 
   return (
-    <section className="py-12 md:py-16" data-testid="timeline-comparison">
+    <section className="py-12 md:py-20" data-testid="timeline-comparison">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-1">{t('timelineTitle')}</h2>
         <p className="text-sm text-muted-foreground mb-6">{t('timelineSub')}</p>

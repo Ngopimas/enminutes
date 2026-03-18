@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -64,9 +64,18 @@ export default function ProductExplorer({
   const { salaryRef, setSalaryRef } = useSalaryRef();
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
-  const [category, setCategory] = useState("all");
-  const [search, setSearch] = useState("");
-  const [trend, setTrend] = useState<"all" | "up" | "down" | "stable">("all");
+  const [category, setCategory] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get("cat") ?? "all"; } catch { return "all"; }
+  });
+  const [search, setSearch] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get("q") ?? ""; } catch { return ""; }
+  });
+  const [trend, setTrend] = useState<"all" | "up" | "down" | "stable">(() => {
+    try {
+      const t = new URLSearchParams(window.location.search).get("trend");
+      return (t === "up" || t === "down" || t === "stable") ? t : "all";
+    } catch { return "all"; }
+  });
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [deepLinkYearA, setDeepLinkYearA] = useState<number | undefined>(
@@ -77,6 +86,21 @@ export default function ProductExplorer({
   );
 
   const productList = useMemo(() => Object.values(products), []);
+
+  // Sync explorer filters to URL query params (preserved alongside hash routing)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (category !== "all") params.set("cat", category);
+    if (search.trim()) params.set("q", search.trim());
+    if (trend !== "all") params.set("trend", trend);
+    const qs = params.toString();
+    const hash = window.location.hash || "#/";
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + (qs ? "?" + qs : "") + hash,
+    );
+  }, [category, search, trend]);
 
   function getTrend(product: Product) {
     const mins = getMinutes(product, salaryRef);
@@ -112,6 +136,55 @@ export default function ProductExplorer({
     return list;
   }, [category, search, trend, productList, salaryRef]);
 
+  // Refs for stable keyboard handler closures
+  const selectedProductRef = useRef(selectedProduct);
+  const filteredRef = useRef(filtered);
+  useEffect(() => { selectedProductRef.current = selectedProduct; }, [selectedProduct]);
+  useEffect(() => { filteredRef.current = filtered; }, [filtered]);
+
+  // Track the years the user has explicitly chosen so they carry over during navigation
+  const chosenYearARef = useRef<number | undefined>(undefined);
+  const chosenYearBRef = useRef<number | undefined>(undefined);
+
+  const navigatePrev = useCallback(() => {
+    const current = selectedProductRef.current;
+    const list = filteredRef.current;
+    if (!current) return;
+    const idx = list.findIndex((p) => p.id === current.id);
+    if (idx <= 0) return;
+    setSelectedProduct(list[idx - 1]);
+    setDeepLinkYearA(chosenYearARef.current);
+    setDeepLinkYearB(chosenYearBRef.current);
+  }, []);
+
+  const navigateNext = useCallback(() => {
+    const current = selectedProductRef.current;
+    const list = filteredRef.current;
+    if (!current) return;
+    const idx = list.findIndex((p) => p.id === current.id);
+    if (idx < 0 || idx >= list.length - 1) return;
+    setSelectedProduct(list[idx + 1]);
+    setDeepLinkYearA(chosenYearARef.current);
+    setDeepLinkYearB(chosenYearBRef.current);
+  }, []);
+
+  // Keyboard navigation: ←/→ to move between products when modal is open
+  useEffect(() => {
+    if (!modalOpen) return;
+    function handleKey(e: KeyboardEvent) {
+      // Don't intercept when a Radix dropdown is open
+      if (document.querySelector("[data-radix-popper-content-wrapper]")) return;
+      if (e.key === "ArrowLeft") navigatePrev();
+      else if (e.key === "ArrowRight") navigateNext();
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [modalOpen, navigatePrev, navigateNext]);
+
+  const selectedIndex = selectedProduct
+    ? filtered.findIndex((p) => p.id === selectedProduct.id)
+    : -1;
+
   // Open modal when navigating directly to /#/product/:id?ref=...&from=...&to=...
   // wouter captures query params as part of :id, so we strip them first
   const deepLinkApplied = useRef(false);
@@ -144,13 +217,16 @@ export default function ProductExplorer({
       sessionStorage.setItem("homeScrollY", String(window.scrollY));
       navigate(`/product/${product.id}`);
     } else {
+      // Reset chosen years so the product opens with its own stored preferences
+      chosenYearARef.current = undefined;
+      chosenYearBRef.current = undefined;
       setSelectedProduct(product);
       setModalOpen(true);
     }
   };
 
   return (
-    <section className="py-12 md:py-16" data-testid="product-explorer">
+    <section className="py-12 md:py-20" data-testid="product-explorer">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-1">{t("productExplorer")}</h2>
         <p className="text-sm text-muted-foreground mb-6">
@@ -362,6 +438,14 @@ export default function ProductExplorer({
         onOpenChange={setModalOpen}
         initialYearA={deepLinkYearA}
         initialYearB={deepLinkYearB}
+        selectedIndex={selectedIndex}
+        filteredCount={filtered.length}
+        onNavigatePrev={navigatePrev}
+        onNavigateNext={navigateNext}
+        onYearsChange={(a, b) => {
+          chosenYearARef.current = a;
+          chosenYearBRef.current = b;
+        }}
       />
     </section>
   );

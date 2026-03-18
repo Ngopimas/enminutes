@@ -93,7 +93,7 @@ export default function Sources() {
   const { t } = useLang();
 
   return (
-    <section className="py-12 md:py-16" data-testid="sources">
+    <section className="py-12 md:py-20" data-testid="sources">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-6">{t('sourcesTitle')}</h2>
 

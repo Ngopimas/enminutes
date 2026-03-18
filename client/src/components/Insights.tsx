@@ -155,7 +155,7 @@ export default function Insights() {
   };
 
   return (
-    <section className="py-12 md:py-16" data-testid="insights">
+    <section className="py-12 md:py-20" data-testid="insights">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-6">
           {lang === "fr" ? "Faits marquants" : "Key Insights"}

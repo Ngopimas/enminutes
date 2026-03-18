@@ -446,7 +446,7 @@ export default function PurchasingPowerIndex() {
 
   if (!mounted) {
     return (
-      <section className="py-12 md:py-16">
+      <section className="py-12 md:py-20">
         <div className="max-w-6xl mx-auto px-4">
           <Skeleton className="h-6 w-48 mb-2" />
           <Skeleton className="h-4 w-64 mb-8" />
@@ -462,7 +462,7 @@ export default function PurchasingPowerIndex() {
   }
 
   return (
-    <section className="py-12 md:py-16" data-testid="pp-index">
+    <section className="py-12 md:py-20" data-testid="pp-index">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-1">{title}</h2>
         <p className="text-sm text-muted-foreground mb-8">{subtitle}</p>
