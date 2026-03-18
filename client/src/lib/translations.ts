@@ -10,11 +10,12 @@ export const translations: Record<Lang, Record<string, string>> = {
     siteSubtitle: "Le temps de travail derrière chaque achat",
     heroHeadline: "Combien de minutes pour une baguette\u202F?",
     heroSubtitle:
-      "Explorez l'évolution du pouvoir d'achat en France depuis 1950, mesurée en minutes de travail.",
+      "Pouvoir d'achat en France depuis 1950, mesuré en minutes de SMIC.",
     heroSubtitleMedian:
-      "Explorez l'évolution du pouvoir d'achat en France depuis 1996, mesurée en minutes de salaire médian.",
+      "Pouvoir d'achat en France depuis 1996, mesuré en minutes de salaire médian.",
     heroSubtitleMean:
-      "Explorez l'évolution du pouvoir d'achat en France depuis 1950, mesurée en minutes de salaire moyen.",
+      "Pouvoir d'achat en France depuis 1950, mesuré en minutes de salaire moyen.",
+    heroExplore: "Explorer tous les produits",
     heroFactPrefix: "En",
     heroFactMiddle: "il fallait",
     heroFactMinutes: "minutes de travail pour acheter",
@@ -243,11 +244,12 @@ export const translations: Record<Lang, Record<string, string>> = {
     siteSubtitle: "The work-time behind every purchase",
     heroHeadline: "How many minutes for a baguette?",
     heroSubtitle:
-      "Explore the evolution of purchasing power in France since 1950, measured in work-minutes.",
+      "Purchasing power in France since 1950, in SMIC work-minutes.",
     heroSubtitleMedian:
-      "Explore the evolution of purchasing power in France since 1996, measured in minutes of median salary.",
+      "Purchasing power in France since 1996, in minutes of median salary.",
     heroSubtitleMean:
-      "Explore the evolution of purchasing power in France since 1950, measured in minutes of mean salary.",
+      "Purchasing power in France since 1950, in minutes of mean salary.",
+    heroExplore: "Explore all products",
     heroFactPrefix: "In",
     heroFactMiddle: "it took",
     heroFactMinutes: "work-minutes to buy",

@@ -226,7 +226,7 @@ export default function ProductExplorer({
   };
 
   return (
-    <section className="py-12 md:py-20" data-testid="product-explorer">
+    <section id="explorer" className="py-12 md:py-20" data-testid="product-explorer">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-xl font-bold mb-1">{t("productExplorer")}</h2>
         <p className="text-sm text-muted-foreground mb-6">
