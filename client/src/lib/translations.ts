@@ -220,6 +220,8 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Exclu du panier\u202F: données disponibles à partir de 2014 seulement",
     basketExcludedGaz:
       "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+    basketExcludedOphtalmologiste:
+      "Exclu du panier\u202F: données disponibles à partir de 1990 seulement - l'inclure créerait une rupture artificielle dans la série historique",
     dataTypeActual: "Prix réel (source INSEE directe)",
     dataTypeIpcEstimate:
       "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
@@ -448,6 +450,8 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Excluded from basket: data only available from 2014",
     basketExcludedGaz:
       "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+    basketExcludedOphtalmologiste:
+      "Excluded from basket: data only available from 1990 - including it would create an artificial break in the historical series",
     dataTypeActual: "Actual price (direct INSEE source)",
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",

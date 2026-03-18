@@ -72,6 +72,8 @@ export default function BasketComposition() {
                     ? t('basketExcludedStreaming')
                     : item.id === 'gaz'
                     ? t('basketExcludedGaz')
+                    : item.id === 'consultation_specialiste'
+                    ? t('basketExcludedOphtalmologiste')
                     : null
                   : null;
 
