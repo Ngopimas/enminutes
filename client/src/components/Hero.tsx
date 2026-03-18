@@ -35,7 +35,9 @@ export default function Hero() {
   const nameDisplay =
     lang === "fr" ? product.nameFr.toLowerCase() : product.nameEn.toLowerCase();
   const wentDown = lastMin < firstMin;
-  const pctChange = Math.abs(Math.round(((lastMin - firstMin) / firstMin) * 100));
+  const pctChange = Math.abs(
+    Math.round(((lastMin - firstMin) / firstMin) * 100),
+  );
 
   const refLabel =
     salaryRef === "smic"
@@ -53,7 +55,7 @@ export default function Hero() {
   return (
     <section className="py-16 md:py-28" data-testid="hero">
       <div className="max-w-6xl mx-auto px-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
           {t("heroHeadline")}
         </h1>
         <p className="text-muted-foreground text-base mx-auto mb-10">
@@ -63,7 +65,7 @@ export default function Hero() {
               ? t("heroSubtitleMedian")
               : t("heroSubtitleMean")}
         </p>
-<div className="h-[60px] flex items-center justify-center overflow-hidden">
+        <div className="h-[60px] flex items-center justify-center overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.p
               key={`${productId}-${salaryRef}`}
