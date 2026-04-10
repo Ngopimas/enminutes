@@ -142,7 +142,7 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 17 biens courants (base 100 = 1960)",
     ppKpiMultiplier:
       "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
-    ppKpiBasket: "Minutes par produit (moy.)",
+    ppKpiBasket: "Minutes par produit (moy.) en",
     ppKpiRangeLabel: "De pouvoir d'achat entre {start} et {end}",
     ppChartYLabel: "Indice pouvoir d'achat (base 100 = 1960)",
     ppChartAriaLabel:
@@ -376,7 +376,7 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Composite purchasing power index of the SMIC, based on a basket of 17 everyday goods (base 100 = 1960)",
     ppKpiMultiplier:
       "SMIC purchasing power has been multiplied by {mult} since {year}",
-    ppKpiBasket: "Minutes per product (avg.)",
+    ppKpiBasket: "Minutes per product (avg.) in",
     ppKpiRangeLabel: "Purchasing power between {start} and {end}",
     ppChartYLabel: "Purchasing power index (base 100 = 1960)",
     ppChartAriaLabel:
