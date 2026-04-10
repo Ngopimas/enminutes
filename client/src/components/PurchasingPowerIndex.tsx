@@ -258,7 +258,7 @@ export default function PurchasingPowerIndex() {
     {
       label: t("ppLegendIndex"),
       data: indexData,
-      borderColor: chartColor(1),
+      borderColor: chartColor(2),
       backgroundColor: "transparent",
       borderDash: [6, 3],
       tension: 0.3,
@@ -270,7 +270,7 @@ export default function PurchasingPowerIndex() {
     {
       label: t("ppLegendMinutes"),
       data: minutesData,
-      borderColor: chartColor(2),
+      borderColor: chartColor(1),
       backgroundColor: chartColorAlpha(2, 0.08),
       fill: true,
       tension: 0.3,
