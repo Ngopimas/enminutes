@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLang } from "@/lib/i18n";
 import { useSalaryRef } from "@/lib/salaryRef";
@@ -13,13 +13,21 @@ export default function Hero() {
   const { lang, t } = useLang();
   const { salaryRef } = useSalaryRef();
   const [index, setIndex] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setIndex((i) => (i + 1) % featuredProducts.length);
+    }, 6000);
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % featuredProducts.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    resetTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [resetTimer]);
 
   const productId = featuredProducts[index];
   const product = products[productId];
@@ -150,13 +158,31 @@ export default function Hero() {
             </motion.p>
           </AnimatePresence>
         </div>
+        {/* Carousel progress dots */}
+        <div className="flex justify-center gap-1.5 mt-4">
+          {featuredProducts.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setIndex(i);
+                resetTimer();
+              }}
+              aria-label={`Produit ${i + 1}`}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                i === index
+                  ? "bg-foreground/60 w-4"
+                  : "bg-foreground/15 hover:bg-foreground/30"
+              }`}
+            />
+          ))}
+        </div>
         <button
           onClick={() =>
             document
               .getElementById("explorer")
               ?.scrollIntoView({ behavior: "smooth" })
           }
-          className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           {t("heroExplore")} ↓
         </button>

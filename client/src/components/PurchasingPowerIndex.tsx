@@ -259,25 +259,25 @@ export default function PurchasingPowerIndex() {
       label: t("ppLegendIndex"),
       data: indexData,
       borderColor: chartColor(1),
-      backgroundColor: chartColorAlpha(1, 0.08),
-      fill: true,
-      tension: 0.3,
-      pointRadius: 0,
-      pointHoverRadius: 4,
-      yAxisID: "y",
-      borderWidth: 2.5,
-    },
-    {
-      label: t("ppLegendMinutes"),
-      data: minutesData,
-      borderColor: chartColor(2),
       backgroundColor: "transparent",
       borderDash: [6, 3],
       tension: 0.3,
       pointRadius: 0,
       pointHoverRadius: 4,
-      yAxisID: "y1",
+      yAxisID: "y",
       borderWidth: 2,
+    },
+    {
+      label: t("ppLegendMinutes"),
+      data: minutesData,
+      borderColor: chartColor(2),
+      backgroundColor: chartColorAlpha(2, 0.08),
+      fill: true,
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      yAxisID: "y1",
+      borderWidth: 2.5,
     },
   ];
 
@@ -496,7 +496,7 @@ export default function PurchasingPowerIndex() {
                 {basketNow ? Math.round(basketNow) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasket1960")} {kpiEndYear}
+                {t("ppKpiBasketNow")} ({kpiEndYear})
               </p>
             </CardContent>
           </Card>
@@ -619,7 +619,9 @@ export default function PurchasingPowerIndex() {
               ℹ {t("meanStopsAt")}
             </p>
           )}
-          <p className={`text-[11px] text-muted-foreground/70 italic transition-opacity duration-200 ${showProductivity ? "opacity-100" : "opacity-0 select-none"}`}>
+          <p
+            className={`text-[11px] text-muted-foreground/70 italic transition-opacity duration-200 ${showProductivity ? "opacity-100" : "opacity-0 select-none"}`}
+          >
             ℹ {t("productivityBackProjection")}
           </p>
         </div>

@@ -2,11 +2,15 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { products, basketWeights } from "@/lib/data";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function BasketComposition() {
   const { lang, t } = useLang();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   // Sort basket items: active (weight > 0) first, then by weight desc, then alphabetical
   const basketItems = Object.entries(basketWeights)
@@ -54,27 +58,28 @@ export default function BasketComposition() {
             {basketItems.map((item) => {
               const excludedTooltip =
                 item.weight === 0
-                  ? item.id === 'cigarettes'
-                    ? t('basketExcludedCigarettes')
-                    : item.id === 'loyer'
-                    ? t('basketExcludedLoyer')
-                    : item.id === 'loyer_paris' || item.id === 'loyer_national'
-                    ? t('basketExcludedLoyerParis')
-                    : item.id === 'smartphone'
-                    ? t('basketExcludedSmartphone')
-                    : item.id === 'voiture_milieu_gamme'
-                    ? t('basketExcludedVoiture')
-                    : item.id === 'internet'
-                    ? t('basketExcludedInternet')
-                    : item.id === 'forfait_mobile'
-                    ? t('basketExcludedMobile')
-                    : item.id === 'streaming'
-                    ? t('basketExcludedStreaming')
-                    : item.id === 'gaz'
-                    ? t('basketExcludedGaz')
-                    : item.id === 'consultation_specialiste'
-                    ? t('basketExcludedOphtalmologiste')
-                    : null
+                  ? item.id === "cigarettes"
+                    ? t("basketExcludedCigarettes")
+                    : item.id === "loyer"
+                      ? t("basketExcludedLoyer")
+                      : item.id === "loyer_paris" ||
+                          item.id === "loyer_national"
+                        ? t("basketExcludedLoyerParis")
+                        : item.id === "smartphone"
+                          ? t("basketExcludedSmartphone")
+                          : item.id === "voiture_milieu_gamme"
+                            ? t("basketExcludedVoiture")
+                            : item.id === "internet"
+                              ? t("basketExcludedInternet")
+                              : item.id === "forfait_mobile"
+                                ? t("basketExcludedMobile")
+                                : item.id === "streaming"
+                                  ? t("basketExcludedStreaming")
+                                  : item.id === "gaz"
+                                    ? t("basketExcludedGaz")
+                                    : item.id === "consultation_specialiste"
+                                      ? t("basketExcludedOphtalmologiste")
+                                      : null
                   : null;
 
               const card = (

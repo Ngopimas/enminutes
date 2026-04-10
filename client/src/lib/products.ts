@@ -12,7 +12,11 @@ import {
   getRatesForRef,
 } from "./salary-rates";
 import { interpolate, computeMinutes } from "./calculations";
-import { inflationRates, productivityIndex, ppAnnotations } from "./macroeconomics";
+import {
+  inflationRates,
+  productivityIndex,
+  ppAnnotations,
+} from "./macroeconomics";
 
 // ── Product interface ──────────────────────────────────────
 export type ProductDataType = "actual" | "ipc_estimate" | "manual";
@@ -148,16 +152,16 @@ const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
 // ── Product-level disclaimers ──────────────────────────────
 const PRODUCT_DISCLAIMERS: Record<string, { fr: string; en: string }> = {
   loyer_paris: {
-    fr: "Données OLAP/CLAMEUR : loyers de marché à Paris intra-muros (logements remis en location). Non représentatif des loyers nationaux ni des locataires en place.",
-    en: "OLAP/CLAMEUR data: market rents in Paris intra-muros (re-let dwellings). Not representative of national rents or sitting tenants.",
+    fr: "Données OLAP/CLAMEUR\u202F: loyers de marché à Paris intra-muros (logements remis en location, hors charges). L'OLAP publie une moyenne de 25,5\u202F€/m² pour le parc existant\u202F; ce chiffre reflète les nouvelles mises en location, plus élevées. Non représentatif des locataires en place.",
+    en: "OLAP/CLAMEUR data: market rents in Paris intra-muros (re-let dwellings, excl. charges). OLAP publishes 25.5\u202F€/m² for the existing stock; this figure reflects new listings, which are higher. Not representative of sitting tenants.",
   },
   loyer_national: {
-    fr: "Données estimées à partir de l'IRL INSEE (indice légal de révision) et de l'Enquête Logement INSEE. Reflète le loyer moyen de marché national (nouveaux baux), non les loyers réellement payés ni les logements sociaux.",
-    en: "Estimates based on INSEE IRL (legal revision index) and INSEE Housing Survey. Reflects national average market rent (new leases), not actual paid rents or social housing.",
+    fr: "Données estimées à partir de l'IRL INSEE et de l'Enquête Logement INSEE. Loyer hors charges, tous baux confondus. Les plateformes d'annonces (LocService) indiquent des moyennes plus élevées (charges comprises).",
+    en: "Estimates based on INSEE IRL and INSEE Housing Survey. Rent excluding charges, all leases. Listing platforms (LocService) report higher averages (charges included).",
   },
   consultation_specialiste: {
-    fr: "Prix moyen d'une consultation d'ophtalmologiste en secteur 2 (avec dépassements d'honoraires). Les tarifs varient fortement selon la spécialité, le secteur et la région. Source : DREES / SNDS.",
-    en: "Average ophthalmologist consultation fee in sector 2 (with excess charges). Prices vary significantly by specialty, sector and region. Source: DREES / SNDS.",
+    fr: "Honoraires moyens d'un ophtalmologiste en secteur 2 (dépassements inclus). Fourchette observée\u202F: 40–100\u202F€. Ce chiffre reflète la tranche haute\u202F; le tarif conventionnel secteur 1 est de 30\u202F€. Source\u202F: DREES / SNDS.",
+    en: "Average ophthalmologist fee in sector 2 (excess charges included). Observed range: €40–100. This figure reflects the upper range; the sector 1 convention rate is €30. Source: DREES / SNDS.",
   },
 };
 
@@ -280,7 +284,7 @@ const rawProducts: Record<
       2010: 1.42,
       2015: 1.3,
       2020: 1.3,
-      2024: 1.75,
+      2024: 1.78,
       2025: 1.61,
     },
   },
@@ -306,7 +310,7 @@ const rawProducts: Record<
       2010: 6.5,
       2015: 6.8,
       2020: 7.0,
-      2024: 7.5,
+      2024: 7.42,
     },
   },
   medecin: {

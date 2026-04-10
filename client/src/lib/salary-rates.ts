@@ -87,7 +87,7 @@ export const smicRates: Record<number, number> = {
   2023: 8.92,
   2024: 9.22,
   2025: 9.4,
-  2026: 9.51,
+  2026: 9.52,
 };
 
 export const DATA_START_YEAR = Math.min(...Object.keys(smicRates).map(Number));
@@ -170,13 +170,54 @@ export const meanSalaryRates: Record<number, number> = {
   2021: 15.56,
   2022: 16.38,
   2023: 17.1,
-  2024: 17.56,
+  2024: 18.0,
 };
 
 // ── Median salary net hourly rates (euros) ──────────────────
-// Source: INSEE DADS (idbank 010752342), annual net EQTP / 1820h
-// Available from 1996 onward
+// 1996-2024: INSEE DADS (idbank 010752342), annual net EQTP / 1820h
+// 1960-1995: Estimated from INSEE DADS TC08 (séries longues, full-time D5)
+//   adjusted by EQTP/TC calibration ratio (0.988, avg over 1996-2018 overlap)
+//   then divided by 1820h.
+//   Source: INSEE, "Séries longues sur les salaires dans le secteur privé",
+//   table TC08 – Distribution par sexe, D5 (médiane), ensemble.
+//   https://www.insee.fr/fr/statistiques/8660332?sommaire=8660243
 export const medianSalaryRates: Record<number, number> = {
+  1960: 0.51,
+  1961: 0.54,
+  1962: 0.61,
+  1963: 0.62,
+  1964: 0.68,
+  1965: 0.71,
+  1966: 0.75,
+  1967: 0.8,
+  1968: 0.87,
+  1969: 0.97,
+  1970: 1.07,
+  1971: 1.19,
+  1972: 1.32,
+  1973: 1.48,
+  1974: 1.73,
+  1975: 1.98,
+  1976: 2.3,
+  1977: 2.55,
+  1978: 2.89,
+  1979: 3.17,
+  1980: 3.63,
+  1981: 4.09,
+  1982: 4.64,
+  1983: 5.13,
+  1984: 5.49,
+  1985: 5.88,
+  1986: 6.15,
+  1987: 6.32,
+  1988: 6.53,
+  1989: 6.78,
+  1990: 7.15,
+  1991: 7.41,
+  1992: 7.64,
+  1993: 7.83,
+  1994: 7.84,
+  1995: 8.07,
   1996: 8.21,
   1997: 8.36,
   1998: 8.51,

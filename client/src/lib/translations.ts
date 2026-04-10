@@ -10,11 +10,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     siteSubtitle: "Le temps de travail derrière chaque achat",
     heroHeadline: "Combien de minutes pour une baguette\u202F?",
     heroSubtitle:
-      "Pouvoir d'achat en France depuis 1950, mesuré en minutes de SMIC.",
+      "Pouvoir d'achat en France depuis 1960, mesuré en minutes de SMIC.",
     heroSubtitleMedian:
       "Pouvoir d'achat en France depuis 1996, mesuré en minutes de salaire médian.",
     heroSubtitleMean:
-      "Pouvoir d'achat en France depuis 1950, mesuré en minutes de salaire moyen.",
+      "Pouvoir d'achat en France depuis 1960, mesuré en minutes de salaire moyen.",
     heroExplore: "Explorer tous les produits",
     heroFactPrefix: "En",
     heroFactMiddle: "il fallait",
@@ -49,16 +49,16 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightCigarettes:
       "Cigarettes : le produit qui a le plus augmenté en temps de travail",
     insightCigarettesSub:
-      "De 21 minutes en 1960 à 78 minutes en 2024. Les taxes anti-tabac ont multiplié le coût par presque 4 en temps de travail.",
-    insightBaguette: "Baguette : 2,5× plus accessible qu'en 1960",
+      "De 21 minutes en 1960 à 80 minutes en 2025. Les taxes anti-tabac ont multiplié le coût par presque 4 en temps de travail.",
+    insightBaguette: "Baguette : 1,7× plus accessible qu'en 1950",
     insightBaguetteSub:
-      "De 18 minutes de travail en 1960 à environ 7 minutes aujourd'hui. Le pain reste le symbole de l'accessibilité alimentaire.",
+      "De 12 minutes de travail en 1950 à environ 7 minutes aujourd'hui. Le pain reste le symbole de l'accessibilité alimentaire.",
     insightEssence: "Essence : remarquablement stable depuis 30 ans",
     insightEssenceSub:
-      "Malgré les fluctuations de prix, un litre d'essence coûte entre 10 et 12 minutes de travail depuis les années 1990.",
+      "Malgré les fluctuations de prix, un litre d'essence coûte entre 10 et 14 minutes de travail depuis les années 1990.",
     insightCinema: "Cinéma : un luxe relatif croissant",
     insightCinemaSub:
-      "Malgré la baisse spectaculaire depuis 1950 (57→49 min), le cinéma stagne en accessibilité depuis 20 ans.",
+      "Malgré la baisse depuis 1950 (57→49 min), le cinéma stagne autour de 49 minutes de travail depuis 20 ans.",
     historyTitle: "Repères historiques",
     historySub: "Les grandes dates du salaire minimum en France",
     sourcesTitle: "Méthodologie & Sources",
@@ -246,11 +246,11 @@ export const translations: Record<Lang, Record<string, string>> = {
     siteSubtitle: "The work-time behind every purchase",
     heroHeadline: "How many minutes for a baguette?",
     heroSubtitle:
-      "Purchasing power in France since 1950, in SMIC work-minutes.",
+      "Purchasing power in France since 1960, in SMIC work-minutes.",
     heroSubtitleMedian:
       "Purchasing power in France since 1996, in minutes of median salary.",
     heroSubtitleMean:
-      "Purchasing power in France since 1950, in minutes of mean salary.",
+      "Purchasing power in France since 1960, in minutes of mean salary.",
     heroExplore: "Explore all products",
     heroFactPrefix: "In",
     heroFactMiddle: "it took",
@@ -283,16 +283,16 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsTitle: "Key Insights",
     insightCigarettes: "Cigarettes: the biggest increase in work-time cost",
     insightCigarettesSub:
-      "From 21 minutes in 1960 to 78 minutes in 2024. Anti-tobacco taxes multiplied the work-time cost by nearly 4×.",
-    insightBaguette: "Baguette: 2.5× more affordable than in 1960",
+      "From 21 minutes in 1960 to 80 minutes in 2025. Anti-tobacco taxes multiplied the work-time cost by nearly 4×.",
+    insightBaguette: "Baguette: 1.7× more affordable than in 1950",
     insightBaguetteSub:
-      "From 18 work-minutes in 1960 to about 7 minutes today. Bread remains the symbol of food affordability.",
+      "From 12 work-minutes in 1950 to about 7 minutes today. Bread remains the symbol of food affordability.",
     insightEssence: "Petrol: remarkably stable for 30 years",
     insightEssenceSub:
-      "Despite price swings, a litre of petrol costs 10-12 work-minutes since the 1990s.",
+      "Despite price swings, a litre of petrol costs 10-14 work-minutes since the 1990s.",
     insightCinema: "Cinema: a growing relative luxury",
     insightCinemaSub:
-      "Despite the spectacular drop since 1950 (57→49 min), cinema accessibility has stagnated for 20 years.",
+      "Despite the drop since 1950 (57→49 min), cinema accessibility has stagnated around 49 work-minutes for 20 years.",
     historyTitle: "Historical Milestones",
     historySub: "Key dates of the French minimum wage",
     sourcesTitle: "Methodology & Sources",
