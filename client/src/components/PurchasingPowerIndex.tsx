@@ -486,7 +486,7 @@ export default function PurchasingPowerIndex() {
                 {basket1960 ? Math.round(basket1960) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasket1960")} {kpiStartYear}
+                {t("ppKpiBasket")} {kpiStartYear}
               </p>
             </CardContent>
           </Card>
@@ -496,7 +496,7 @@ export default function PurchasingPowerIndex() {
                 {basketNow ? Math.round(basketNow) : "–"} min
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {t("ppKpiBasketNow")} ({kpiEndYear})
+                {t("ppKpiBasket")} {kpiEndYear}
               </p>
             </CardContent>
           </Card>

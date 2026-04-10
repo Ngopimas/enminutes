@@ -143,11 +143,10 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppKpiMultiplier:
       "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket1960: "Minutes pour le panier en",
-    ppKpiBasketNow: "Minutes pour le panier aujourd'hui",
+    ppKpiBasket: "Minutes pour le panier en",
     ppKpiRangeLabel: "De pouvoir d'achat entre {start} et {end}",
     ppChartYLabel: "Indice pouvoir d'achat (base 100 = 1960)",
-    ppChartAriaLabel:
-      "Évolution du pouvoir d'achat du SMIC de 1960 à aujourd'hui, indice base 100",
+    ppChartAriaLabel: "Évolution du pouvoir d'achat du SMIC, indice base 100",
     ppChartYLabel2: "Minutes de travail par produit (moy.)",
     ppLegendIndex: "Indice pouvoir d'achat",
     ppLegendMinutes: "Minutes par produit (moy.)",
@@ -378,7 +377,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppKpiMultiplier:
       "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket1960: "Minutes for the basket in",
-    ppKpiBasketNow: "Minutes for the basket today",
+    ppKpiBasket: "Minutes for the basket in",
     ppKpiRangeLabel: "Purchasing power between {start} and {end}",
     ppChartYLabel: "Purchasing power index (base 100 = 1960)",
     ppChartAriaLabel:
