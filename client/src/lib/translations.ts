@@ -12,7 +12,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     heroSubtitle:
       "Pouvoir d'achat en France depuis 1960, mesuré en minutes de SMIC.",
     heroSubtitleMedian:
-      "Pouvoir d'achat en France depuis 1996, mesuré en minutes de salaire médian.",
+      "Pouvoir d'achat en France depuis 1960, mesuré en minutes de salaire médian.",
     heroSubtitleMean:
       "Pouvoir d'achat en France depuis 1960, mesuré en minutes de salaire moyen.",
     heroExplore: "Explorer tous les produits",
@@ -67,6 +67,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     sourcesSmicLabel: "SMIC horaire net",
     sourcesSmicDesc:
       "Historique officiel du salaire minimum (net après CSG/CRDS)",
+    sourcesSalaryLabel: "Salaires médians et moyens (INSEE DADS)",
+    sourcesSalaryDesc:
+      "Séries longues sur les salaires, distribution D5 (médiane) et moyenne, secteur privé EQTP. 1960–1995 : estimé à partir des temps complets (TC08) avec ratio de calibration EQTP/TC.",
     sourcesPricesLabel: "Prix à la consommation",
     sourcesPricesDesc: "Indices et prix moyens de détail",
     sourcesPikettyLabel: "World Inequality Database",
@@ -184,14 +187,14 @@ export const translations: Record<Lang, Record<string, string>> = {
     salaryRefSmic: "SMIC",
     salaryRefSmicDesc: "Salaire minimum net",
     salaryRefMedian: "Médian",
-    salaryRefMedianDesc: "Salaire net médian (depuis 1996)",
+    salaryRefMedianDesc: "Salaire net médian (depuis 1960)",
     salaryRefMean: "Moyen",
     salaryRefMeanDesc: "Salaire net moyen",
     salaryRefNote: "Données depuis {year}",
     chartYLabelMedian: "Minutes de salaire médian",
     chartYLabelMean: "Minutes de salaire moyen",
     ppIndexSubMedian:
-      "Indice composite basé sur le salaire net médian, panier de 17 biens courants (base 100 = 1996)",
+      "Indice composite basé sur le salaire net médian, panier de 17 biens courants (base 100 = 1960)",
     ppIndexSubMean:
       "Indice composite basé sur le salaire net moyen, panier de 17 biens courants (base 100 = 1960)",
     ppIndexTitleMedian:
@@ -227,7 +230,7 @@ export const translations: Record<Lang, Record<string, string>> = {
       "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
     dataTypeManual: "Prix actuel vérifié manuellement",
     medianAvailableFrom:
-      "Salaire médian disponible à partir de 1996 (INSEE DADS).",
+      "Salaire médian : données EQTP depuis 1996 (INSEE DADS). Avant 1996 : estimé via séries longues temps complets (TC08, D5) ajustées par ratio EQTP/TC.",
     meanStopsAt: "Salaire moyen disponible jusqu'en 2024 (INSEE DADS).",
     productivityBackProjection:
       "Productivité : données OCDE réelles à partir de 1995. Avant 1995\u202F: rétroprojection à partir de taux documentés.",
@@ -248,7 +251,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     heroSubtitle:
       "Purchasing power in France since 1960, in SMIC work-minutes.",
     heroSubtitleMedian:
-      "Purchasing power in France since 1996, in minutes of median salary.",
+      "Purchasing power in France since 1960, in minutes of median salary.",
     heroSubtitleMean:
       "Purchasing power in France since 1960, in minutes of mean salary.",
     heroExplore: "Explore all products",
@@ -300,6 +303,9 @@ export const translations: Record<Lang, Record<string, string>> = {
       "For each product and year, work-time is calculated as: minutes = (price / net hourly salary) × 60. Intermediate prices are estimated through linear interpolation between known data points.",
     sourcesSmicLabel: "Net hourly SMIC",
     sourcesSmicDesc: "Official minimum wage history (net after CSG/CRDS)",
+    sourcesSalaryLabel: "Median & mean salaries (INSEE DADS)",
+    sourcesSalaryDesc:
+      "Long salary series, D5 distribution (median) and mean, private sector EQTP. 1960–1995: estimated from full-time workers (TC08) with EQTP/TC calibration ratio.",
     sourcesPricesLabel: "Consumer prices",
     sourcesPricesDesc: "Price indices and average retail prices",
     sourcesPikettyLabel: "World Inequality Database",
@@ -416,14 +422,14 @@ export const translations: Record<Lang, Record<string, string>> = {
     salaryRefSmic: "Min. wage",
     salaryRefSmicDesc: "Net minimum wage (SMIC)",
     salaryRefMedian: "Median",
-    salaryRefMedianDesc: "Net median salary (since 1996)",
+    salaryRefMedianDesc: "Net median salary (since 1960)",
     salaryRefMean: "Mean",
     salaryRefMeanDesc: "Net mean salary",
     salaryRefNote: "Data from {year}",
     chartYLabelMedian: "Minutes of median salary",
     chartYLabelMean: "Minutes of mean salary",
     ppIndexSubMedian:
-      "Composite index based on net median salary, basket of 17 everyday goods (base 100 = 1996)",
+      "Composite index based on net median salary, basket of 17 everyday goods (base 100 = 1960)",
     ppIndexSubMean:
       "Composite index based on net mean salary, basket of 17 everyday goods (base 100 = 1960)",
     ppIndexTitleMedian: "Does the median salary buy more or less than before?",
@@ -456,7 +462,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",
     medianAvailableFrom:
-      "Median salary available from 1996 onwards (INSEE DADS).",
+      "Median salary: EQTP data from 1996 (INSEE DADS). Before 1996: estimated from full-time long series (TC08, D5) adjusted by EQTP/TC ratio.",
     meanStopsAt: "Mean salary available through 2024 (INSEE DADS).",
     productivityBackProjection:
       "Productivity: real OECD data from 1995. Before 1995: back-projected from documented growth rates.",

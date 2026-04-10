@@ -33,7 +33,7 @@ export default function BasketComposition() {
   const totalWeight = basketItems.reduce((sum, item) => sum + item.weight, 0);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 -mt-4 mb-8">
+    <div className="max-w-6xl mx-auto px-4 mb-8">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"

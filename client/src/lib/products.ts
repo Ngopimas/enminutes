@@ -1353,7 +1353,7 @@ export function computePurchasingPowerForRef(ref: SalaryRef) {
     if (rates[y]) refYears.push(y);
   }
 
-  // Use the first year with basket data as base (1960 for smic/mean, 1996 for median)
+  // Use the first year with basket data as base (1960 for smic/mean/median)
   const baseYr =
     refYears.find((y) => y >= 1960 && computeBasketMinutes(y, ref) !== null) ??
     refYears[0];
