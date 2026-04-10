@@ -152,8 +152,8 @@ const PRODUCT_INFLECTIONS: Record<string, ProductInflection[]> = {
 // ── Product-level disclaimers ──────────────────────────────
 const PRODUCT_DISCLAIMERS: Record<string, { fr: string; en: string }> = {
   loyer_paris: {
-    fr: "Données OLAP/CLAMEUR\u202F: loyers de marché à Paris intra-muros (logements remis en location, hors charges). L'OLAP publie une moyenne de 25,5\u202F€/m² pour le parc existant\u202F; ce chiffre reflète les nouvelles mises en location, plus élevées. Non représentatif des locataires en place.",
-    en: "OLAP/CLAMEUR data: market rents in Paris intra-muros (re-let dwellings, excl. charges). OLAP publishes 25.5\u202F€/m² for the existing stock; this figure reflects new listings, which are higher. Not representative of sitting tenants.",
+    fr: "Données OLAP\u202F: loyers moyens de l'ensemble du parc privé à Paris intra-muros (hors charges). Source\u202F: rapports annuels OLAP (Tableaux n°10 et n°12). Ces chiffres incluent les locataires en place et les nouveaux baux.",
+    en: "OLAP data: average rents for all private housing in Paris intra-muros (excl. charges). Source: OLAP annual reports (Tables 10 & 12). These figures include sitting tenants and new leases.",
   },
   loyer_national: {
     fr: "Données estimées à partir de l'IRL INSEE et de l'Enquête Logement INSEE. Loyer hors charges, tous baux confondus. Les plateformes d'annonces (LocService) indiquent des moyennes plus élevées (charges comprises).",
@@ -249,7 +249,7 @@ const rawProducts: Record<
       "In 1960, you needed 18 work-minutes to buy a baguette. Today, about 7 minutes is enough.",
     prices: {
       1950: 0.021,
-      1960: 0.067,
+      1960: 0.05,
       1970: 0.084,
       1980: 0.255,
       1990: 0.479,
@@ -392,16 +392,18 @@ const rawProducts: Record<
     emoji: "🚇",
     category: "transport",
     funFactFr:
-      "Le ticket de métro a toujours coûté environ 8 à 14 minutes de travail - une stabilité remarquable sur 70 ans.",
+      "Le ticket de métro a toujours coûté environ 8 à 16 minutes de travail - une stabilité remarquable sur 70 ans.",
     funFactEn:
-      "A metro ticket has always cost about 8-14 work-minutes - remarkably stable over 70 years.",
+      "A metro ticket has always cost about 8-16 work-minutes - remarkably stable over 70 years.",
+    // Corrected 1960, 1970, 1990: original values used carnet (reduced) prices
+    // Source: STIF via Le Miroir de Rufus, Le Monde oct. 1980, Wikipedia ticket t+
     prices: {
       1950: 0.015,
-      1960: 0.03,
-      1970: 0.046,
-      1980: 0.183,
-      1990: 0.46,
-      2000: 1.07,
+      1960: 0.064,
+      1970: 0.076,
+      1980: 0.229,
+      1990: 0.69,
+      2000: 1.14,
       2005: 1.4,
       2010: 1.6,
       2015: 1.8,
@@ -505,7 +507,7 @@ const rawProducts: Record<
       2015: 2.2,
       2020: 2.5,
       2024: 3,
-      2025: 2.31,
+      2025: 3.1,
     },
   },
   cafe: {
@@ -542,6 +544,8 @@ const rawProducts: Record<
       "La plaquette de beurre est passée de 62 min de travail en 1960 à 16 min en 2024.",
     funFactEn:
       "A 250g block of butter went from 62 work-minutes in 1960 to 16 in 2024.",
+    // Corrected 2025: 1.84€ was the margarine price, not butter
+    // Source: FranceAgriMer, INSEE IPC beurre (base 2015=100, indice 171.2 en 2024)
     prices: {
       1960: 0.228,
       1970: 0.343,
@@ -552,7 +556,7 @@ const rawProducts: Record<
       2015: 1.7,
       2020: 2.13,
       2024: 2.5,
-      2025: 1.84,
+      2025: 2.9,
     },
   },
   croissant: {
@@ -566,15 +570,17 @@ const rawProducts: Record<
       "Le croissant coûtait 8 minutes de travail en 1960, et 8 minutes en 2024 - un produit remarquablement stable.",
     funFactEn:
       "A croissant cost 8 work-minutes in 1960 and 8 in 2024 - remarkably stable.",
+    // Corrected 2000: INSEE série 000442619 gives 0.54€ (original 0.76€ was +41%)
+    // 2005, 2010 also adjusted downward to match corrected trajectory
     prices: {
       1960: 0.03,
       1970: 0.061,
       1980: 0.229,
       1990: 0.53,
-      2000: 0.76,
-      2005: 0.85,
-      2010: 0.95,
-      2015: 1.0,
+      2000: 0.54,
+      2005: 0.65,
+      2010: 0.8,
+      2015: 0.95,
       2020: 1.1,
       2024: 1.25,
     },
@@ -599,7 +605,7 @@ const rawProducts: Record<
       2015: 1.9,
       2020: 2.1,
       2024: 2.4,
-      2025: 1.89,
+      2025: 2.3,
     },
   },
   vin: {
@@ -610,19 +616,21 @@ const rawProducts: Record<
     emoji: "🍷",
     category: "alimentation",
     funFactFr:
-      "Une bouteille de vin de table coûtait 25 minutes de travail en 1960. En 2024 : 20 minutes.",
+      "Une bouteille de vin de table coûtait 43 minutes de travail en 1960. En 2024 : 14 minutes.",
     funFactEn:
-      "A bottle of table wine cost 25 work-minutes in 1960. In 2024: 20 min.",
+      "A bottle of table wine cost 43 work-minutes in 1960. In 2024: 14 min.",
+    // Corrected: harmonized to table wine in bottle (75cl) throughout
+    // Source: INSEE Annuaire 1961 (1,39 FRF/L → 1,04 FRF/75cl), Ordre Spontané (déc. 2001: 0,94€/75cl)
     prices: {
-      1960: 0.091,
-      1970: 0.152,
-      1980: 0.534,
+      1960: 0.159,
+      1970: 0.24,
+      1980: 0.6,
       1990: 1.07,
-      2000: 1.52,
-      2010: 2.0,
-      2015: 2.3,
-      2020: 2.5,
-      2024: 3.0,
+      2000: 0.94,
+      2010: 1.3,
+      2015: 1.5,
+      2020: 1.7,
+      2024: 2.2,
     },
   },
   pommes_de_terre: {
@@ -679,14 +687,16 @@ const rawProducts: Record<
     emoji: "🍝",
     category: "alimentation",
     funFactFr:
-      "Les pâtes sont passées de 29 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn: "Pasta went from 29 work-minutes in 1960 to 10 in 2024.",
+      "Les pâtes sont passées de 65 minutes de travail en 1960 à 10 minutes en 2024.",
+    funFactEn: "Pasta went from 65 work-minutes in 1960 to 10 in 2024.",
+    // Pre-2010 corrected: original values were for 500g, not 1kg
+    // Source: INSEE Annuaire 1961 (1,91 FRF/kg), Ordre Spontané (déc. 2001: 1,48€/kg)
     prices: {
-      1960: 0.107,
-      1970: 0.152,
-      1980: 0.381,
-      1990: 0.76,
-      2000: 1.07,
+      1960: 0.24,
+      1970: 0.34,
+      1980: 0.76,
+      1990: 1.15,
+      2000: 1.45,
       2010: 1.5,
       2015: 1.3,
       2020: 1.4,
@@ -703,15 +713,17 @@ const rawProducts: Record<
     funFactFr:
       "Le sucre est passé de 33 minutes de travail en 1960 à 10 minutes en 2024.",
     funFactEn: "Sugar went from 33 work-minutes in 1960 to 10 in 2024.",
+    // Corrected 2010, 2015, 2020: sugar was stable at ~0.85–1.00€/kg before 2022 spike
+    // Source: INSEE IPC sucre, FranceAgriMer
     prices: {
       1960: 0.122,
       1970: 0.168,
       1980: 0.457,
       1990: 0.76,
       2000: 1.07,
-      2010: 1.4,
-      2015: 1.2,
-      2020: 1.3,
+      2010: 0.95,
+      2015: 0.9,
+      2020: 0.95,
       2024: 1.5,
     },
   },
@@ -733,8 +745,8 @@ const rawProducts: Record<
       2000: 1.07,
       2010: 1.5,
       2015: 1.4,
-      2020: 1.6,
-      2024: 2.2,
+      2020: 1.1,
+      2024: 1.8,
     },
   },
   oranges: {
@@ -835,17 +847,19 @@ const rawProducts: Record<
     emoji: "🥕",
     category: "alimentation",
     funFactFr:
-      "Les carottes sont passées de 13 min de travail en 1960 à 8 min en 2024.",
-    funFactEn: "Carrots went from 13 work-minutes in 1960 to 8 in 2024.",
+      "Les carottes sont passées de 49 min de travail en 1960 à 10 min en 2024.",
+    funFactEn: "Carrots went from 49 work-minutes in 1960 to 10 in 2024.",
+    // Corrected 1960/1970: original values were transposed from salade
+    // Source: INSEE Annuaire 1961 (Paris: 1,18 FRF/kg = 0,18€), INSEE série 000641422
     prices: {
-      1960: 0.046,
-      1970: 0.076,
-      1980: 0.229,
-      1990: 0.46,
-      2000: 0.76,
-      2010: 1.1,
-      2015: 1.1,
-      2020: 1.2,
+      1960: 0.18,
+      1970: 0.28,
+      1980: 0.38,
+      1990: 0.55,
+      2000: 0.85,
+      2010: 1.25,
+      2015: 1.35,
+      2020: 1.55,
       2024: 1.5,
     },
   },
@@ -878,19 +892,21 @@ const rawProducts: Record<
     emoji: "🍺",
     category: "cafe_restaurant",
     funFactFr:
-      "Un demi au comptoir coûtait 8 min de travail en 1960. En 2024 : 23 minutes - presque 3 fois plus.",
+      "Un demi au comptoir coûtait 12 min de travail en 1960. En 2024 : 23 minutes - presque le double.",
     funFactEn:
-      "A draft beer cost 8 work-minutes in 1960. In 2024: 23 min - nearly 3 times more.",
+      "A draft beer cost 12 work-minutes in 1960. In 2024: 23 min - nearly double.",
+    // Corrected: 1960 (+53%), 1980 (+25%), 2000 (+25%), 2015/2020/2024 lowered to INSEE national avg
+    // Source: TCMA/INSEE, INSEE série 000806957, Assemblée nationale rapport 2025
     prices: {
-      1960: 0.03,
+      1960: 0.046,
       1970: 0.076,
-      1980: 0.305,
+      1980: 0.381,
       1990: 0.76,
-      2000: 1.52,
+      2000: 1.9,
       2010: 2.5,
-      2015: 3.0,
-      2020: 3.5,
-      2024: 4.5,
+      2015: 2.6,
+      2020: 3.0,
+      2024: 3.5,
     },
   },
   magazine: {
@@ -1015,17 +1031,19 @@ const rawProducts: Record<
     emoji: "🎬",
     category: "loisirs",
     funFactFr:
-      "Un abonnement streaming standard vaut 135 min de travail au SMIC en 2024 - soit moins que le cinéma pour un mois illimité.",
+      "Un abonnement streaming standard vaut 86 min de travail au SMIC en 2024 - soit moins que deux places de cinéma pour un mois illimité.",
     funFactEn:
-      "A standard streaming subscription costs 135 work-minutes at minimum wage in 2024 - less than a cinema ticket for unlimited monthly viewing.",
+      "A standard streaming subscription costs 86 work-minutes at minimum wage in 2024 - less than two cinema tickets for unlimited monthly viewing.",
+    // Source: Le Figaro, PhonAndroid, Frandroid, Presse-Citron (historique Netflix France)
+    // Corrected: 2017–2020 were shifted by one year in original data
     prices: {
       2014: 8.99,
-      2015: 8.99,
+      2015: 9.99,
       2016: 9.99,
-      2017: 9.99,
-      2018: 11.99,
-      2019: 12.99,
-      2020: 13.99,
+      2017: 10.99,
+      2018: 10.99,
+      2019: 11.99,
+      2020: 11.99,
       2021: 13.49,
       2022: 13.49,
       2023: 13.49,
@@ -1064,22 +1082,24 @@ const rawProducts: Record<
     emoji: "🔥",
     category: "logement",
     funFactFr:
-      "1 MWh de gaz coûtait 192 min de travail en 2000. La crise énergétique de 2022 l'a fait bondir à ~1 560 min - avant un reflux partiel.",
+      "1 MWh de gaz coûtait 240 min de travail en 2000. La crise énergétique de 2022 a fait exploser les prix - avant un reflux partiel.",
     funFactEn:
-      "1 MWh of gas cost 192 work-minutes in 2000. The 2022 energy crisis pushed it to ~1,560 min - before a partial retreat.",
+      "1 MWh of gas cost 240 work-minutes in 2000. The 2022 energy crisis sent prices soaring - before a partial retreat.",
+    // Source: SDES / Ministère de la Transition Écologique (rapports 2020 & 2024)
+    // Corrected: 2000 (+25%), 2019 (+30%), 2020 (+48%), 2024 (+63%) vs originals
     prices: {
-      2000: 16.0,
+      2000: 20.0,
       2005: 32.0,
-      2008: 58.0,
-      2010: 47.0,
-      2012: 62.0,
+      2008: 50.0,
+      2010: 52.0,
+      2012: 65.0,
       2015: 68.0,
-      2019: 63.0,
-      2020: 52.0,
+      2019: 82.0,
+      2020: 77.0,
       2021: 80.0,
-      2022: 130.0,
-      2023: 95.0,
-      2024: 80.0,
+      2022: 96.0,
+      2023: 115.0,
+      2024: 130.0,
     },
   },
   loyer_paris: {
@@ -1090,22 +1110,22 @@ const rawProducts: Record<
     emoji: "🏛️",
     category: "logement",
     funFactFr:
-      "Le m² parisien est passé de ~30 min de travail en 1970 à ~370 min en 2024 - une multiplication par 12, bien plus que les salaires.",
+      "Le m² parisien est passé de ~150 min de travail en 2000 à ~170 min en 2024 - le logement parisien pèse de plus en plus.",
     funFactEn:
-      "Paris rent per m² went from ~30 work-minutes in 1970 to ~370 in 2024 - a 12× increase, far outpacing wages.",
+      "Paris rent per m² went from ~150 work-minutes in 2000 to ~170 in 2024 - Parisian housing weighs ever more.",
+    // OLAP official data: "ensemble du parc privé, Paris intra-muros"
+    // Source: OLAP rapports Paris 2009, 2011, 2024 (Tableau n°12 / Tableau 10)
     prices: {
-      1970: 2.5,
-      1980: 8.0,
-      1990: 18.0,
-      2000: 22.0,
-      2005: 29.0,
-      2008: 36.0,
-      2010: 35.0,
-      2015: 37.0,
-      2018: 35.0,
-      2020: 35.0,
-      2022: 34.5,
-      2024: 36.0,
+      1997: 12.4,
+      2000: 13.1,
+      2005: 16.3,
+      2008: 18.4,
+      2010: 19.7,
+      2015: 22.3,
+      2018: 22.9,
+      2020: 23.7,
+      2022: 24.1,
+      2024: 25.5,
     },
   },
   voiture_milieu_gamme: {
