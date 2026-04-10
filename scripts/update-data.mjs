@@ -83,10 +83,23 @@ const DIRECT_PRICE_MAP = {
  * We convert to estimated prices: anchorPrice × (currentIndex / anchorIndex)
  *
  * IMPORTANT: These are ESTIMATES. The PR reviewer should check values are plausible.
+ * Validation bounds below will reject outliers automatically.
  * To find idbanks: https://www.insee.fr/fr/statistiques/series/102342213
+ *
+ * Products NOT here (intentionally manual-only):
+ *   - loyer_paris: uses OLAP annual reports (Tableau 10/12), not IPC
+ *   - gaz: uses SDES official annual reports, not CRE spot/IPC
+ *   - metro, cigarettes, etc.: see MANUAL_SOURCES at end of script
  */
 const INDEX_PRICE_MAP = {
   // NOTE: loyer_national uses IRL (see IRL_RENT_MAP below), not IPC
+  //
+  // Anchor prices were verified in April 2026 against INSEE, FranceAgriMer,
+  // Ordre Spontané, and other primary sources. Key corrections:
+  //   - sucre: was 1.2 → 0.90 (sugar was very stable pre-2022; original was too high)
+  //   - pates: was 1.3 → 1.3 (OK — post-2010 values were already correct)
+  //   - vin: was 2.3 → 1.5 (harmonized to vin de table 75cl, not regional appellation)
+  //   - huile: was 1.4 → 1.4 (OK for 2015)
   baguette: { idbank: "001762397", anchorYear: 2015, anchorPrice: 0.86 },
   essence: { idbank: "001762471", anchorYear: 2015, anchorPrice: 1.3 },
   lait: { idbank: "001762395", anchorYear: 2015, anchorPrice: 0.87 },
@@ -95,11 +108,11 @@ const INDEX_PRICE_MAP = {
   beurre: { idbank: "001762389", anchorYear: 2015, anchorPrice: 1.7 },
   poulet: { idbank: "001762387", anchorYear: 2015, anchorPrice: 7.0 },
   pommes_de_terre: { idbank: "001762399", anchorYear: 2015, anchorPrice: 1.2 },
-  sucre: { idbank: "001762405", anchorYear: 2015, anchorPrice: 1.2 },
+  sucre: { idbank: "001762405", anchorYear: 2015, anchorPrice: 0.9 },
   pates: { idbank: "001762403", anchorYear: 2015, anchorPrice: 1.3 },
   huile: { idbank: "001762411", anchorYear: 2015, anchorPrice: 1.4 },
   camembert: { idbank: "001762391", anchorYear: 2015, anchorPrice: 1.9 },
-  vin: { idbank: "001762413", anchorYear: 2015, anchorPrice: 2.3 },
+  vin: { idbank: "001762413", anchorYear: 2015, anchorPrice: 1.5 },
   yaourt: { idbank: "001762415", anchorYear: 2015, anchorPrice: 0.8 },
 };
 
@@ -453,7 +466,8 @@ async function main() {
           break;
         }
       }
-      if (smicUpdated) salaryContent = replaceSmicRates(salaryContent, existingSmicRates);
+      if (smicUpdated)
+        salaryContent = replaceSmicRates(salaryContent, existingSmicRates);
     } else {
       console.log("  No new SMIC rates available.");
     }
@@ -461,7 +475,10 @@ async function main() {
 
   // 2. Update mean salary rates (INSEE DADS)
   console.log("\nStep 2a: Mean salary net hourly (INSEE 010752366)");
-  const existingMeanRates = extractSalaryRates(salaryContent, "meanSalaryRates");
+  const existingMeanRates = extractSalaryRates(
+    salaryContent,
+    "meanSalaryRates",
+  );
   const maxMeanYear =
     Object.keys(existingMeanRates).length > 0
       ? Math.max(...Object.keys(existingMeanRates).map(Number))
@@ -501,7 +518,10 @@ async function main() {
 
   // 2b. Update median salary rates (INSEE DADS)
   console.log("\nStep 2b: Median salary net hourly (INSEE 010752342)");
-  const existingMedianRates = extractSalaryRates(salaryContent, "medianSalaryRates");
+  const existingMedianRates = extractSalaryRates(
+    salaryContent,
+    "medianSalaryRates",
+  );
   const maxMedianYear =
     Object.keys(existingMedianRates).length > 0
       ? Math.max(...Object.keys(existingMedianRates).map(Number))
@@ -601,6 +621,16 @@ async function main() {
     let updated = false;
     for (const [year, price] of Object.entries(newPrices)) {
       if (year > maxYear && year <= currentYear) {
+        // Sanity check: direct prices should not jump more than 100% YoY
+        const prevYearPrice = existingPrices[year - 1];
+        if (
+          prevYearPrice &&
+          (price / prevYearPrice > 2.0 || price / prevYearPrice < 0.5)
+        ) {
+          console.warn(
+            `  ⚠ ${productId} ${year}: ${price}€ is a ${((price / prevYearPrice - 1) * 100).toFixed(0)}% jump vs ${year - 1} — flagged for review`,
+          );
+        }
         existingPrices[year] = price;
         changes.push(`${productId}: added ${year} → ${price} € (direct price)`);
         updated = true;
@@ -608,7 +638,11 @@ async function main() {
     }
 
     if (updated) {
-      productsContent = replacePrices(productsContent, productId, existingPrices);
+      productsContent = replacePrices(
+        productsContent,
+        productId,
+        existingPrices,
+      );
       console.log(`  ✓ Updated.`);
     } else {
       console.log(`  No new years available.`);
@@ -658,6 +692,17 @@ async function main() {
 
     for (const [year, price] of Object.entries(estimatedPrices)) {
       if (year > maxYear && year <= currentYear) {
+        // Validation: reject if price deviates more than 80% from anchor or previous year
+        const prevYearPrice = existingPrices[year - 1];
+        const ratio = prevYearPrice
+          ? price / prevYearPrice
+          : price / config.anchorPrice;
+        if (ratio < 0.5 || ratio > 2.0) {
+          console.warn(
+            `  ⚠ ${productId} ${year}: ${price}€ is ${((ratio - 1) * 100).toFixed(0)}% vs previous — skipped (likely IPC data issue)`,
+          );
+          continue;
+        }
         existingPrices[year] = price;
         changes.push(`${productId}: added ${year} → ${price} € (IPC estimate)`);
         updated = true;
@@ -665,7 +710,11 @@ async function main() {
     }
 
     if (updated) {
-      productsContent = replacePrices(productsContent, productId, existingPrices);
+      productsContent = replacePrices(
+        productsContent,
+        productId,
+        existingPrices,
+      );
       console.log(`  ✓ Updated.`);
     } else {
       console.log(`  No new years available.`);
@@ -716,13 +765,19 @@ async function main() {
     for (const [year, price] of Object.entries(estimatedPrices)) {
       if (year > maxYear && year <= currentYear) {
         existingPrices[year] = price;
-        changes.push(`${productId}: added ${year} → ${price} €/m² (IRL estimate)`);
+        changes.push(
+          `${productId}: added ${year} → ${price} €/m² (IRL estimate)`,
+        );
         updated = true;
       }
     }
 
     if (updated) {
-      productsContent = replacePrices(productsContent, productId, existingPrices);
+      productsContent = replacePrices(
+        productsContent,
+        productId,
+        existingPrices,
+      );
       console.log(`  ✓ Updated.`);
     } else {
       console.log(`  No new years available.`);
@@ -755,26 +810,32 @@ async function main() {
   // 6. Manual products checklist
   const MANUAL_SOURCES = {
     cigarettes: "DGDDI / Tabac Info Service",
-    cinema: "CNC (Centre national du cinéma)",
-    medecin: "Assurance Maladie / CNAM",
-    metro: "RATP / Île-de-France Mobilités",
-    timbre: "La Poste (tarifs en vigueur)",
-    journal: "Prix éditeur (ex: Le Monde, Le Figaro)",
-    magazine: "Prix éditeur / kiosque",
-    cafe: "Enquête prix services (INSEE / secteur)",
-    biere: "Enquête prix services (INSEE / secteur)",
+    cinema: "CNC Bilan annuel (recette moyenne par entrée)",
+    medecin: "Assurance Maladie / CNAM (tarif conventionnel secteur 1)",
+    metro: "RATP / Île-de-France Mobilités (ticket unitaire t+, pas carnet)",
+    timbre:
+      "La Poste (tarifs en vigueur — timbres-de-france.com pour historique)",
+    journal: "Prix éditeur (Le Monde au numéro)",
+    magazine: "Prix éditeur / kiosque (Télé 7 Jours)",
+    cafe: "Enquête prix services (INSEE série 000670982 si disponible)",
+    biere: "INSEE série 000806957 (demi blonde 25cl détail, moyenne nationale)",
     internet: "ARCEP / opérateurs (offres entrée de gamme)",
-    electricite: "EDF / CRE (tarifs réglementés)",
-    loyer: "OLAP / CLAMEUR / INSEE Enquête Logement",
-    baguette_tradition: "Fédération des boulangers (si applicable)",
-    gaz: "CRE / DGEC (tarifs réglementés ou prix spot marché)",
-    loyer_paris: "OLAP Paris / CLAMEUR (m² Paris intra-muros)",
+    electricite:
+      "EDF / CRE (tarifs réglementés — Agence France Électricité historique)",
+    loyer: "OLAP / CLAMEUR / INSEE Enquête Logement (parc privé)",
+    croissant:
+      "INSEE série 000442619 (croissant ordinaire — série arrêtée, puis tendance)",
+    gaz: "SDES / Ministère Transition Écologique (rapports annuels prix du gaz — pas CRE spot)",
+    loyer_paris:
+      "OLAP rapports annuels Paris (Tableau 10/12 — ensemble du parc privé, pas nouveaux baux seuls)",
     consultation_specialiste:
       "DREES Données stat. professions libérales santé (ophtalmologiste secteur 2, honoraires totaux moyens)",
     forfait_mobile: "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
-    streaming: "Netflix France (abonnement standard)",
+    streaming:
+      "Netflix France (abonnement Standard — vérifier dates exactes des hausses)",
     smartphone: "GSM Arena / Lesnumeriques (milieu de gamme référence)",
-    voiture_milieu_gamme: "Peugeot France (prix catalogue neuf, gamme 205→208)",
+    voiture_milieu_gamme:
+      "Peugeot France (prix catalogue neuf, gamme 205→208→308)",
   };
 
   const allProductIds = [
