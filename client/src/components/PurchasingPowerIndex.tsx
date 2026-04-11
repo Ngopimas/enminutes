@@ -503,7 +503,7 @@ export default function PurchasingPowerIndex() {
         </div>
 
         {/* Chart controls */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 sm:flex sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2">
           <div className="flex items-center gap-2">
             <Switch
               id="reverse-minutes"
@@ -580,7 +580,7 @@ export default function PurchasingPowerIndex() {
             onClick={handleDownload}
             title={t("downloadChart")}
             aria-label={t("downloadChart")}
-            className="ml-auto h-7 w-7 text-muted-foreground/40 hover:text-muted-foreground"
+            className="col-span-2 justify-self-end sm:ml-auto h-7 w-7 text-muted-foreground/40 hover:text-muted-foreground"
           >
             <Camera className="h-3.5 w-3.5" />
           </Button>

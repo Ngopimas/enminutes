@@ -81,7 +81,7 @@ export default function Hero() {
           : "mean salary";
 
   return (
-    <section className="py-16 md:py-28" data-testid="hero">
+    <section className="py-12 md:py-20" data-testid="hero">
       <div className="max-w-6xl mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
           {t("heroHeadline")}
@@ -94,7 +94,7 @@ export default function Hero() {
               : t("heroSubtitleMean")}
         </p>
         <div
-          className="h-[60px] flex items-center justify-center overflow-hidden"
+          className="h-[80px] flex items-center justify-center overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -105,7 +105,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
-              className="text-base text-muted-foreground tabular-nums"
+              className="text-base md:text-lg text-foreground/80 tabular-nums"
             >
               <span>{product.emoji} </span>
               {lang === "fr" ? (
@@ -210,7 +210,7 @@ export default function Hero() {
               .getElementById("explorer")
               ?.scrollIntoView({ behavior: "smooth" })
           }
-          className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           {t("heroExplore")} ↓
         </button>
