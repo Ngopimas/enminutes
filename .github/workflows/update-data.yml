@@ -79,7 +79,6 @@ jobs:
 
             - [ ] Values in `client/src/lib/data.ts` look reasonable (no order-of-magnitude errors)
             - [ ] Manual products above have been reviewed (or deferred with a comment)
-            - [ ] `funFact` strings updated if the latest year figure changed materially
             - [ ] `npm run check` passes (TypeScript)
             - [ ] `npm run build` succeeds locally
 

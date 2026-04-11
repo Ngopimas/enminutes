@@ -34,8 +34,6 @@ export interface Product {
   unit: string;
   emoji: string;
   category: string;
-  funFactFr: string;
-  funFactEn: string;
   prices: Record<number, number>;
   pricesInterp: Record<number, number>;
   minutes: Record<number, number>;
@@ -231,8 +229,6 @@ const rawProducts: Record<
     unit: string;
     emoji: string;
     category: string;
-    funFactFr: string;
-    funFactEn: string;
     prices: Record<number, number>;
   }
 > = {
@@ -243,10 +239,6 @@ const rawProducts: Record<
     unit: "250g",
     emoji: "🥖",
     category: "alimentation",
-    funFactFr:
-      "En 1960, il fallait 18 minutes de travail pour acheter une baguette. Aujourd'hui, environ 7 minutes suffisent.",
-    funFactEn:
-      "In 1960, you needed 18 work-minutes to buy a baguette. Today, about 7 minutes is enough.",
     prices: {
       1950: 0.021,
       1960: 0.05,
@@ -269,10 +261,6 @@ const rawProducts: Record<
     unit: "1L",
     emoji: "⛽",
     category: "transport",
-    funFactFr:
-      "Le prix de l'essence en minutes de travail est remarquablement stable depuis 30 ans, autour de 10-12 minutes.",
-    funFactEn:
-      "The petrol price in work-minutes has been remarkably stable for 30 years, around 10-12 minutes.",
     prices: {
       1950: 0.072,
       1960: 0.157,
@@ -295,10 +283,6 @@ const rawProducts: Record<
     unit: "1 place",
     emoji: "🎬",
     category: "services",
-    funFactFr:
-      "Prix d'une place adulte tarif normal (sans réduction CE, carte illimitée ou tarif scolaire). La moyenne statistique du CNC (RME) est plus basse car elle inclut tous les tarifs réduits.",
-    funFactEn:
-      "Standard adult ticket price (no employer discount, unlimited pass, or student rate). The CNC statistical average (RME) is lower as it includes all reduced fares.",
     prices: {
       1950: 0.105,
       1960: 0.284,
@@ -320,10 +304,6 @@ const rawProducts: Record<
     unit: "1 consultation",
     emoji: "🩺",
     category: "services",
-    funFactFr:
-      "Une consultation de généraliste coûtait 208 minutes de travail en 1950. En 2025, c'est environ 191 minutes.",
-    funFactEn:
-      "A GP consultation cost 208 work-minutes in 1950. In 2025, it's about 191 minutes.",
     prices: {
       1950: 0.381,
       1960: 1.282,
@@ -345,10 +325,6 @@ const rawProducts: Record<
     unit: "1 timbre",
     emoji: "📮",
     category: "communication",
-    funFactFr:
-      "Le timbre a presque doublé en minutes de travail depuis 2000 : de 6 à 10 minutes, reflet du déclin du courrier papier.",
-    funFactEn:
-      "A stamp costs almost twice as many work-minutes as in 2000: from 6 to 10 min, reflecting the decline of paper mail.",
     prices: {
       1950: 0.023,
       1960: 0.038,
@@ -370,9 +346,6 @@ const rawProducts: Record<
     unit: "1 exemplaire",
     emoji: "📰",
     category: "communication",
-    funFactFr:
-      "Un journal quotidien coûtait 13 minutes de travail en 1960 contre 21 minutes en 2024.",
-    funFactEn: "A daily newspaper cost 13 work-minutes in 1960 vs 21 in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -391,10 +364,6 @@ const rawProducts: Record<
     unit: "1 ticket",
     emoji: "🚇",
     category: "transport",
-    funFactFr:
-      "Le ticket de métro a toujours coûté environ 8 à 16 minutes de travail - une stabilité remarquable sur 70 ans.",
-    funFactEn:
-      "A metro ticket has always cost about 8-16 work-minutes - remarkably stable over 70 years.",
     // Corrected 1960, 1970, 1990: original values used carnet (reduced) prices
     // Source: STIF via Le Miroir de Rufus, Le Monde oct. 1980, Wikipedia ticket t+
     prices: {
@@ -419,10 +388,6 @@ const rawProducts: Record<
     unit: "20 cigarettes",
     emoji: "🚬",
     category: "tabac",
-    funFactFr:
-      "Les cigarettes sont le produit qui a le plus augmenté en temps de travail : de 21 min en 1960 à 80 min en 2025.",
-    funFactEn:
-      "Cigarettes saw the biggest increase in work-time: from 21 min in 1960 to 80 min in 2025.",
     prices: {
       1960: 0.076,
       1970: 0.122,
@@ -444,10 +409,6 @@ const rawProducts: Record<
     unit: "1L",
     emoji: "🥛",
     category: "alimentation",
-    funFactFr:
-      "Le lait est passé de 17 minutes de travail en 1960 à 7 minutes aujourd'hui - divisé par 2,4.",
-    funFactEn:
-      "Milk went from 17 work-minutes in 1960 to 7 today - divided by 2.4.",
     prices: {
       1960: 0.061,
       1970: 0.091,
@@ -468,10 +429,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🥩",
     category: "alimentation",
-    funFactFr:
-      "Un kilo de bœuf coûtait 415 minutes de travail en 1960 contre 169 minutes en 2024 - 2,5 fois moins.",
-    funFactEn:
-      "A kilo of beef cost 415 work-minutes in 1960 vs 169 in 2024 - 2.5 times less.",
     prices: {
       1960: 1.52,
       1970: 2.74,
@@ -492,10 +449,6 @@ const rawProducts: Record<
     unit: "12 œufs",
     emoji: "🥚",
     category: "alimentation",
-    funFactFr:
-      "Les œufs sont passés de 50 minutes de travail la douzaine en 1960 à 20 minutes en 2024.",
-    funFactEn:
-      "Eggs went from 50 work-minutes per dozen in 1960 to 20 in 2024.",
     prices: {
       1960: 0.183,
       1970: 0.305,
@@ -517,10 +470,6 @@ const rawProducts: Record<
     unit: "1 tasse",
     emoji: "☕",
     category: "cafe_restaurant",
-    funFactFr:
-      "Un café au comptoir coûte environ 10-12 minutes de travail depuis 60 ans - une constante française.",
-    funFactEn:
-      "A counter espresso has cost about 10-12 work-minutes for 60 years - a French constant.",
     prices: {
       1960: 0.038,
       1970: 0.076,
@@ -540,10 +489,6 @@ const rawProducts: Record<
     unit: "250g",
     emoji: "🧈",
     category: "alimentation",
-    funFactFr:
-      "La plaquette de beurre est passée de 62 min de travail en 1960 à 16 min en 2024.",
-    funFactEn:
-      "A 250g block of butter went from 62 work-minutes in 1960 to 16 in 2024.",
     // Corrected 2025: 1.84€ was the margarine price, not butter
     // Source: FranceAgriMer, INSEE IPC beurre (base 2015=100, indice 171.2 en 2024)
     prices: {
@@ -566,10 +511,6 @@ const rawProducts: Record<
     unit: "1 pièce",
     emoji: "🥐",
     category: "alimentation",
-    funFactFr:
-      "Le croissant coûtait 8 minutes de travail en 1960, et 8 minutes en 2024 - un produit remarquablement stable.",
-    funFactEn:
-      "A croissant cost 8 work-minutes in 1960 and 8 in 2024 - remarkably stable.",
     // Corrected 2000: INSEE série 000442619 gives 0.54€ (original 0.76€ was +41%)
     // 2005, 2010 also adjusted downward to match corrected trajectory
     prices: {
@@ -592,9 +533,6 @@ const rawProducts: Record<
     unit: "250g",
     emoji: "🧀",
     category: "alimentation",
-    funFactFr:
-      "Le camembert est passé de 46 minutes de travail en 1960 à 16 minutes en 2024.",
-    funFactEn: "Camembert went from 46 work-minutes in 1960 to 16 in 2024.",
     prices: {
       1960: 0.168,
       1970: 0.305,
@@ -615,10 +553,6 @@ const rawProducts: Record<
     unit: "75cl",
     emoji: "🍷",
     category: "alimentation",
-    funFactFr:
-      "Une bouteille de vin de table coûtait 43 minutes de travail en 1960. En 2024 : 14 minutes.",
-    funFactEn:
-      "A bottle of table wine cost 43 work-minutes in 1960. In 2024: 14 min.",
     // Corrected: harmonized to table wine in bottle (75cl) throughout
     // Source: INSEE Annuaire 1961 (1,39 FRF/L → 1,04 FRF/75cl), Ordre Spontané (déc. 2001: 0,94€/75cl)
     prices: {
@@ -640,10 +574,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🥔",
     category: "alimentation",
-    funFactFr:
-      "Le kilo de pommes de terre est passé de 17 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn:
-      "A kilo of potatoes went from 17 work-minutes in 1960 to 10 in 2024.",
     prices: {
       1960: 0.061,
       1970: 0.076,
@@ -663,10 +593,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍗",
     category: "alimentation",
-    funFactFr:
-      "Le poulet est passé de 208 min de travail/kg en 1960 à 62 min en 2024 - divisé par plus de 3.",
-    funFactEn:
-      "Chicken went from 208 work-min/kg in 1960 to 62 in 2024 - divided by more than 3.",
     prices: {
       1960: 0.762,
       1970: 1.22,
@@ -686,9 +612,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍝",
     category: "alimentation",
-    funFactFr:
-      "Les pâtes sont passées de 65 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn: "Pasta went from 65 work-minutes in 1960 to 10 in 2024.",
     // Pre-2010 corrected: original values were for 500g, not 1kg
     // Source: INSEE Annuaire 1961 (1,91 FRF/kg), Ordre Spontané (déc. 2001: 1,48€/kg)
     prices: {
@@ -710,9 +633,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍬",
     category: "alimentation",
-    funFactFr:
-      "Le sucre est passé de 33 minutes de travail en 1960 à 10 minutes en 2024.",
-    funFactEn: "Sugar went from 33 work-minutes in 1960 to 10 in 2024.",
     // Corrected 2010, 2015, 2020: sugar was stable at ~0.85–1.00€/kg before 2022 spike
     // Source: INSEE IPC sucre, FranceAgriMer
     prices: {
@@ -734,9 +654,6 @@ const rawProducts: Record<
     unit: "1L",
     emoji: "🌻",
     category: "alimentation",
-    funFactFr:
-      "L'huile de tournesol coûtait 50 minutes de travail en 1960 et 14 minutes en 2024.",
-    funFactEn: "Sunflower oil cost 50 work-minutes in 1960 and 14 in 2024.",
     prices: {
       1960: 0.183,
       1970: 0.229,
@@ -756,9 +673,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍊",
     category: "alimentation",
-    funFactFr:
-      "Les oranges sont passées de 41 minutes de travail en 1960 à 14 minutes en 2024.",
-    funFactEn: "Oranges went from 41 work-minutes in 1960 to 14 in 2024.",
     prices: {
       1960: 0.152,
       1970: 0.229,
@@ -779,9 +693,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍅",
     category: "alimentation",
-    funFactFr:
-      "Les tomates coûtaient 46 min de travail en 1960, 18 min en 2024.",
-    funFactEn: "Tomatoes cost 46 work-minutes in 1960, 18 in 2024.",
     prices: {
       1960: 0.183,
       1970: 0.305,
@@ -802,9 +713,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🍎",
     category: "alimentation",
-    funFactFr:
-      "Les pommes sont passées de 33 min de travail en 1960 à 14 min en 2024.",
-    funFactEn: "Apples went from 30 min in 1960 to 14 min in 2024.",
     prices: {
       1960: 0.122,
       1970: 0.183,
@@ -825,8 +733,6 @@ const rawProducts: Record<
     unit: "1 pièce",
     emoji: "🥬",
     category: "alimentation",
-    funFactFr: "Une salade coûtait 13 min de travail en 1960, 8 min en 2024.",
-    funFactEn: "A head of lettuce cost 13 work-minutes in 1960, 8 in 2024.",
     prices: {
       1960: 0.046,
       1970: 0.076,
@@ -846,9 +752,6 @@ const rawProducts: Record<
     unit: "1 kg",
     emoji: "🥕",
     category: "alimentation",
-    funFactFr:
-      "Les carottes sont passées de 49 min de travail en 1960 à 10 min en 2024.",
-    funFactEn: "Carrots went from 49 work-minutes in 1960 to 10 in 2024.",
     // Corrected 1960/1970: original values were transposed from salade
     // Source: INSEE Annuaire 1961 (Paris: 1,18 FRF/kg = 0,18€), INSEE série 000641422
     prices: {
@@ -870,9 +773,6 @@ const rawProducts: Record<
     unit: "lot de 4",
     emoji: "🥄",
     category: "alimentation",
-    funFactFr:
-      "Le lot de yaourts est passé de 10 min de travail en 1970 à 5 min en 2024.",
-    funFactEn: "A 4-pack of yogurt went from 9 min in 1970 to 6 min in 2024.",
     prices: {
       1970: 0.076,
       1980: 0.229,
@@ -891,10 +791,6 @@ const rawProducts: Record<
     unit: "25cl",
     emoji: "🍺",
     category: "cafe_restaurant",
-    funFactFr:
-      "Un demi au comptoir coûtait 12 min de travail en 1960. En 2024 : 23 minutes - presque le double.",
-    funFactEn:
-      "A draft beer cost 12 work-minutes in 1960. In 2024: 23 min - nearly double.",
     // Corrected: 1960 (+53%), 1980 (+25%), 2000 (+25%), 2015/2020/2024 lowered to INSEE national avg
     // Source: TCMA/INSEE, INSEE série 000806957, Assemblée nationale rapport 2025
     prices: {
@@ -916,9 +812,6 @@ const rawProducts: Record<
     unit: "1 exemplaire",
     emoji: "📖",
     category: "loisirs",
-    funFactFr:
-      "Un magazine hebdomadaire coûtait 25 min de travail en 1960 et 13 min en 2024.",
-    funFactEn: "A weekly magazine cost 25 work-minutes in 1960 and 13 in 2024.",
     prices: {
       1960: 0.091,
       1970: 0.183,
@@ -937,10 +830,6 @@ const rawProducts: Record<
     unit: "1 kWh",
     emoji: "⚡",
     category: "logement",
-    funFactFr:
-      "Le kWh d'électricité coûtait 3,8 min de travail en 1960 et seulement 1,6 min en 2024 - malgré les hausses récentes.",
-    funFactEn:
-      "A kWh of electricity cost 3.8 work-minutes in 1960 and only 1.6 in 2024 - despite recent price hikes.",
     prices: {
       1960: 0.014,
       1970: 0.018,
@@ -961,10 +850,6 @@ const rawProducts: Record<
     unit: "1 m²/mois",
     emoji: "🏠",
     category: "logement",
-    funFactFr:
-      "Le loyer au m² est passé de 61 min de travail en 1970 à 88 min en 2024 - le logement pèse de plus en plus.",
-    funFactEn:
-      "Rent per m² went from 61 work-minutes in 1970 to 88 in 2024 - housing weighs more and more.",
     prices: {
       1970: 0.46,
       1980: 1.83,
@@ -984,10 +869,6 @@ const rawProducts: Record<
     unit: "1 mois",
     emoji: "📶",
     category: "communication",
-    funFactFr:
-      "Un abonnement Internet est passé de 367 min de travail en 2000 à 208 min en 2024 - de moins en moins cher malgré un débit multiplié par 1000.",
-    funFactEn:
-      "An Internet subscription went from 367 work-minutes in 2000 to 208 in 2024 - cheaper despite 1000× faster speeds.",
     prices: {
       2000: 30.0,
       2005: 29.9,
@@ -1004,10 +885,6 @@ const rawProducts: Record<
     unit: "1 mois",
     emoji: "📱",
     category: "communication",
-    funFactFr:
-      "Le forfait mobile est passé de ~480 min de travail en 2000 à ~130 min en 2024 - et la disruption Free en 2012 a divisé les prix par 3 en quelques mois.",
-    funFactEn:
-      "A mobile plan went from ~480 work-minutes in 2000 to ~130 in 2024 - and Free Mobile's 2012 disruption cut prices by 3× in just months.",
     prices: {
       2000: 40.0,
       2005: 35.0,
@@ -1030,10 +907,6 @@ const rawProducts: Record<
     unit: "1 mois",
     emoji: "🎬",
     category: "loisirs",
-    funFactFr:
-      "Un abonnement streaming standard vaut 86 min de travail au SMIC en 2024 - soit moins que deux places de cinéma pour un mois illimité.",
-    funFactEn:
-      "A standard streaming subscription costs 86 work-minutes at minimum wage in 2024 - less than two cinema tickets for unlimited monthly viewing.",
     // Source: Le Figaro, PhonAndroid, Frandroid, Presse-Citron (historique Netflix France)
     // Corrected: 2017–2020 were shifted by one year in original data
     prices: {
@@ -1057,10 +930,6 @@ const rawProducts: Record<
     unit: "1 appareil",
     emoji: "📲",
     category: "communication",
-    funFactFr:
-      "Un smartphone milieu de gamme représentait ~6 200 min de travail en 2007. En 2024 : ~4 000 min - mais avec une puissance informatique incomparable.",
-    funFactEn:
-      "A mid-range smartphone required ~6,200 work-minutes in 2007. By 2024: ~4,000 min - but with vastly more computing power.",
     prices: {
       2007: 499.0,
       2008: 450.0,
@@ -1081,10 +950,6 @@ const rawProducts: Record<
     unit: "1 MWh",
     emoji: "🔥",
     category: "logement",
-    funFactFr:
-      "1 MWh de gaz coûtait 240 min de travail en 2000. La crise énergétique de 2022 a fait exploser les prix - avant un reflux partiel.",
-    funFactEn:
-      "1 MWh of gas cost 240 work-minutes in 2000. The 2022 energy crisis sent prices soaring - before a partial retreat.",
     // Source: SDES / Ministère de la Transition Écologique (rapports 2020 & 2024)
     // Corrected: 2000 (+25%), 2019 (+30%), 2020 (+48%), 2024 (+63%) vs originals
     prices: {
@@ -1109,10 +974,6 @@ const rawProducts: Record<
     unit: "1 m²/mois",
     emoji: "🏛️",
     category: "logement",
-    funFactFr:
-      "Le m² parisien est passé de ~150 min de travail en 2000 à ~170 min en 2024 - le logement parisien pèse de plus en plus.",
-    funFactEn:
-      "Paris rent per m² went from ~150 work-minutes in 2000 to ~170 in 2024 - Parisian housing weighs ever more.",
     // OLAP official data: "ensemble du parc privé, Paris intra-muros"
     // Source: OLAP rapports Paris 2009, 2011, 2024 (Tableau n°12 / Tableau 10)
     prices: {
@@ -1135,10 +996,6 @@ const rawProducts: Record<
     unit: "1 voiture",
     emoji: "🚘",
     category: "transport",
-    funFactFr:
-      "Une Peugeot 205 valait ~81 000 min de travail en 1983. Sa descendante 208 en vaut ~240 000 en 2024 - le pouvoir d'achat automobile a chuté.",
-    funFactEn:
-      "A Peugeot 205 cost ~81,000 work-minutes in 1983. Its successor the 208 costs ~240,000 in 2024 - car purchasing power has dropped sharply.",
     prices: {
       1983: 6800.0,
       1990: 8000.0,
@@ -1161,10 +1018,6 @@ const rawProducts: Record<
     unit: "1 m²/mois",
     emoji: "🏘️",
     category: "logement",
-    funFactFr:
-      "Le loyer moyen national au m² est passé de ~70 min de travail en 1970 à ~94 min en 2024 - moins que Paris, mais la tendance est la même.",
-    funFactEn:
-      "The national average rent per m² went from ~70 work-minutes in 1970 to ~94 in 2024 - less than Paris, but the trend is the same.",
     // Anchor: ~12.0 €/m² in 2015 (INSEE Enquête Logement + OLAP national)
     // 2006–2024: projected via INSEE IRL quarterly index (idbank 001515333)
     // Pre-2006: projected via ICC (Indice du Coût de la Construction)
@@ -1194,10 +1047,6 @@ const rawProducts: Record<
     unit: "1 consultation",
     emoji: "👁️",
     category: "services",
-    funFactFr:
-      "Une consultation chez l'ophtalmologiste représentait ~280 min de travail en 2000. En 2024, il faut ~360 min - l'accès aux soins spécialisés se dégrade.",
-    funFactEn:
-      "An ophthalmologist consultation cost ~280 work-minutes in 2000. In 2024 it takes ~360 minutes - access to specialist care is getting harder.",
     // Source: DREES Données statistiques sur les professions libérales de santé
     // Average total fee (secteur 2, dépassements d'honoraires inclus)
     prices: {
