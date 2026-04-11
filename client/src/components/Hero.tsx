@@ -15,12 +15,32 @@ export default function Hero() {
   const [index, setIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const touchStartX = useRef<number | null>(null);
+
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setIndex((i) => (i + 1) % featuredProducts.length);
     }, 6000);
   }, []);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 50) {
+      setIndex((i) =>
+        delta < 0
+          ? (i + 1) % featuredProducts.length
+          : (i - 1 + featuredProducts.length) % featuredProducts.length,
+      );
+      resetTimer();
+    }
+    touchStartX.current = null;
+  };
 
   useEffect(() => {
     resetTimer();
@@ -73,7 +93,11 @@ export default function Hero() {
               ? t("heroSubtitleMedian")
               : t("heroSubtitleMean")}
         </p>
-        <div className="h-[60px] flex items-center justify-center overflow-hidden">
+        <div
+          className="h-[60px] flex items-center justify-center overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="wait">
             <motion.p
               key={`${productId}-${salaryRef}`}
@@ -168,12 +192,16 @@ export default function Hero() {
                 resetTimer();
               }}
               aria-label={`Produit ${i + 1}`}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                i === index
-                  ? "bg-foreground/60 w-4"
-                  : "bg-foreground/15 hover:bg-foreground/30"
-              }`}
-            />
+              className="p-2 cursor-pointer"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${
+                  i === index
+                    ? "bg-foreground/60 w-4"
+                    : "bg-foreground/15 hover:bg-foreground/30 w-1.5"
+                }`}
+              />
+            </button>
           ))}
         </div>
         <button
