@@ -86,7 +86,7 @@ export default function Hero() {
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
           {t("heroHeadline")}
         </h1>
-        <p className="text-muted-foreground text-base mx-auto mb-10">
+        <p className="text-muted-foreground text-base mx-auto mb-6">
           {salaryRef === "smic"
             ? t("heroSubtitle")
             : salaryRef === "median"
@@ -210,7 +210,7 @@ export default function Hero() {
               .getElementById("explorer")
               ?.scrollIntoView({ behavior: "smooth" })
           }
-          className="mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="mt-5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           {t("heroExplore")} ↓
         </button>
