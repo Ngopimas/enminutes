@@ -81,7 +81,7 @@ export default function Hero() {
           : "mean salary";
 
   return (
-    <section className="py-12 md:py-20" data-testid="hero">
+    <section className="py-16 md:py-28" data-testid="hero">
       <div className="max-w-6xl mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
           {t("heroHeadline")}
