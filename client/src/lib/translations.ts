@@ -88,7 +88,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     sourcesArcepLabel: "ARCEP",
     sourcesArcepDesc: "Tarifs des forfaits mobiles et offres internet fixe",
     sourcesCncLabel: "CNC - Centre National du Cinéma",
-    sourcesCncDesc: "Prix moyen de la place de cinéma et fréquentation",
+    sourcesCncDesc:
+      "Bilans annuels du CNC. Les prix correspondent au tarif normal adulte, distinct de la Recette Moyenne par Entrée (RME) qui inclut abonnements illimités, tarifs scolaires et CE.",
     sourcesRatpLabel: "RATP / Île-de-France Mobilités",
     sourcesRatpDesc: "Historique du tarif du ticket de métro parisien",
     sourcesAmeliLabel: "Assurance Maladie",
@@ -322,7 +323,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     sourcesArcepLabel: "ARCEP",
     sourcesArcepDesc: "Mobile plan and fixed broadband tariffs",
     sourcesCncLabel: "CNC - National Cinema Centre",
-    sourcesCncDesc: "Average cinema ticket price and attendance",
+    sourcesCncDesc:
+      "CNC annual reports. These prices reflect the standard adult ticket, distinct from the Average Revenue per Admission (RME) which includes unlimited passes, school rates, and employer-subsidized tickets.",
     sourcesRatpLabel: "RATP / Île-de-France Mobilités",
     sourcesRatpDesc: "History of Paris metro single-ticket fares",
     sourcesAmeliLabel: "Assurance Maladie",

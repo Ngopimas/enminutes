@@ -296,9 +296,9 @@ const rawProducts: Record<
     emoji: "🎬",
     category: "services",
     funFactFr:
-      "Le cinéma est devenu un luxe relatif croissant : de 57 minutes en 1950 à 49 en 2024, mais la baisse ralentit.",
+      "Prix d'une place adulte tarif normal (sans réduction CE, carte illimitée ou tarif scolaire). La moyenne statistique du CNC (RME) est plus basse car elle inclut tous les tarifs réduits.",
     funFactEn:
-      "Cinema has become a slowly growing relative luxury: from 57 min in 1950 down to 49 in 2024, but the decline is slowing.",
+      "Standard adult ticket price (no employer discount, unlimited pass, or student rate). The CNC statistical average (RME) is lower as it includes all reduced fares.",
     prices: {
       1950: 0.105,
       1960: 0.284,
