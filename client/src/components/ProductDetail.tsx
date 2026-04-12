@@ -4,6 +4,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -17,13 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { YearRangeSlider } from "@/components/YearRangeSlider";
 import { ArrowRight, Equal, Share2, Check, X, Camera } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useIsMobile, formatMinutes } from "@/lib/utils";
@@ -40,6 +35,7 @@ import { EURO_TO_FRANC } from "@/lib/constants";
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -100,14 +96,12 @@ interface ProductDetailProps {
   product: Product;
   initialYearA?: number;
   initialYearB?: number;
-  onYearsChange?: (yearA: number, yearB: number) => void;
 }
 
 export default function ProductDetail({
   product,
   initialYearA,
   initialYearB,
-  onYearsChange,
 }: ProductDetailProps) {
   const { lang, t } = useLang();
   const isMobile = useIsMobile();
@@ -119,10 +113,11 @@ export default function ProductDetail({
   const [showContext, setShowContext] = useState(() => {
     try { return localStorage.getItem("pref_showContext") === "true"; } catch { return false; }
   });
+  const [logScale, setLogScale] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
-  const [yearA, setYearA] = useState<number>(0);
-  const [yearB, setYearB] = useState<number>(0);
+  const [chartStart, setChartStart] = useState(0);
+  const [chartEnd, setChartEnd] = useState(0);
   const chartRef = useRef<any>(null);
 
   // Persist toggle preferences globally
@@ -133,37 +128,39 @@ export default function ProductDetail({
     try { localStorage.setItem("pref_showContext", String(showContext)); } catch {}
   }, [showContext]);
 
-  // Reset selected years when product or salary ref changes
+  // Reset chart range when product or salary ref changes
   useEffect(() => {
-    if (product) {
-      const yrs = getYearsForRef(product, salaryRef);
-      if (yrs.length > 0) {
-        const defaultA = yrs[0];
-        const defaultB = yrs[yrs.length - 1];
-        // Read per-product saved years, falling back if year not available for this ref
-        let savedA: number | undefined;
-        let savedB: number | undefined;
-        try {
-          const saved = localStorage.getItem(`pref_years_${product.id}`);
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (typeof parsed.yearA === "number" && yrs.includes(parsed.yearA)) savedA = parsed.yearA;
-            if (typeof parsed.yearB === "number" && yrs.includes(parsed.yearB)) savedB = parsed.yearB;
-          }
-        } catch {}
-        // URL-provided years take highest priority, then localStorage, then defaults
-        const validA =
-          initialYearA !== undefined && yrs.includes(initialYearA)
-            ? initialYearA
-            : (savedA ?? defaultA);
-        const validB =
-          initialYearB !== undefined && yrs.includes(initialYearB)
-            ? initialYearB
-            : (savedB ?? defaultB);
-        setYearA(validA);
-        setYearB(validB);
-      }
+    if (!product) return;
+    const yrs = getYearsForRef(product, salaryRef);
+    if (yrs.length === 0) return;
+    const first = yrs[0];
+    const last = yrs[yrs.length - 1];
+
+    // URL params take highest priority
+    if (initialYearA !== undefined || initialYearB !== undefined) {
+      setChartStart(initialYearA !== undefined ? Math.max(initialYearA, first) : first);
+      setChartEnd(initialYearB !== undefined ? Math.min(initialYearB, last) : last);
+      return;
     }
+
+    // Try to restore the global saved range and intersect with this product's span
+    try {
+      const saved = localStorage.getItem("pref_chart_range");
+      if (saved) {
+        const { start, end } = JSON.parse(saved) as { start: number; end: number };
+        const clampedStart = Math.max(start, first);
+        const clampedEnd = Math.min(end, last);
+        if (clampedStart <= clampedEnd) {
+          setChartStart(clampedStart);
+          setChartEnd(clampedEnd);
+          return;
+        }
+      }
+    } catch {}
+
+    // Default: full range
+    setChartStart(first);
+    setChartEnd(last);
   }, [product?.id, salaryRef]);
 
   // Keyboard shortcuts: p = toggle price, c = toggle context
@@ -183,6 +180,15 @@ export default function ProductDetail({
   const minutes = getMinutes(product, salaryRef);
   const years = getYearsForRef(product, salaryRef);
   const name = lang === "fr" ? product.nameFr : product.nameEn;
+
+  // Chart view: filtered to the selected range
+  const visibleYears = chartStart === 0
+    ? years
+    : years.filter((y) => y >= chartStart && y <= chartEnd);
+
+  // Comparison endpoints are the first and last visible year
+  const yearA = visibleYears[0] ?? years[0];
+  const yearB = visibleYears[visibleYears.length - 1] ?? years[years.length - 1];
 
   // Empty state when no data for current salary ref
   if (years.length === 0) {
@@ -258,14 +264,12 @@ export default function ProductDetail({
   const gotCheaper = minB < minA;
   const ratioRaw = gotCheaper ? minA / minB : minB / minA;
 
-  // Generate decade-based year options for the selects (every 5 years + first/last)
-  const yearOptions = years.filter((y, i) => {
-    if (i === 0 || i === years.length - 1) return true;
-    return y % 5 === 0;
-  });
+
+
+  const axisColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
 
   // Pre-1970 uncertainty shading (SMIG era, estimated rates ±10%)
-  const pre1970EndIdx = years.findIndex((y) => y >= 1970);
+  const pre1970EndIdx = visibleYears.findIndex((y) => y >= 1970);
   const annotations: Record<string, object> = {};
   if (pre1970EndIdx > 0) {
     annotations["pre1970"] = {
@@ -287,7 +291,7 @@ export default function ProductDetail({
   }
 
   // Euro transition annotation (vertical line at 2002)
-  const euroIdx = years.indexOf(2002);
+  const euroIdx = visibleYears.indexOf(2002);
   if (showPrice && euroIdx >= 0) {
     annotations["euroLine"] = {
       type: "line" as const,
@@ -314,7 +318,7 @@ export default function ProductDetail({
   // Inflection point annotations
   if (showContext && product.inflections) {
     product.inflections.forEach((inf, i) => {
-      const idx = years.indexOf(inf.year);
+      const idx = visibleYears.indexOf(inf.year);
       if (idx < 0) return;
       annotations[`inf${i}`] = {
         type: "line" as const,
@@ -340,13 +344,46 @@ export default function ProductDetail({
     });
   }
 
+  // First/last visible point value labels
+  if (visibleYears.length > 0) {
+    const firstVal = minutes[visibleYears[0]];
+    const lastVal = minutes[visibleYears[visibleYears.length - 1]];
+    const labelBg = isDark ? "rgba(20,20,20,0.75)" : "rgba(255,255,255,0.75)";
+    annotations["firstLabel"] = {
+      type: "label" as const,
+      xValue: 0,
+      yValue: firstVal,
+      yScaleID: "y",
+      content: formatMinutes(firstVal, lang, 1),
+      position: { x: "start" as const, y: "center" as const },
+      xAdjust: 6,
+      backgroundColor: labelBg,
+      color: axisColor,
+      font: { size: 9 },
+      padding: { top: 2, bottom: 2, left: 4, right: 4 },
+    };
+    annotations["lastLabel"] = {
+      type: "label" as const,
+      xValue: visibleYears.length - 1,
+      yValue: lastVal,
+      yScaleID: "y",
+      content: formatMinutes(lastVal, lang, 1),
+      position: { x: "end" as const, y: "center" as const },
+      xAdjust: -6,
+      backgroundColor: labelBg,
+      color: axisColor,
+      font: { size: 9 },
+      padding: { top: 2, bottom: 2, left: 4, right: 4 },
+    };
+  }
+
   // Confidence band datasets (±5% for ipc_estimate products), prepended so main line renders on top
   const confidenceBands: any[] = [];
   if (product.dataType === "ipc_estimate") {
     const bandAlpha = isDark ? "rgba(99,179,237,0.12)" : "rgba(66,153,225,0.1)";
     confidenceBands.push(
       {
-        data: years.map((y) => +(minutes[y] * 1.05).toFixed(1)),
+        data: visibleYears.map((y) => +(minutes[y] * 1.05).toFixed(1)),
         borderWidth: 0,
         pointRadius: 0,
         fill: "+1",
@@ -356,7 +393,7 @@ export default function ProductDetail({
         label: "",
       },
       {
-        data: years.map((y) => +(minutes[y] * 0.95).toFixed(1)),
+        data: visibleYears.map((y) => +(minutes[y] * 0.95).toFixed(1)),
         borderWidth: 0,
         pointRadius: 0,
         fill: false,
@@ -372,10 +409,10 @@ export default function ProductDetail({
     ...confidenceBands,
     {
       label: `${name} (${t("minutesAbbr")})`,
-      data: years.map((y) => minutes[y]),
+      data: visibleYears.map((y) => minutes[y]),
       borderColor: chartColor(1),
       backgroundColor: chartColorAlpha(1, 0.08),
-      fill: true,
+      fill: !logScale,
       tension: 0.3,
       pointRadius: 2,
       pointHoverRadius: 5,
@@ -387,7 +424,7 @@ export default function ProductDetail({
   // Always include price dataset (hidden when toggle off) so legend and y1 axis stay stable
   datasets.push({
     label: t("nominalPriceLabel"),
-    data: years.map((y) => product.pricesInterp[y]),
+    data: visibleYears.map((y) => product.pricesInterp[y]),
     borderColor: isDark ? priceColors.dark : priceColors.light,
     backgroundColor: "transparent",
     borderDash: [5, 3],
@@ -399,8 +436,6 @@ export default function ProductDetail({
     hidden: !showPrice,
   });
 
-  const axisColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
-
   const scales: any = {
     x: {
       ticks: {
@@ -411,7 +446,7 @@ export default function ProductDetail({
       grid: { display: false },
     },
     y: {
-      type: "linear" as const,
+      type: (logScale ? "logarithmic" : "linear") as "logarithmic" | "linear",
       display: true,
       position: "left" as const,
       title: {
@@ -493,7 +528,7 @@ export default function ProductDetail({
             const value = ctx.parsed.y;
             if (value == null) return "";
             if (showPrice && ctx.dataset.yAxisID === "y1") {
-              const year = years[ctx.dataIndex];
+              const year = visibleYears[ctx.dataIndex];
               const { value: formatted, currency } = formatPrice(value, year);
               return ` ${t("nominalPriceLabel")}: ${formatted} ${currency}`;
             }
@@ -501,7 +536,7 @@ export default function ProductDetail({
           },
           footer: (items: any[]) => {
             if (!product.inflections?.length || !items.length) return [];
-            const year = years[items[0].dataIndex];
+            const year = visibleYears[items[0].dataIndex];
             const inf = product.inflections.find((i) => i.year === year);
             if (!inf) return [];
             return [`→ ${lang === "fr" ? inf.labelFr : inf.labelEn}`];
@@ -643,6 +678,19 @@ export default function ProductDetail({
             </Label>
           </div>
         )}
+        <div className="flex items-center gap-2">
+          <Switch
+            id="log-scale"
+            checked={logScale}
+            onCheckedChange={setLogScale}
+          />
+          <Label
+            className="text-xs text-muted-foreground cursor-pointer"
+            onClick={() => setLogScale((v) => !v)}
+          >
+            {t("logScaleLabel")}
+          </Label>
+        </div>
         <Button
           variant="ghost"
           size="icon"
@@ -661,79 +709,49 @@ export default function ProductDetail({
         aria-label={`${name} - ${yLabel}`}
       >
         <Line
+          key={logScale ? "log" : "linear"}
           ref={chartRef}
-          data={{ labels: years, datasets }}
+          data={{ labels: visibleYears, datasets }}
           options={chartOptions as any}
           plugins={[crosshairPlugin]}
         />
       </div>
 
-      {/* Interactive year comparison */}
+      {/* Year range slider */}
+      {years.length > 1 && (
+        <div className="mt-2">
+          <YearRangeSlider
+            min={years[0]}
+            max={years[years.length - 1]}
+            value={[chartStart || years[0], chartEnd || years[years.length - 1]]}
+            onValueChange={([s, e]) => {
+              setChartStart(s);
+              setChartEnd(e);
+              try { localStorage.setItem("pref_chart_range", JSON.stringify({ start: s, end: e })); } catch {}
+            }}
+          />
+        </div>
+      )}
+
+      {/* Comparison: endpoints of the visible range */}
       <div className="mt-3" data-testid="year-comparison">
-        {/* 3×3 grid: selects / [minutes + arrow] / prices */}
         <div
-          className={`grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-1.5 ${isSameYear ? "opacity-50" : ""}`}
+          className={`grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-1 ${isSameYear ? "opacity-50" : ""}`}
         >
-          {/* Row 1: Year selects */}
+          {/* Row 1: Year labels */}
           <div className="flex justify-center">
-            <Select
-              value={String(yearA)}
-              onValueChange={(v) => {
-                const n = Number(v);
-                setYearA(n);
-                try { localStorage.setItem(`pref_years_${product.id}`, JSON.stringify({ yearA: n, yearB })); } catch {}
-                onYearsChange?.(n, yearB);
-              }}
-            >
-              <SelectTrigger
-                className="w-[90px] h-8 text-sm"
-                data-testid="year-select-a"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {yearOptions.map((y) => (
-                  <SelectItem key={y} value={String(y)}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <span className="text-xs text-muted-foreground tabular-nums">{yearA}</span>
           </div>
           <div />
           <div className="flex justify-center">
-            <Select
-              value={String(yearB)}
-              onValueChange={(v) => {
-                const n = Number(v);
-                setYearB(n);
-                try { localStorage.setItem(`pref_years_${product.id}`, JSON.stringify({ yearA, yearB: n })); } catch {}
-                onYearsChange?.(yearA, n);
-              }}
-            >
-              <SelectTrigger
-                className="w-[90px] h-8 text-sm"
-                data-testid="year-select-b"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {yearOptions.map((y) => (
-                  <SelectItem key={y} value={String(y)}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <span className="text-xs text-muted-foreground tabular-nums">{yearB}</span>
           </div>
 
           {/* Row 2: Minutes values + arrow */}
           <div className="flex justify-center items-center">
             <div className="text-lg font-bold tabular-nums">
               {formatMinutes(minA, lang, 1)}{" "}
-              <span className="text-xs font-normal text-muted-foreground">
-                min
-              </span>
+              <span className="text-xs font-normal text-muted-foreground">min</span>
             </div>
           </div>
           <div className="flex justify-center items-center">
@@ -746,35 +764,21 @@ export default function ProductDetail({
           <div className="flex justify-center items-center">
             <div className="text-lg font-bold tabular-nums">
               {formatMinutes(minB, lang, 1)}{" "}
-              <span className="text-xs font-normal text-muted-foreground">
-                min
-              </span>
+              <span className="text-xs font-normal text-muted-foreground">min</span>
             </div>
           </div>
 
           {/* Row 3: Prices */}
           <div
             className="flex justify-center text-xs tabular-nums"
-            style={{
-              color: showPrice
-                ? isDark
-                  ? priceColors.dark
-                  : priceColors.light
-                : "transparent",
-            }}
+            style={{ color: showPrice ? (isDark ? priceColors.dark : priceColors.light) : "transparent" }}
           >
             {formattedA.value} {formattedA.currency}
           </div>
           <div />
           <div
             className="flex justify-center text-xs tabular-nums"
-            style={{
-              color: showPrice
-                ? isDark
-                  ? priceColors.dark
-                  : priceColors.light
-                : "transparent",
-            }}
+            style={{ color: showPrice ? (isDark ? priceColors.dark : priceColors.light) : "transparent" }}
           >
             {formattedB.value} {formattedB.currency}
           </div>

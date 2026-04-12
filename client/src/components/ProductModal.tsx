@@ -15,7 +15,6 @@ interface ProductModalProps {
   filteredCount?: number;
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
-  onYearsChange?: (yearA: number, yearB: number) => void;
 }
 
 export default function ProductModal({
@@ -28,7 +27,6 @@ export default function ProductModal({
   filteredCount,
   onNavigatePrev,
   onNavigateNext,
-  onYearsChange,
 }: ProductModalProps) {
   const { lang } = useLang();
 
@@ -92,7 +90,6 @@ export default function ProductModal({
             product={product}
             initialYearA={initialYearA}
             initialYearB={initialYearB}
-            onYearsChange={onYearsChange}
           />
         </div>
       </DialogContent>

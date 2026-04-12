@@ -142,10 +142,6 @@ export default function ProductExplorer({
   useEffect(() => { selectedProductRef.current = selectedProduct; }, [selectedProduct]);
   useEffect(() => { filteredRef.current = filtered; }, [filtered]);
 
-  // Track the years the user has explicitly chosen so they carry over during navigation
-  const chosenYearARef = useRef<number | undefined>(undefined);
-  const chosenYearBRef = useRef<number | undefined>(undefined);
-
   const navigatePrev = useCallback(() => {
     const current = selectedProductRef.current;
     const list = filteredRef.current;
@@ -153,8 +149,8 @@ export default function ProductExplorer({
     const idx = list.findIndex((p) => p.id === current.id);
     if (idx <= 0) return;
     setSelectedProduct(list[idx - 1]);
-    setDeepLinkYearA(chosenYearARef.current);
-    setDeepLinkYearB(chosenYearBRef.current);
+    setDeepLinkYearA(undefined);
+    setDeepLinkYearB(undefined);
   }, []);
 
   const navigateNext = useCallback(() => {
@@ -164,8 +160,8 @@ export default function ProductExplorer({
     const idx = list.findIndex((p) => p.id === current.id);
     if (idx < 0 || idx >= list.length - 1) return;
     setSelectedProduct(list[idx + 1]);
-    setDeepLinkYearA(chosenYearARef.current);
-    setDeepLinkYearB(chosenYearBRef.current);
+    setDeepLinkYearA(undefined);
+    setDeepLinkYearB(undefined);
   }, []);
 
   // Keyboard navigation: ←/→ to move between products when modal is open
@@ -217,9 +213,6 @@ export default function ProductExplorer({
       sessionStorage.setItem("homeScrollY", String(window.scrollY));
       navigate(`/product/${product.id}`);
     } else {
-      // Reset chosen years so the product opens with its own stored preferences
-      chosenYearARef.current = undefined;
-      chosenYearBRef.current = undefined;
       setSelectedProduct(product);
       setModalOpen(true);
     }
@@ -442,10 +435,6 @@ export default function ProductExplorer({
         filteredCount={filtered.length}
         onNavigatePrev={navigatePrev}
         onNavigateNext={navigateNext}
-        onYearsChange={(a, b) => {
-          chosenYearARef.current = a;
-          chosenYearBRef.current = b;
-        }}
       />
     </section>
   );

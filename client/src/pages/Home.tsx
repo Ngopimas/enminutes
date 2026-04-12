@@ -11,9 +11,21 @@ import Sources from "@/components/Sources";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import { isEmbedMode } from "@/lib/utils";
+import { useLang } from "@/lib/i18n";
 
-export default function Home({ initialProductId }: { initialProductId?: string }) {
+export default function Home({
+  initialProductId,
+}: {
+  initialProductId?: string;
+}) {
   const embed = isEmbedMode();
+  const { t } = useLang();
+
+  const chartFallback = (
+    <div className="flex h-48 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
+      {t("chartUnavailable")}
+    </div>
+  );
 
   useEffect(() => {
     const savedY = sessionStorage.getItem("homeScrollY");
@@ -26,9 +38,12 @@ export default function Home({ initialProductId }: { initialProductId?: string }
 
   if (embed) {
     return (
-      <div className="min-h-screen bg-background text-foreground" data-embed="true">
+      <div
+        className="min-h-screen bg-background text-foreground"
+        data-embed="true"
+      >
         <main>
-          <ErrorBoundary>
+          <ErrorBoundary fallback={chartFallback}>
             <ProductExplorer initialProductId={initialProductId} />
           </ErrorBoundary>
         </main>
@@ -41,11 +56,11 @@ export default function Home({ initialProductId }: { initialProductId?: string }
       <Header />
       <main>
         <Hero />
-        <ErrorBoundary>
+        <ErrorBoundary fallback={chartFallback}>
           <PurchasingPowerIndex />
         </ErrorBoundary>
         <BasketComposition />
-        <ErrorBoundary>
+        <ErrorBoundary fallback={chartFallback}>
           <ProductExplorer initialProductId={initialProductId} />
         </ErrorBoundary>
         <Insights />

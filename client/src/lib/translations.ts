@@ -243,6 +243,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsMostImproved: "Les plus accessibles",
     insightsMostDegraded: "Les plus dégradés",
     insightsOverPeriod: "sur la période disponible",
+    logScaleLabel: "Échelle log",
+    chartUnavailable: "Graphique indisponible",
   },
   en: {
     siteTitle: "Purchasing Power",
@@ -475,5 +477,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsMostImproved: "Most affordable gains",
     insightsMostDegraded: "Most degraded",
     insightsOverPeriod: "over available period",
+    logScaleLabel: "Log scale",
+    chartUnavailable: "Chart unavailable",
   },
 };

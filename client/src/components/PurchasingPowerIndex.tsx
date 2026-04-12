@@ -3,6 +3,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -35,6 +36,7 @@ import { YearRangeSlider } from "@/components/YearRangeSlider";
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   PointElement,
   LineElement,
   Title,
@@ -73,8 +75,27 @@ export default function PurchasingPowerIndex() {
   const [showContext, setShowContext] = useState(false);
   const [showInflation, setShowInflation] = useState(false);
   const [showProductivity, setShowProductivity] = useState(false);
-  const [yearStart, setYearStart] = useState(1960);
-  const [yearEnd, setYearEnd] = useState(DATA_END_YEAR);
+  const [logScale, setLogScale] = useState(false);
+  const [yearStart, setYearStart] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pref_chart_range");
+      if (saved) {
+        const { start } = JSON.parse(saved);
+        if (typeof start === "number") return Math.max(1960, start);
+      }
+    } catch {}
+    return 1960;
+  });
+  const [yearEnd, setYearEnd] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pref_chart_range");
+      if (saved) {
+        const { end } = JSON.parse(saved);
+        if (typeof end === "number") return Math.min(DATA_END_YEAR, end);
+      }
+    } catch {}
+    return DATA_END_YEAR;
+  });
   const chartRef = useRef<any>(null);
 
   function handleDownload() {
@@ -272,7 +293,7 @@ export default function PurchasingPowerIndex() {
       data: minutesData,
       borderColor: chartColor(1),
       backgroundColor: chartColorAlpha(2, 0.08),
-      fill: true,
+      fill: !logScale,
       tension: 0.3,
       pointRadius: 0,
       pointHoverRadius: 4,
@@ -344,7 +365,7 @@ export default function PurchasingPowerIndex() {
       },
     },
     y1: {
-      type: "linear" as const,
+      type: (logScale ? "logarithmic" : "linear") as "logarithmic" | "linear",
       display: true,
       position: "right" as const,
       title: {
@@ -574,6 +595,20 @@ export default function PurchasingPowerIndex() {
               {t("ppShowProductivity")}
             </Label>
           </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              id="log-scale"
+              checked={logScale}
+              onCheckedChange={setLogScale}
+              data-testid="log-scale-toggle"
+            />
+            <Label
+              htmlFor="log-scale"
+              className="text-xs text-muted-foreground cursor-pointer"
+            >
+              {t("logScaleLabel")}
+            </Label>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -591,7 +626,12 @@ export default function PurchasingPowerIndex() {
           role="img"
           aria-label={t("ppChartAriaLabel")}
         >
-          <Line ref={chartRef} data={chartData} options={chartOptions as any} />
+          <Line
+            ref={chartRef}
+            data={chartData}
+            options={chartOptions as any}
+            key={logScale ? "log" : "linear"}
+          />
         </div>
 
         {/* Year range filter */}
@@ -603,6 +643,12 @@ export default function PurchasingPowerIndex() {
             onValueChange={([s, e]) => {
               setYearStart(s);
               setYearEnd(e);
+              try {
+                localStorage.setItem(
+                  "pref_chart_range",
+                  JSON.stringify({ start: s, end: e }),
+                );
+              } catch {}
             }}
           />
         </div>
