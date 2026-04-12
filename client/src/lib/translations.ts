@@ -140,7 +140,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     perHour: "/heure",
     ppIndexTitle: "Le SMIC achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexSub:
-      "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de 17 biens courants (base 100 = 1960)",
+      "Indice composite du pouvoir d'achat du SMIC, basé sur un panier de {count} biens courants (base 100 = {year})",
     ppKpiMultiplier:
       "Le pouvoir d'achat du SMIC a été multiplié par {mult} depuis {year}",
     ppKpiBasket: "Minutes par produit (moy.) en",
@@ -173,7 +173,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     euroTransition: "Passage à l'euro",
     basketTitle: "Composition du panier",
     basketExplain:
-      "L'indice composite est calculé à partir de 17 produits courants, pondérés selon leur fréquence d'achat typique (poids ci-dessous). Ce n'est pas un budget-type de ménage\u202F: il mesure l'évolution du pouvoir d'achat sur un panier stable depuis 1960.",
+      "L'indice composite est calculé à partir de {count} produits courants, pondérés selon leur fréquence d'achat typique (poids ci-dessous). Ce n'est pas un budget-type de ménage\u202F: il mesure l'évolution du pouvoir d'achat sur un panier stable depuis 1960.",
     basketWeight: "Poids",
     basketNote:
       "Les produits avec poids 0 sont exclus de l'indice composite mais restent explorables individuellement. Les cigarettes, par exemple, sont exclues car leur hausse reflète une politique fiscale volontaire, pas l'évolution du coût de la vie.",
@@ -194,9 +194,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     chartYLabelMedian: "Minutes de salaire médian",
     chartYLabelMean: "Minutes de salaire moyen",
     ppIndexSubMedian:
-      "Indice composite basé sur le salaire net médian, panier de 17 biens courants (base 100 = 1960)",
+      "Indice composite basé sur le salaire net médian, panier de {count} biens courants (base 100 = {year})",
     ppIndexSubMean:
-      "Indice composite basé sur le salaire net moyen, panier de 17 biens courants (base 100 = 1960)",
+      "Indice composite basé sur le salaire net moyen, panier de {count} biens courants (base 100 = {year})",
     ppIndexTitleMedian:
       "Le salaire médian achète-t-il plus ou moins qu'avant\u202F?",
     ppIndexTitleMean:
@@ -206,25 +206,25 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppKpiMultiplierMean:
       "Le pouvoir d'achat du salaire moyen a augmenté de {mult}× depuis {year}",
     basketExcludedCigarettes:
-      "Exclu du panier\u202F: la hausse reflète une politique fiscale, pas le coût de la vie",
+      "Non inclus par défaut\u202F: la hausse reflète une politique fiscale, pas le coût de la vie",
     basketExcludedLoyer:
-      "Exclu du panier\u202F: les données nationales masquent les fortes disparités régionales",
+      "Non inclus par défaut\u202F: les données nationales masquent de fortes disparités régionales",
     basketExcludedLoyerParis:
-      "Exclu du panier\u202F: spécifique à Paris, non représentatif du niveau de vie national",
+      "Non inclus par défaut\u202F: spécifique à Paris, non représentatif du niveau de vie national",
     basketExcludedSmartphone:
-      "Exclu du panier\u202F: achat ponctuel, non récurrent comme les postes de consommation courante",
+      "Non inclus par défaut\u202F: achat ponctuel, non récurrent comme les postes de consommation courante",
     basketExcludedVoiture:
-      "Exclu du panier\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
+      "Non inclus par défaut\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
     basketExcludedInternet:
-      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedMobile:
-      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedStreaming:
-      "Exclu du panier\u202F: données disponibles à partir de 2014 seulement",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2014 seulement",
     basketExcludedGaz:
-      "Exclu du panier\u202F: données disponibles à partir de 2000 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedOphtalmologiste:
-      "Exclu du panier\u202F: données disponibles à partir de 1990 seulement - l'inclure créerait une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 1990 — l'inclure crée une rupture artificielle dans la série historique",
     dataTypeActual: "Prix réel (source INSEE directe)",
     dataTypeIpcEstimate:
       "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
@@ -245,6 +245,20 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsOverPeriod: "sur la période disponible",
     logScaleLabel: "Échelle log",
     chartUnavailable: "Graphique indisponible",
+    basketCustomBadge: "Panier personnalisé",
+    basketReset: "Réinitialiser",
+    basketClickToToggle:
+      "Cliquez sur un produit pour l'inclure ou l'exclure du panier",
+    basketTooFew: "Gardez au moins 3 produits dans le panier",
+    basketCustomInfo:
+      "L'historique peut être plus court si un produit n'a pas de données depuis 1960.",
+    basketPresetLabel: "Profils",
+    basketPresetStandard: "Standard",
+    basketPresetParis: "Parisien",
+    basketPresetVege: "Végétarien",
+    basketPresetVoiture: "Voiturier",
+    basketExplore: "Explorer ce produit",
+    basketScrollToBasket: "Voir le panier",
   },
   en: {
     siteTitle: "Purchasing Power",
@@ -377,7 +391,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     perHour: "/hour",
     ppIndexTitle: "Does the minimum wage buy more or less than before?",
     ppIndexSub:
-      "Composite purchasing power index of the SMIC, based on a basket of 17 everyday goods (base 100 = 1960)",
+      "Composite purchasing power index of the SMIC, based on a basket of {count} everyday goods (base 100 = {year})",
     ppKpiMultiplier:
       "SMIC purchasing power has been multiplied by {mult} since {year}",
     ppKpiBasket: "Minutes per product (avg.) in",
@@ -410,7 +424,7 @@ export const translations: Record<Lang, Record<string, string>> = {
     euroTransition: "Euro adoption",
     basketTitle: "Basket composition",
     basketExplain:
-      "The composite index is built from 17 everyday products, weighted by typical purchase frequency (weights below). This is not a household budget - it measures purchasing power trends across a stable basket of goods available since 1960.",
+      "The composite index is built from {count} everyday products, weighted by typical purchase frequency (weights below). This is not a household budget - it measures purchasing power trends across a stable basket of goods available since 1960.",
     basketWeight: "Weight",
     basketNote:
       "Products with weight 0 are excluded from the composite index but remain individually explorable. Cigarettes, for example, are excluded because their price increases reflect deliberate tax policy, not cost-of-living trends.",
@@ -431,9 +445,9 @@ export const translations: Record<Lang, Record<string, string>> = {
     chartYLabelMedian: "Minutes of median salary",
     chartYLabelMean: "Minutes of mean salary",
     ppIndexSubMedian:
-      "Composite index based on net median salary, basket of 17 everyday goods (base 100 = 1960)",
+      "Composite index based on net median salary, basket of {count} everyday goods (base 100 = {year})",
     ppIndexSubMean:
-      "Composite index based on net mean salary, basket of 17 everyday goods (base 100 = 1960)",
+      "Composite index based on net mean salary, basket of {count} everyday goods (base 100 = {year})",
     ppIndexTitleMedian: "Does the median salary buy more or less than before?",
     ppIndexTitleMean: "Does the mean salary buy more or less than before?",
     ppKpiMultiplierMedian:
@@ -441,25 +455,25 @@ export const translations: Record<Lang, Record<string, string>> = {
     ppKpiMultiplierMean:
       "Mean salary purchasing power increased {mult}× since {year}",
     basketExcludedCigarettes:
-      "Excluded from basket: price increases reflect tax policy, not cost-of-living trends",
+      "Not in the standard basket: price increases reflect tax policy, not cost-of-living trends",
     basketExcludedLoyer:
-      "Excluded from basket: national averages mask large regional disparities",
+      "Not in the standard basket: national averages mask large regional disparities",
     basketExcludedLoyerParis:
-      "Excluded from basket: Paris-specific data, not representative of national living costs",
+      "Not in the standard basket: Paris-specific data, not representative of national living costs",
     basketExcludedSmartphone:
-      "Excluded from basket: one-off purchase, not a recurring monthly expense",
+      "Not in the standard basket: one-off purchase, not a recurring monthly expense",
     basketExcludedVoiture:
-      "Excluded from basket: high-value one-off purchase, difficult to weight in a monthly basket",
+      "Not in the standard basket: high-value one-off purchase, difficult to weight in a monthly basket",
     basketExcludedInternet:
-      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
     basketExcludedMobile:
-      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
     basketExcludedStreaming:
-      "Excluded from basket: data only available from 2014",
+      "Not in the standard basket: data only available from 2014",
     basketExcludedGaz:
-      "Excluded from basket: data only available from 2000 - including it would create an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
     basketExcludedOphtalmologiste:
-      "Excluded from basket: data only available from 1990 - including it would create an artificial break in the historical series",
+      "Not in the standard basket: data only available from 1990 — adding it creates an artificial break in the historical series",
     dataTypeActual: "Actual price (direct INSEE source)",
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",
@@ -479,5 +493,18 @@ export const translations: Record<Lang, Record<string, string>> = {
     insightsOverPeriod: "over available period",
     logScaleLabel: "Log scale",
     chartUnavailable: "Chart unavailable",
+    basketCustomBadge: "Custom basket",
+    basketReset: "Reset",
+    basketClickToToggle: "Click a product to include or exclude it from the basket",
+    basketTooFew: "Keep at least 3 products in the basket",
+    basketCustomInfo:
+      "Historical range may be shorter if a product has no data from 1960.",
+    basketPresetLabel: "Profiles",
+    basketPresetStandard: "Standard",
+    basketPresetParis: "Parisian",
+    basketPresetVege: "Vegetarian",
+    basketPresetVoiture: "Car-dependent",
+    basketExplore: "Explore this product",
+    basketScrollToBasket: "View basket",
   },
 };

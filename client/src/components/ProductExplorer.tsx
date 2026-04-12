@@ -57,8 +57,10 @@ function Sparkline({ data }: { data: number[] }) {
 
 export default function ProductExplorer({
   initialProductId,
+  openProductId,
 }: {
   initialProductId?: string;
+  openProductId?: string;
 }) {
   const { lang, t } = useLang();
   const { salaryRef, setSalaryRef } = useSalaryRef();
@@ -207,6 +209,18 @@ export default function ProductExplorer({
     setSelectedProduct(products[productId]);
     setModalOpen(true);
   }, [initialProductId]);
+
+  // Open a specific product from an external caller (e.g. basket composition)
+  useEffect(() => {
+    if (!openProductId || !products[openProductId]) return;
+    if (isMobile) {
+      sessionStorage.setItem("homeScrollY", String(window.scrollY));
+      navigate(`/product/${openProductId}`);
+    } else {
+      setSelectedProduct(products[openProductId]);
+      setModalOpen(true);
+    }
+  }, [openProductId]);
 
   const handleCardClick = (product: Product) => {
     if (isMobile) {

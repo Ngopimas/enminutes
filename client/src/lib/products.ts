@@ -1185,6 +1185,15 @@ export const basketWeights: Record<string, number> = {
   consultation_specialiste: 0,
   smartphone: 0,
   voiture_milieu_gamme: 0,
+  // Additional products available for custom baskets
+  tomates: 0,
+  oranges: 0,
+  pommes: 0,
+  biere: 0,
+  croissant: 0,
+  vin: 0,
+  camembert: 0,
+  yaourt: 0,
 };
 
 const indexBaseYear = 1960;
@@ -1196,11 +1205,13 @@ for (let y = 1960; y <= DATA_END_YEAR; y++) {
 export function computeBasketMinutes(
   year: number,
   ref: SalaryRef = "smic",
+  customWeights?: Record<string, number>,
 ): number | null {
+  const weights = customWeights ?? basketWeights;
   let totalWeightedMinutes = 0;
   let totalWeight = 0;
   let maxWeight = 0;
-  for (const [pid, w] of Object.entries(basketWeights)) {
+  for (const [pid, w] of Object.entries(weights)) {
     if (w === 0) continue;
     const prod = products[pid];
     if (!prod) continue;
@@ -1215,7 +1226,10 @@ export function computeBasketMinutes(
 }
 
 /** Compute purchasing power data for any salary reference */
-export function computePurchasingPowerForRef(ref: SalaryRef) {
+export function computePurchasingPowerForRef(
+  ref: SalaryRef,
+  customWeights?: Record<string, number>,
+) {
   const rates = getRatesForRef(ref);
   const refYears: number[] = [];
   for (let y = DATA_START_YEAR; y <= DATA_END_YEAR; y++) {
@@ -1224,15 +1238,16 @@ export function computePurchasingPowerForRef(ref: SalaryRef) {
 
   // Use the first year with basket data as base (1960 for smic/mean/median)
   const baseYr =
-    refYears.find((y) => y >= 1960 && computeBasketMinutes(y, ref) !== null) ??
-    refYears[0];
+    refYears.find(
+      (y) => y >= 1960 && computeBasketMinutes(y, ref, customWeights) !== null,
+    ) ?? refYears[0];
 
   const bmy: Record<number, number> = {};
   const ppIdx: Record<number, number> = {};
-  const base = computeBasketMinutes(baseYr, ref);
+  const base = computeBasketMinutes(baseYr, ref, customWeights);
 
   refYears.forEach((y) => {
-    const m = computeBasketMinutes(y, ref);
+    const m = computeBasketMinutes(y, ref, customWeights);
     if (m !== null && base !== null) {
       bmy[y] = +m.toFixed(2);
       ppIdx[y] = +((base / m) * 100).toFixed(1);

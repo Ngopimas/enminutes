@@ -27,6 +27,7 @@ import {
   ppAnnotations,
   computePurchasingPowerForRef,
   productivityIndex,
+  basketWeights,
   DATA_END_YEAR,
 } from "@/lib/data";
 import { useIsMobile } from "@/lib/utils";
@@ -64,7 +65,13 @@ const presidentColors = {
   dark: ["rgba(120,160,220,0.04)", "rgba(120,160,220,0.08)"],
 };
 
-export default function PurchasingPowerIndex() {
+export default function PurchasingPowerIndex({
+  customWeights,
+  isCustomBasket,
+}: {
+  customWeights?: Record<string, number>;
+  isCustomBasket?: boolean;
+}) {
   const { lang, t } = useLang();
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
@@ -107,9 +114,9 @@ export default function PurchasingPowerIndex() {
     a.click();
   }
 
-  // Compute PP data based on salary ref
+  // Compute PP data based on salary ref and custom weights
   const ppData = useMemo(() => {
-    if (salaryRef === "smic") {
+    if (!customWeights && salaryRef === "smic") {
       return {
         indexYears: purchasingPower.indexYears,
         indexBaseYear: purchasingPower.indexBaseYear,
@@ -119,12 +126,12 @@ export default function PurchasingPowerIndex() {
         inflationRates: purchasingPower.inflationRates,
       };
     }
-    const computed = computePurchasingPowerForRef(salaryRef);
+    const computed = computePurchasingPowerForRef(salaryRef, customWeights);
     return {
       ...computed,
       inflationRates: purchasingPower.inflationRates,
     };
-  }, [salaryRef]);
+  }, [salaryRef, customWeights]);
 
   const {
     indexYears,
@@ -190,13 +197,19 @@ export default function PurchasingPowerIndex() {
         ? t("ppIndexTitleMean")
         : t("ppIndexTitle");
 
+  const activeCount = customWeights
+    ? Object.values(customWeights).filter((w) => w > 0).length
+    : Object.values(basketWeights).filter((w) => w > 0).length;
+
   const subtitle = (
     salaryRef === "median"
       ? t("ppIndexSubMedian")
       : salaryRef === "mean"
         ? t("ppIndexSubMean")
         : t("ppIndexSub")
-  ).replace(/= \d{4}/, `= ${kpiStartYear}`);
+  )
+    .replace("{count}", String(activeCount))
+    .replace("{year}", String(kpiStartYear));
 
   // Chart Y labels
   const yLabel2 =
@@ -485,7 +498,21 @@ export default function PurchasingPowerIndex() {
   return (
     <section className="py-12 md:py-20" data-testid="pp-index">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-xl font-bold mb-1">{title}</h2>
+        <div className="flex items-start justify-between gap-4 mb-1">
+          <h2 className="text-xl font-bold">{title}</h2>
+          {isCustomBasket && (
+            <button
+              onClick={() =>
+                document
+                  .getElementById("basket-composition")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+              className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border border-amber-400/60 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-950/60 transition-colors"
+            >
+              {t("basketCustomBadge")} ↓
+            </button>
+          )}
+        </div>
         <p className="text-sm text-muted-foreground mb-8">{subtitle}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
