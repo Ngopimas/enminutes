@@ -108,10 +108,18 @@ export default function ProductDetail({
   const { isDark } = useTheme();
   const { salaryRef } = useSalaryRef();
   const [showPrice, setShowPrice] = useState(() => {
-    try { return localStorage.getItem("pref_showPrice") === "true"; } catch { return false; }
+    try {
+      return localStorage.getItem("pref_showPrice") === "true";
+    } catch {
+      return false;
+    }
   });
   const [showContext, setShowContext] = useState(() => {
-    try { return localStorage.getItem("pref_showContext") === "true"; } catch { return false; }
+    try {
+      return localStorage.getItem("pref_showContext") === "true";
+    } catch {
+      return false;
+    }
   });
   const [logScale, setLogScale] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -122,10 +130,14 @@ export default function ProductDetail({
 
   // Persist toggle preferences globally
   useEffect(() => {
-    try { localStorage.setItem("pref_showPrice", String(showPrice)); } catch {}
+    try {
+      localStorage.setItem("pref_showPrice", String(showPrice));
+    } catch {}
   }, [showPrice]);
   useEffect(() => {
-    try { localStorage.setItem("pref_showContext", String(showContext)); } catch {}
+    try {
+      localStorage.setItem("pref_showContext", String(showContext));
+    } catch {}
   }, [showContext]);
 
   // Reset chart range when product or salary ref changes
@@ -138,8 +150,12 @@ export default function ProductDetail({
 
     // URL params take highest priority
     if (initialYearA !== undefined || initialYearB !== undefined) {
-      setChartStart(initialYearA !== undefined ? Math.max(initialYearA, first) : first);
-      setChartEnd(initialYearB !== undefined ? Math.min(initialYearB, last) : last);
+      setChartStart(
+        initialYearA !== undefined ? Math.max(initialYearA, first) : first,
+      );
+      setChartEnd(
+        initialYearB !== undefined ? Math.min(initialYearB, last) : last,
+      );
       return;
     }
 
@@ -147,7 +163,10 @@ export default function ProductDetail({
     try {
       const saved = localStorage.getItem("pref_chart_range");
       if (saved) {
-        const { start, end } = JSON.parse(saved) as { start: number; end: number };
+        const { start, end } = JSON.parse(saved) as {
+          start: number;
+          end: number;
+        };
         const clampedStart = Math.max(start, first);
         const clampedEnd = Math.min(end, last);
         if (clampedStart <= clampedEnd) {
@@ -171,7 +190,8 @@ export default function ProductDetail({
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (document.querySelector("[data-radix-popper-content-wrapper]")) return;
       if (e.key === "p") setShowPrice((v) => !v);
-      if (e.key === "c" && (product.inflections?.length ?? 0) > 0) setShowContext((v) => !v);
+      if (e.key === "c" && (product.inflections?.length ?? 0) > 0)
+        setShowContext((v) => !v);
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
@@ -182,13 +202,15 @@ export default function ProductDetail({
   const name = lang === "fr" ? product.nameFr : product.nameEn;
 
   // Chart view: filtered to the selected range
-  const visibleYears = chartStart === 0
-    ? years
-    : years.filter((y) => y >= chartStart && y <= chartEnd);
+  const visibleYears =
+    chartStart === 0
+      ? years
+      : years.filter((y) => y >= chartStart && y <= chartEnd);
 
   // Comparison endpoints are the first and last visible year
   const yearA = visibleYears[0] ?? years[0];
-  const yearB = visibleYears[visibleYears.length - 1] ?? years[years.length - 1];
+  const yearB =
+    visibleYears[visibleYears.length - 1] ?? years[years.length - 1];
 
   // Empty state when no data for current salary ref
   if (years.length === 0) {
@@ -263,8 +285,6 @@ export default function ProductDetail({
   const diff = minA - minB;
   const gotCheaper = minB < minA;
   const ratioRaw = gotCheaper ? minA / minB : minB / minA;
-
-
 
   const axisColor = isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
 
@@ -723,11 +743,24 @@ export default function ProductDetail({
           <YearRangeSlider
             min={years[0]}
             max={years[years.length - 1]}
-            value={[chartStart || years[0], chartEnd || years[years.length - 1]]}
+            value={[
+              chartStart || years[0],
+              chartEnd || years[years.length - 1],
+            ]}
             onValueChange={([s, e]) => {
               setChartStart(s);
               setChartEnd(e);
-              try { localStorage.setItem("pref_chart_range", JSON.stringify({ start: s, end: e })); } catch {}
+              try {
+                localStorage.setItem(
+                  "pref_chart_range",
+                  JSON.stringify({ start: s, end: e }),
+                );
+                window.dispatchEvent(
+                  new CustomEvent("chartRangeChanged", {
+                    detail: { start: s, end: e },
+                  }),
+                );
+              } catch {}
             }}
           />
         </div>
@@ -740,18 +773,24 @@ export default function ProductDetail({
         >
           {/* Row 1: Year labels */}
           <div className="flex justify-center">
-            <span className="text-xs text-muted-foreground tabular-nums">{yearA}</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {yearA}
+            </span>
           </div>
           <div />
           <div className="flex justify-center">
-            <span className="text-xs text-muted-foreground tabular-nums">{yearB}</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {yearB}
+            </span>
           </div>
 
           {/* Row 2: Minutes values + arrow */}
           <div className="flex justify-center items-center">
             <div className="text-lg font-bold tabular-nums">
               {formatMinutes(minA, lang, 1)}{" "}
-              <span className="text-xs font-normal text-muted-foreground">min</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                min
+              </span>
             </div>
           </div>
           <div className="flex justify-center items-center">
@@ -764,21 +803,35 @@ export default function ProductDetail({
           <div className="flex justify-center items-center">
             <div className="text-lg font-bold tabular-nums">
               {formatMinutes(minB, lang, 1)}{" "}
-              <span className="text-xs font-normal text-muted-foreground">min</span>
+              <span className="text-xs font-normal text-muted-foreground">
+                min
+              </span>
             </div>
           </div>
 
           {/* Row 3: Prices */}
           <div
             className="flex justify-center text-xs tabular-nums"
-            style={{ color: showPrice ? (isDark ? priceColors.dark : priceColors.light) : "transparent" }}
+            style={{
+              color: showPrice
+                ? isDark
+                  ? priceColors.dark
+                  : priceColors.light
+                : "transparent",
+            }}
           >
             {formattedA.value} {formattedA.currency}
           </div>
           <div />
           <div
             className="flex justify-center text-xs tabular-nums"
-            style={{ color: showPrice ? (isDark ? priceColors.dark : priceColors.light) : "transparent" }}
+            style={{
+              color: showPrice
+                ? isDark
+                  ? priceColors.dark
+                  : priceColors.light
+                : "transparent",
+            }}
           >
             {formattedB.value} {formattedB.currency}
           </div>

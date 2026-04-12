@@ -105,6 +105,17 @@ export default function PurchasingPowerIndex({
   });
   const chartRef = useRef<any>(null);
 
+  // Sync year range when ProductDetail slider changes
+  useEffect(() => {
+    function handleRangeChange(e: Event) {
+      const { start, end } = (e as CustomEvent<{ start: number; end: number }>).detail;
+      setYearStart((prev) => (prev === start ? prev : start));
+      setYearEnd((prev) => (prev === end ? prev : end));
+    }
+    window.addEventListener("chartRangeChanged", handleRangeChange);
+    return () => window.removeEventListener("chartRangeChanged", handleRangeChange);
+  }, []);
+
   function handleDownload() {
     if (!chartRef.current) return;
     const url = chartRef.current.toBase64Image("image/png", 1);
@@ -675,6 +686,7 @@ export default function PurchasingPowerIndex({
                   "pref_chart_range",
                   JSON.stringify({ start: s, end: e }),
                 );
+                window.dispatchEvent(new CustomEvent("chartRangeChanged", { detail: { start: s, end: e } }));
               } catch {}
             }}
           />
