@@ -53,18 +53,29 @@ export default function BasketComposition({
 
   const excludedReasonTooltip = (id: string): string | null => {
     switch (id) {
-      case "cigarettes":               return t("basketExcludedCigarettes");
-      case "loyer":                    return t("basketExcludedLoyer");
+      case "cigarettes":
+        return t("basketExcludedCigarettes");
+      case "loyer":
+        return t("basketExcludedLoyer");
       case "loyer_paris":
-      case "loyer_national":           return t("basketExcludedLoyerParis");
-      case "smartphone":               return t("basketExcludedSmartphone");
-      case "voiture_milieu_gamme":     return t("basketExcludedVoiture");
-      case "internet":                 return t("basketExcludedInternet");
-      case "forfait_mobile":           return t("basketExcludedMobile");
-      case "streaming":                return t("basketExcludedStreaming");
-      case "gaz":                      return t("basketExcludedGaz");
-      case "consultation_specialiste": return t("basketExcludedOphtalmologiste");
-      default:                         return null;
+      case "loyer_national":
+        return t("basketExcludedLoyerParis");
+      case "smartphone":
+        return t("basketExcludedSmartphone");
+      case "voiture_milieu_gamme":
+        return t("basketExcludedVoiture");
+      case "internet":
+        return t("basketExcludedInternet");
+      case "forfait_mobile":
+        return t("basketExcludedMobile");
+      case "streaming":
+        return t("basketExcludedStreaming");
+      case "gaz":
+        return t("basketExcludedGaz");
+      case "consultation_specialiste":
+        return t("basketExcludedOphtalmologiste");
+      default:
+        return null;
     }
   };
 
@@ -85,7 +96,7 @@ export default function BasketComposition({
           </span>
         </button>
 
-        {/* Dismissible chip — click to reset */}
+        {/* Dismissible chip - click to reset */}
         {isCustom && (
           <button
             onClick={onReset}
@@ -113,8 +124,9 @@ export default function BasketComposition({
               const isActive = item.weight > 0;
               const canDecrement = isActive && totalWeight > 1;
               const canIncrement = item.weight < MAX_BASKET_WEIGHT;
-              const exclusionReason =
-                !isActive ? excludedReasonTooltip(item.id) : null;
+              const exclusionReason = !isActive
+                ? excludedReasonTooltip(item.id)
+                : null;
 
               const card = (
                 <div
@@ -147,7 +159,9 @@ export default function BasketComposition({
                     </button>
                     <span
                       className={`text-xs font-mono tabular-nums w-4 text-center ${
-                        isActive ? "text-muted-foreground" : "text-muted-foreground/40"
+                        isActive
+                          ? "text-muted-foreground"
+                          : "text-muted-foreground/40"
                       }`}
                     >
                       {item.weight}

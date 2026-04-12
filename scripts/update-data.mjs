@@ -97,7 +97,7 @@ const INDEX_PRICE_MAP = {
   // Anchor prices were verified in April 2026 against INSEE, FranceAgriMer,
   // Ordre Spontané, and other primary sources. Key corrections:
   //   - sucre: was 1.2 → 0.90 (sugar was very stable pre-2022; original was too high)
-  //   - pates: was 1.3 → 1.3 (OK — post-2010 values were already correct)
+  //   - pates: was 1.3 → 1.3 (OK - post-2010 values were already correct)
   //   - vin: was 2.3 → 1.5 (harmonized to vin de table 75cl, not regional appellation)
   //   - huile: was 1.4 → 1.4 (OK for 2015)
   baguette: { idbank: "001762397", anchorYear: 2015, anchorPrice: 0.86 },
@@ -628,7 +628,7 @@ async function main() {
           (price / prevYearPrice > 2.0 || price / prevYearPrice < 0.5)
         ) {
           console.warn(
-            `  ⚠ ${productId} ${year}: ${price}€ is a ${((price / prevYearPrice - 1) * 100).toFixed(0)}% jump vs ${year - 1} — flagged for review`,
+            `  ⚠ ${productId} ${year}: ${price}€ is a ${((price / prevYearPrice - 1) * 100).toFixed(0)}% jump vs ${year - 1} - flagged for review`,
           );
         }
         existingPrices[year] = price;
@@ -699,7 +699,7 @@ async function main() {
           : price / config.anchorPrice;
         if (ratio < 0.5 || ratio > 2.0) {
           console.warn(
-            `  ⚠ ${productId} ${year}: ${price}€ is ${((ratio - 1) * 100).toFixed(0)}% vs previous — skipped (likely IPC data issue)`,
+            `  ⚠ ${productId} ${year}: ${price}€ is ${((ratio - 1) * 100).toFixed(0)}% vs previous - skipped (likely IPC data issue)`,
           );
           continue;
         }
@@ -814,25 +814,25 @@ async function main() {
     medecin: "Assurance Maladie / CNAM (tarif conventionnel secteur 1)",
     metro: "RATP / Île-de-France Mobilités (ticket unitaire t+, pas carnet)",
     timbre:
-      "La Poste (tarifs en vigueur — timbres-de-france.com pour historique)",
+      "La Poste (tarifs en vigueur - timbres-de-france.com pour historique)",
     journal: "Prix éditeur (Le Monde au numéro)",
     magazine: "Prix éditeur / kiosque (Télé 7 Jours)",
     cafe: "Enquête prix services (INSEE série 000670982 si disponible)",
     biere: "INSEE série 000806957 (demi blonde 25cl détail, moyenne nationale)",
     internet: "ARCEP / opérateurs (offres entrée de gamme)",
     electricite:
-      "EDF / CRE (tarifs réglementés — Agence France Électricité historique)",
+      "EDF / CRE (tarifs réglementés - Agence France Électricité historique)",
     loyer: "OLAP / CLAMEUR / INSEE Enquête Logement (parc privé)",
     croissant:
-      "INSEE série 000442619 (croissant ordinaire — série arrêtée, puis tendance)",
-    gaz: "SDES / Ministère Transition Écologique (rapports annuels prix du gaz — pas CRE spot)",
+      "INSEE série 000442619 (croissant ordinaire - série arrêtée, puis tendance)",
+    gaz: "SDES / Ministère Transition Écologique (rapports annuels prix du gaz - pas CRE spot)",
     loyer_paris:
-      "OLAP rapports annuels Paris (Tableau 10/12 — ensemble du parc privé, pas nouveaux baux seuls)",
+      "OLAP rapports annuels Paris (Tableau 10/12 - ensemble du parc privé, pas nouveaux baux seuls)",
     consultation_specialiste:
       "DREES Données stat. professions libérales santé (ophtalmologiste secteur 2, honoraires totaux moyens)",
     forfait_mobile: "ARCEP / opérateurs (forfait 5-10 Go entrée de gamme)",
     streaming:
-      "Netflix France (abonnement Standard — vérifier dates exactes des hausses)",
+      "Netflix France (abonnement Standard - vérifier dates exactes des hausses)",
     smartphone: "GSM Arena / Lesnumeriques (milieu de gamme référence)",
     voiture_milieu_gamme:
       "Peugeot France (prix catalogue neuf, gamme 205→208→308)",

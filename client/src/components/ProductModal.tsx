@@ -53,7 +53,7 @@ export default function ProductModal({
       >
         <DialogTitle className="sr-only">{name}</DialogTitle>
 
-        {/* Navigation bar — pr-12 clears the built-in close button (absolute right-4 top-4) */}
+        {/* Navigation bar - pr-12 clears the built-in close button (absolute right-4 top-4) */}
         {showNav && (
           <div className="flex items-center gap-1 px-4 pt-3.5 pb-3 border-b shrink-0 pr-12">
             <Button
@@ -82,7 +82,7 @@ export default function ProductModal({
           </div>
         )}
 
-        {/* Scrollable content — pt-12 when no nav bar to clear the close button */}
+        {/* Scrollable content - pt-12 when no nav bar to clear the close button */}
         <div
           className={`overflow-y-auto flex-1 px-6 pb-6 ${showNav ? "pt-5" : "pt-12"}`}
         >

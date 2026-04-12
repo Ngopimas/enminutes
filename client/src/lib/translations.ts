@@ -216,15 +216,15 @@ export const translations: Record<Lang, Record<string, string>> = {
     basketExcludedVoiture:
       "Non inclus par défaut\u202F: achat ponctuel de montant élevé, difficile à pondérer dans une dépense mensuelle",
     basketExcludedInternet:
-      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 - l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedMobile:
-      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 - l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedStreaming:
       "Non inclus par défaut\u202F: données disponibles à partir de 2014 seulement",
     basketExcludedGaz:
-      "Non inclus par défaut\u202F: données disponibles à partir de 2000 — l'inclure crée une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 2000 - l'inclure crée une rupture artificielle dans la série historique",
     basketExcludedOphtalmologiste:
-      "Non inclus par défaut\u202F: données disponibles à partir de 1990 — l'inclure crée une rupture artificielle dans la série historique",
+      "Non inclus par défaut\u202F: données disponibles à partir de 1990 - l'inclure crée une rupture artificielle dans la série historique",
     dataTypeActual: "Prix réel (source INSEE directe)",
     dataTypeIpcEstimate:
       "Prix estimé via indice IPC (INSEE) · zone ombrée = ±5\u202F%",
@@ -465,15 +465,15 @@ export const translations: Record<Lang, Record<string, string>> = {
     basketExcludedVoiture:
       "Not in the standard basket: high-value one-off purchase, difficult to weight in a monthly basket",
     basketExcludedInternet:
-      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 - adding it creates an artificial break in the historical series",
     basketExcludedMobile:
-      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 - adding it creates an artificial break in the historical series",
     basketExcludedStreaming:
       "Not in the standard basket: data only available from 2014",
     basketExcludedGaz:
-      "Not in the standard basket: data only available from 2000 — adding it creates an artificial break in the historical series",
+      "Not in the standard basket: data only available from 2000 - adding it creates an artificial break in the historical series",
     basketExcludedOphtalmologiste:
-      "Not in the standard basket: data only available from 1990 — adding it creates an artificial break in the historical series",
+      "Not in the standard basket: data only available from 1990 - adding it creates an artificial break in the historical series",
     dataTypeActual: "Actual price (direct INSEE source)",
     dataTypeIpcEstimate: "Estimated via CPI index (INSEE) · shaded area = ±5%",
     dataTypeManual: "Current price manually sourced & verified",
@@ -495,7 +495,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     chartUnavailable: "Chart unavailable",
     basketCustomBadge: "Custom basket",
     basketReset: "Reset",
-    basketClickToToggle: "Click a product to include or exclude it from the basket",
+    basketClickToToggle:
+      "Click a product to include or exclude it from the basket",
     basketTooFew: "Keep at least 3 products in the basket",
     basketCustomInfo:
       "Historical range may be shorter if a product has no data from 1960.",
