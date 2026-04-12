@@ -10,6 +10,9 @@ import {
   Tooltip,
   Legend,
   Filler,
+  type ChartOptions,
+  type ChartDataset,
+  type TooltipItem,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
@@ -299,7 +302,7 @@ export default function PurchasingPowerIndex({
       };
     });
 
-  const datasets: any[] = [
+  const datasets: ChartDataset<"line">[] = [
     {
       label: t("ppLegendIndex"),
       data: indexData,
@@ -361,7 +364,7 @@ export default function PurchasingPowerIndex({
 
   const chartData = { labels: filteredLabels, datasets };
 
-  const scales: any = {
+  const scales: ChartOptions<"line">["scales"] = {
     x: {
       ticks: {
         maxTicksLimit: isMobile ? 5 : 12,
@@ -419,7 +422,7 @@ export default function PurchasingPowerIndex({
     };
   }
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
@@ -455,12 +458,12 @@ export default function PurchasingPowerIndex({
         footerFont: { size: 10, style: "italic" as const },
         footerMarginTop: 6,
         callbacks: {
-          labelColor: (ctx: any) => ({
-            borderColor: ctx.dataset.borderColor,
-            backgroundColor: ctx.dataset.borderColor,
+          labelColor: (ctx: TooltipItem<"line">) => ({
+            borderColor: ctx.dataset.borderColor as string,
+            backgroundColor: ctx.dataset.borderColor as string,
             borderRadius: 0, // square symbols (brutalist style)
           }),
-          label: (ctx: any) => {
+          label: (ctx: TooltipItem<"line">) => {
             const label = ctx.dataset.label || "";
             const value = ctx.parsed.y;
             if (value == null) return "";
@@ -470,7 +473,7 @@ export default function PurchasingPowerIndex({
             }
             return ` ${label}: ${value.toFixed(1)}`;
           },
-          footer: (items: any[]) => {
+          footer: (items: TooltipItem<"line">[]) => {
             if (!items.length) return [];
             const year = filteredLabels[items[0].dataIndex];
             const ann = ppAnnotations.find((a) => a.year === year);
@@ -667,7 +670,7 @@ export default function PurchasingPowerIndex({
           <Line
             ref={chartRef}
             data={chartData}
-            options={chartOptions as any}
+            options={chartOptions}
             key={logScale ? "log" : "linear"}
           />
         </div>

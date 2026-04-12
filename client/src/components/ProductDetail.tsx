@@ -11,6 +11,10 @@ import {
   Tooltip,
   Legend,
   Filler,
+  type ChartOptions,
+  type ChartDataset,
+  type TooltipItem,
+  type LegendItem,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { Line } from "react-chartjs-2";
@@ -48,7 +52,7 @@ ChartJS.register(
 // Crosshair plugin - draws a vertical line at the hovered x position
 const crosshairPlugin = {
   id: "crosshair",
-  afterDraw(chart: any) {
+  afterDraw(chart: ChartJS) {
     const tooltip = chart.tooltip;
     if (!tooltip || !tooltip.getActiveElements().length) return;
     const ctx = chart.ctx;
@@ -126,7 +130,7 @@ export default function ProductDetail({
   const [copyFailed, setCopyFailed] = useState(false);
   const [chartStart, setChartStart] = useState(0);
   const [chartEnd, setChartEnd] = useState(0);
-  const chartRef = useRef<any>(null);
+  const chartRef = useRef<ChartJS<"line"> | null>(null);
 
   // Persist toggle preferences globally
   useEffect(() => {
@@ -398,7 +402,7 @@ export default function ProductDetail({
   }
 
   // Confidence band datasets (±5% for ipc_estimate products), prepended so main line renders on top
-  const confidenceBands: any[] = [];
+  const confidenceBands: ChartDataset<"line">[] = [];
   if (product.dataType === "ipc_estimate") {
     const bandAlpha = isDark ? "rgba(99,179,237,0.12)" : "rgba(66,153,225,0.1)";
     confidenceBands.push(
@@ -425,7 +429,7 @@ export default function ProductDetail({
     );
   }
 
-  const datasets: any[] = [
+  const datasets: ChartDataset<"line">[] = [
     ...confidenceBands,
     {
       label: `${name} (${t("minutesAbbr")})`,
@@ -456,7 +460,7 @@ export default function ProductDetail({
     hidden: !showPrice,
   });
 
-  const scales: any = {
+  const scales: ChartOptions<"line">["scales"] = {
     x: {
       ticks: {
         maxTicksLimit: isMobile ? 5 : 10,
@@ -498,7 +502,7 @@ export default function ProductDetail({
     },
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
@@ -516,7 +520,7 @@ export default function ProductDetail({
           font: { size: 10 },
           color: isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)",
           padding: 12,
-          filter: (item: any) =>
+          filter: (item: LegendItem) =>
             item.text !== "" &&
             (showPrice || item.datasetIndex !== datasets.length - 1),
         },
@@ -537,14 +541,14 @@ export default function ProductDetail({
         footerColor: isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)",
         footerFont: { size: 10, style: "italic" as const },
         footerMarginTop: 6,
-        filter: (item: any) => item.dataset.label !== "",
+        filter: (item: TooltipItem<"line">) => item.dataset.label !== "",
         callbacks: {
-          labelColor: (ctx: any) => ({
-            borderColor: ctx.dataset.borderColor,
-            backgroundColor: ctx.dataset.borderColor,
+          labelColor: (ctx: TooltipItem<"line">) => ({
+            borderColor: ctx.dataset.borderColor as string,
+            backgroundColor: ctx.dataset.borderColor as string,
             borderRadius: 0,
           }),
-          label: (ctx: any) => {
+          label: (ctx: TooltipItem<"line">) => {
             const value = ctx.parsed.y;
             if (value == null) return "";
             if (showPrice && ctx.dataset.yAxisID === "y1") {
@@ -554,7 +558,7 @@ export default function ProductDetail({
             }
             return ` ${ctx.dataset.label}: ${formatMinutes(value, lang, 1)}`;
           },
-          footer: (items: any[]) => {
+          footer: (items: TooltipItem<"line">[]) => {
             if (!product.inflections?.length || !items.length) return [];
             const year = visibleYears[items[0].dataIndex];
             const inf = product.inflections.find((i) => i.year === year);
@@ -676,8 +680,8 @@ export default function ProductDetail({
             data-testid="show-price-toggle"
           />
           <Label
+            htmlFor="show-price"
             className="text-xs text-muted-foreground cursor-pointer"
-            onClick={() => setShowPrice((v) => !v)}
           >
             {t("showNominalPrice")}
           </Label>
@@ -691,8 +695,8 @@ export default function ProductDetail({
               data-testid="show-context-toggle"
             />
             <Label
+              htmlFor="show-context"
               className="text-xs text-muted-foreground cursor-pointer"
-              onClick={() => setShowContext((v) => !v)}
             >
               {t("ppShowContext")}
             </Label>
@@ -705,8 +709,8 @@ export default function ProductDetail({
             onCheckedChange={setLogScale}
           />
           <Label
+            htmlFor="log-scale"
             className="text-xs text-muted-foreground cursor-pointer"
-            onClick={() => setLogScale((v) => !v)}
           >
             {t("logScaleLabel")}
           </Label>
@@ -732,7 +736,7 @@ export default function ProductDetail({
           key={logScale ? "log" : "linear"}
           ref={chartRef}
           data={{ labels: visibleYears, datasets }}
-          options={chartOptions as any}
+          options={chartOptions}
           plugins={[crosshairPlugin]}
         />
       </div>

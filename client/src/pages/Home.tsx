@@ -93,9 +93,10 @@ export default function Home({
       params.delete("basket");
     }
     const search = params.toString();
+    const hash = window.location.hash;
     const newUrl = search
-      ? `${window.location.pathname}?${search}`
-      : window.location.pathname;
+      ? `${window.location.pathname}?${search}${hash}`
+      : `${window.location.pathname}${hash}`;
     window.history.replaceState({}, "", newUrl);
     try {
       if (custom) {

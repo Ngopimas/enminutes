@@ -196,8 +196,8 @@ export default function BasketComposition({
           </div>
 
           {/* Weight sum */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-            <span className="font-mono">Σ = {totalWeight}</span>
+          <div className="flex items-start gap-2 text-xs text-muted-foreground mb-3">
+            <span className="font-mono shrink-0">Σ = {totalWeight}</span>
             <span>–</span>
             <span>{t("basketNote")}</span>
           </div>

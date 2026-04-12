@@ -177,6 +177,7 @@ export function getDynamicFunFact(
 
   const first = yearA ?? years[0];
   const last = yearB ?? years[years.length - 1];
+  if (!(first in mins) || !(last in mins)) return "";
   const minFirstRaw = Math.round(mins[first]);
   const minLastRaw = Math.round(mins[last]);
   const wentDown = minLastRaw < minFirstRaw;
